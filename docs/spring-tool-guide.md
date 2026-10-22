@@ -20,7 +20,7 @@ The start file looks for its map folders next to the `Tool` folder:
 | Folder | What it holds |
 |---|---|
 | `DOCC\MapCache` | Map tiles |
-| `DOCC\Data` | IMD, SoilGrids and CartoDEM files |
+| `DOCC\Data\Secondary data` (else `DOCC\Data`) | IMD, SoilGrids and CartoDEM files |
 
 SoilGrids files can sit either as `SoilGrids\clay_0-5cm_mean.tif` or in depth folders such as `SoilGrids\0-5 soilgrids\clay.tif` (the laptop's layout). Both are read.
 
