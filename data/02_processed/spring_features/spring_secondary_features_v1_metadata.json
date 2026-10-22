@@ -1,0 +1,36 @@
+{
+  "built": "2026-10-22",
+  "records": 1845,
+  "filled": {
+    "bhukosh_geomorphology_250k": 1766,
+    "bhukosh_lineament_distance_m": 1766,
+    "bhukosh_lineament_nearest_type": 1766,
+    "bhukosh_joint_distance_m": 1766,
+    "landslide_distance_m": 1766,
+    "landslide_count_500m": 1766,
+    "landslide_landform_nearest": 1766,
+    "gsi_dip_points_5km": 1766,
+    "gsi_dip_nearest_distance_m": 1159,
+    "gsi_dip_nearest_type": 1159,
+    "gsi_dip_nearest_deg": 1159,
+    "gsi_dip_nearest_direction_deg": 1159,
+    "gsi_dip_median_5km_deg": 1159,
+    "ndvi_s2_2025": 344,
+    "forest_dense_500m_pct": 344,
+    "forest_open_500m_pct": 344,
+    "soil_ksat_0_30cm_mm_h": 1799,
+    "soil_depth_to_bedrock_cm": 1807,
+    "report_catchment_ha": 2
+  },
+  "layers": {
+    "ndvi": "Sentinel2/S2_NDVI_Tehri_OctNov2025_20m.tif",
+    "ksat": "Infiltration/Ksat_0-30cm_SaxtonRawls_mmh.tif",
+    "depth": "SoilGrids/BDRICM_M_250m_Uttarakhand.tif"
+  },
+  "missing_layers": [],
+  "notes": [
+    "Data columns only; not used by Modules A-C yet.",
+    "Bhukosh layers cover Uttarakhand; Sentinel-2 NDVI covers Tehri district; dip points cover Kumaon sheets only.",
+    "Forest cut-offs are provisional: dense NDVI >= 0.7, open 0.5-0.7."
+  ]
+}

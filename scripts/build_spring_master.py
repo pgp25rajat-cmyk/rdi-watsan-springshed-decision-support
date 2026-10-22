@@ -2,6 +2,7 @@
 
 Inputs:  data/01_staged/common/csv/spring_records_common_v1.csv
          data/02_processed/spring_features/spring_features_v1.csv
+         data/02_processed/spring_features/spring_secondary_features_v1.csv (optional; scripts/build_spring_secondary_features.py)
 Output:  data/02_processed/spring_master/spring_master_v1.csv (+ data dictionary,
          fill summary, duplicate pairs, and one-row-per-spring files spring_master_v1_clean.csv,
          _input.csv and _test.csv) and spring_master_v1.xlsx
@@ -31,6 +32,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Alignment, Font, PatternFill
 from openpyxl.utils import get_column_letter
 
+from build_spring_secondary_features import COLUMNS as SECONDARY_COLUMNS, OUT_CSV as SECONDARY_CSV
 from field_visit_spring_records import field_flows
 from spring_duplicates import load_decisions, resolve_group
 
@@ -199,6 +201,9 @@ COLUMNS = [
     ("gaps_remaining", "", "Derived", "Key fields still blank and why."),
     ("notes", "", "Processed features / Derived", "Coordinate and elevation notes, values removed as invalid, and values to check."),
 ]
+# Secondary layers collected in October 2026 (data columns only; no module reads them yet) go after the GSI structure columns
+_at = [c[0] for c in COLUMNS].index("spring_type_source_text")
+COLUMNS[_at:_at] = SECONDARY_COLUMNS
 NAMES = [c[0] for c in COLUMNS]
 
 
@@ -329,6 +334,7 @@ def main():
     watsan_seasonal = {(r["Latitude"], r["Longitude"]): r for r in read(WATSAN_DISCHARGE_CSV)}
     field_flow = field_flows()
     features = read(FEATURES_CSV)
+    secondary = {r["record_id"]: r for r in read(SECONDARY_CSV)} if SECONDARY_CSV.exists() else {}
     own = {f["record_id"]: field_values(common[f["record_id"]], f) for f in features}
     features_by_id = {f["record_id"]: f for f in features}
     report_flow = {rid: own[rid]["discharge_text"] for rid in field_flow if rid in own}
@@ -445,6 +451,7 @@ def main():
             "seasonality_text": c["seasonality_source_value"], "intervention_text": c["intervention_source_value"],
             "vulnerability_index_source": c["vulnerability_index_source_value"], "notes": f["processing_notes"],
         })
+        row.update({c[0]: secondary.get(rid, {}).get(c[0], "") for c in SECONDARY_COLUMNS})
         if f["sg_clay_0_30cm_pct"]:
             row.update(soil_clay_pct=f["sg_clay_0_30cm_pct"], soil_silt_pct=f["sg_silt_0_30cm_pct"], soil_sand_pct=f["sg_sand_0_30cm_pct"],
                        soil_texture_from="SoilGrids 0-30 cm")

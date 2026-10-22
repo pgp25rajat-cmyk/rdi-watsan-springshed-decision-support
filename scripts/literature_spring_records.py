@@ -282,6 +282,8 @@ SRHU_SITES = [
                      "Highly Dissected Structural Hills and Valleys",
         "porosity": "Secondary porosity through fractures, joints and weathering (soil effective porosity 25-40 %)",
         "area_ha": "40.51", "area_loc": "Figure 10, Land Use / Land Cover Statistics table (total)",
+        "area_check": "The outline drawn on the report's other maps measures 12.4 ha (scripts/trace_report_catchments.py); "
+                      "the land-use map that gives 40.51 ha looks redrawn (repeated grid labels, UTM 43N), so prefer 12.4 ha.",
         "elev_range": "1452–1614", "elev_loc": "Section 3.1",
         "land_use": "Catchment: dense forest 48.4 %, open forest 16.0 %, agriculture/terrace 25.7 %, built-up 5.2 %, "
                     "barren 3.2 %, road 1.5 % (Sentinel-2, 2025; the text says 66.91 % forest)",
@@ -301,6 +303,7 @@ SRHU_SITES = [
                      "foliation and bedding planes; Highly Dissected Hills and Valleys",
         "porosity": "Secondary porosity through fractures, joints, foliation and weathering (soil effective porosity 20-35 %)",
         "area_ha": "91.07", "area_loc": "Section 3.9 (delineated catchment)",
+        "area_check": "The outline on the report's geology map measures 94.3 ha (scripts/trace_report_catchments.py).",
         "elev_range": "1461–2076", "elev_loc": "Sections 3.1 and 6.7 (section 3.5 gives about 1500–2050 from contours)",
         "land_use": "Catchment: dense forest 40.8 %, open forest 25.4 %, agriculture/terrace 22.6 %, built-up 4.3 %, "
                     "barren 3.5 %, road 1.3 %, water 0.3 % (Sentinel-2, 2025)",
@@ -332,7 +335,7 @@ def srhu_records():
             "porosity_source_value": (site["porosity"], "descriptive", "", f"{site['file']}, Table 1"),
             "seasonality_source_value": ("Perennial", "reported", "Section 4 lists 'presence of a perennial spring'.", f"{site['file']}, section 4"),
             "catchment_area_ha_source_value": (site["area_ha"], "delineated_estimate",
-                                               "Surface catchment from CartoDEM 30 m; not a confirmed recharge area.",
+                                               "Surface catchment from CartoDEM 30 m; not a confirmed recharge area. " + site["area_check"],
                                                f"{site['file']}, {site['area_loc']}"),
             "catchment_elevation_range_m_source_value": (site["elev_range"], "delineated_estimate", "", f"{site['file']}, {site['elev_loc']}"),
             "recharge_area_slope_aspect_source_value": (site["slope_aspect"], "descriptive", "", f"{site['file']}, sections 3.3-3.4"),
