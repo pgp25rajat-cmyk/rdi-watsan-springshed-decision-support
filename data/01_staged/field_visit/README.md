@@ -29,4 +29,5 @@ How the visit reaches the spring master (2026-10-22):
 - Field springs without a dataset record become FLD-SPR-nnnn rows of the common file (`scripts/field_visit_spring_records.py`; Kokhliyal is FLD-SPR-0001).
 - `scripts/build_spring_master.py` uses the form flow (bucket mean, or the form's estimate range) for the linked RDI springs. Chorghadna was not measured and keeps the report value.
 - Rasanulikhal = HIM-SPR-0194 and ATL-SPR-0943 (Ludru Ka Pani) and Ganjrkhanal = HIM-SPR-0413 are linked as the same spring by team decision (Rajat, 2026-10-22); the field record is the primary one.
+- The Kunjapuri DI handpump (FV26-DI-KUN) is the handpump of the SRHU Badera hydrogeology report (report point about 30 m from the field GPS). No spring was seen on the visit, so `linked_dataset_spring_id` links it to that report's Badeda Spring (RDI-SPR-0008); the DEM puts the handpump 68 m above the spring, 189 m away.
 - Only these 8 records' map values were rebuilt, with `python scripts/build_spring_features.py --only field-visit` and the hand-downloaded layers from DOCC\Data\Secondary data. Every other row is unchanged.

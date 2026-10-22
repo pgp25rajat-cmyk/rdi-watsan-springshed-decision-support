@@ -119,10 +119,14 @@ def main():
         readings.setdefault(r["field_site_id"], []).append(r)
     screens = screen_totals(read(SCORES_CSV))
     master = {r["record_id"]: r for r in read(MASTER_CSV)}
-    # The master now carries the field GPS for these springs, so the offset is measured from the source's own coordinate.
+    # The master carries the field GPS for revisited springs, so offsets are measured from the source's own coordinate.
     source = {r["record_id"]: r for r in read(COMMON_CSV)}
 
+    # DI handpumps linked by a report to a dataset spring that was not seen on the visit
+    report_springs = {d["linked_dataset_spring_id"]: source[d["linked_dataset_spring_id"]] for d in di_sites
+                      if d["linked_dataset_spring_id"] and not d["linked_spring_field_id"]}
     points = [(float(r["latitude"]), float(r["longitude"])) for r in springs + di_sites]
+    points += [(float(r["latitude_source_value"]), float(r["longitude_source_value"])) for r in report_springs.values()]
     dem = [rasterio.open(p) for p in dem_tiles_for(points, Path(args.cache))]
 
     def dem_elevation(lat, lon):
@@ -165,10 +169,16 @@ def main():
         row = dict(d)
         row["elevation_m"] = fmt(elev)
         spring = d["linked_spring_field_id"]
+        report_spring = report_springs.get(d["linked_dataset_spring_id"]) if not spring else None
         if spring and spring in spring_elev and elev is not None and spring_elev[spring] is not None:
             target = next(s for s in springs if s["field_site_id"] == spring)
             row["height_above_spring_dem_m"] = fmt(elev - spring_elev[spring], 0)
             row["distance_to_spring_m"] = fmt(distance_m(lat, lon, float(target["latitude"]), float(target["longitude"])), 0)
+        elif report_spring and elev is not None:
+            s_lat, s_lon = float(report_spring["latitude_source_value"]), float(report_spring["longitude_source_value"])
+            s_elev = dem_elevation(s_lat, s_lon)
+            row["height_above_spring_dem_m"] = "" if s_elev is None else fmt(elev - s_elev, 0)
+            row["distance_to_spring_m"] = fmt(distance_m(lat, lon, s_lat, s_lon), 0)
         else:
             row["height_above_spring_dem_m"] = row["distance_to_spring_m"] = ""
         out_di.append(row)

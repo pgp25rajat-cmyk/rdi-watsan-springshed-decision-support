@@ -45,6 +45,8 @@ def test_every_spring_has_a_full_screen_and_known_links():
         for di in filter(None, s["linked_di_site_ids"].split(";")):
             assert di in di_ids, (s["field_site_id"], di)
         assert s["district"] == "Tehri Garhwal"  # all field springs are test data
+    for d in read(fv.DI_CSV):
+        assert not d["linked_dataset_spring_id"] or d["linked_dataset_spring_id"] in master_ids, d["di_site_id"]
 
 
 def test_recomputed_scores_only_differ_with_a_reason():

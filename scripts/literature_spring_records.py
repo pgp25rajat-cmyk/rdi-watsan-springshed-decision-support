@@ -258,6 +258,107 @@ def chamba_records():
     return records
 
 
+# --------------------------------------------------------------------------- SRHU DI site assessment reports
+SRHU_TITLE = ("Swami Rama Himalayan University (RDI/WATSAN). Scientific Hydrogeological Assessment Report - Impact Assessment "
+              "of Direct Injection-Based Aquifer Recharge Technique for Spring Revival")
+
+
+def dms(degrees, minutes, seconds):
+    return f"{degrees + minutes / 60 + seconds / 3600:.6f}"
+
+
+# Coordinates are printed in degrees-minutes-seconds; they are stored here in decimal degrees, and the long
+# table note keeps the printed form. The handpump coordinates go in intervention_source_value.
+SRHU_SITES = [
+    {
+        "source_id": "SRC-027", "file": "Badera Geohydrology  report.pdf",
+        "area": "Badeda village, Narendra Nagar block, Tehri Garhwal, Uttarakhand", "block": "Narendra Nagar",
+        "village": "Badeda (Badera)", "spring": "Badeda Spring",
+        "lat": (30, 10, 17.26), "lon": (78, 18, 46.42), "hp_lat": (30, 10, 24.21), "hp_lon": (78, 18, 46.25),
+        "hp_name": "Badeda handpump (Kunjapuri; report: 'upper recharge zone of the Kunjapuri Spring catchment')",
+        "spring_type": "Fracture-controlled contact spring; fractured to semi-confined carbonate aquifer of the Krol Group",
+        "lithology": "Limestone, dolomite and shale (Krol Group); aquifer table adds quartzite and sandstone (Blaini Group)",
+        "structure": "Neoproterozoic Krol Group; groundwater controlled by fractures, joints and bedding planes; "
+                     "Highly Dissected Structural Hills and Valleys",
+        "porosity": "Secondary porosity through fractures, joints and weathering (soil effective porosity 25-40 %)",
+        "area_ha": "40.51", "area_loc": "Figure 10, Land Use / Land Cover Statistics table (total)",
+        "elev_range": "1452–1614", "elev_loc": "Section 3.1",
+        "land_use": "Catchment: dense forest 48.4 %, open forest 16.0 %, agriculture/terrace 25.7 %, built-up 5.2 %, "
+                    "barren 3.2 %, road 1.5 % (Sentinel-2, 2025; the text says 66.91 % forest)",
+        "slope_aspect": "Slope 5–36° (12–28° around the handpump); mostly south- to southwest-facing",
+        "link": "The report places the handpump upslope of the spring in the same shallow fractured aquifer "
+                "('only a few metres apart'; the printed coordinates are about 215 m apart).",
+    },
+    {
+        "source_id": "SRC-028", "file": "Domsi & Makhdet Geohydrology report.pdf",
+        "area": "Dungsi & Makhdet villages, Jaunpur block, Tehri Garhwal, Uttarakhand", "block": "Jaunpur",
+        "village": "Makhdet (Dungsi & Makhdet; also spelt Madkhet, Domsi)", "spring": "Makhdet Spring",
+        "lat": (30, 28, 57.86), "lon": (78, 14, 4.83), "hp_lat": (30, 28, 53.30), "hp_lon": (78, 14, 12.10),
+        "hp_name": "Dungsi (Domsi) handpump",
+        "spring_type": "Fracture-controlled gravity spring; unconfined to semi-confined fractured hard-rock aquifer",
+        "lithology": "Quartzite, phyllite, slate and schist (Jaunsar Group; the aquifer table says Jaunpur Group)",
+        "structure": "Neoproterozoic Jaunsar Group, Lesser Himalaya; groundwater controlled by fractures, joints, "
+                     "foliation and bedding planes; Highly Dissected Hills and Valleys",
+        "porosity": "Secondary porosity through fractures, joints, foliation and weathering (soil effective porosity 20-35 %)",
+        "area_ha": "91.07", "area_loc": "Section 3.9 (delineated catchment)",
+        "elev_range": "1461–2076", "elev_loc": "Sections 3.1 and 6.7 (section 3.5 gives about 1500–2050 from contours)",
+        "land_use": "Catchment: dense forest 40.8 %, open forest 25.4 %, agriculture/terrace 22.6 %, built-up 4.3 %, "
+                    "barren 3.5 %, road 1.3 %, water 0.3 % (Sentinel-2, 2025)",
+        "slope_aspect": "Slope 5 to over 37° (5–15° around the spring and handpump); spring and handpump on northwest-facing slopes",
+        "link": "The report places the handpump upslope of the spring in the same springshed, with 'probable hydraulic "
+                "connectivity' through the fractured aquifer.",
+    },
+]
+
+
+def srhu_records():
+    records = []
+    for site in SRHU_SITES:
+        loc = f"{site['file']}, section 1 (Location and Site Characteristics)"
+        printed = lambda d, m, sec, h: f"Printed as {d}°{m}'{sec}\"{h}; converted to decimal degrees."
+        hp = f"{dms(*site['hp_lat'])}, {dms(*site['hp_lon'])}"
+        values = {
+            "source_area_name": site["area"],
+            "district": "Tehri Garhwal",
+            "block": site["block"],
+            "village": site["village"],
+            "spring_name": site["spring"],
+            "latitude_source_value": (dms(*site["lat"]), "reported", printed(*site["lat"], "N")),
+            "longitude_source_value": (dms(*site["lon"]), "reported", printed(*site["lon"], "E")),
+            "land_use_source_value": (site["land_use"], "delineated_estimate", "", f"{site['file']}, section 3.9"),
+            "spring_type_source_value": (site["spring_type"], "descriptive", "", f"{site['file']}, section 2"),
+            "lithology_source_value": (site["lithology"], "descriptive", "", f"{site['file']}, sections 2, 3.6 and Table 1"),
+            "geological_structure_source_value": (site["structure"], "descriptive", "", f"{site['file']}, sections 3.6-3.7"),
+            "porosity_source_value": (site["porosity"], "descriptive", "", f"{site['file']}, Table 1"),
+            "seasonality_source_value": ("Perennial", "reported", "Section 4 lists 'presence of a perennial spring'.", f"{site['file']}, section 4"),
+            "catchment_area_ha_source_value": (site["area_ha"], "delineated_estimate",
+                                               "Surface catchment from CartoDEM 30 m; not a confirmed recharge area.",
+                                               f"{site['file']}, {site['area_loc']}"),
+            "catchment_elevation_range_m_source_value": (site["elev_range"], "delineated_estimate", "", f"{site['file']}, {site['elev_loc']}"),
+            "recharge_area_slope_aspect_source_value": (site["slope_aspect"], "descriptive", "", f"{site['file']}, sections 3.3-3.4"),
+            "recharge_area_basis_source_value": ("Surface catchment from CartoDEM 30 m with thematic layers; the handpump area is "
+                                                 "called the upper recharge zone", "descriptive", "", f"{site['file']}, section 3"),
+            "intervention_source_value": (f"Rooftop rainwater harvesting with direct injection through the existing {site['hp_name']} "
+                                          f"at {hp}, plus catchment treatment (trenches, recharge pits, check dams). {site['link']}",
+                                          "reported", f"Handpump printed as {site['hp_lat'][0]}°{site['hp_lat'][1]}'{site['hp_lat'][2]}\"N "
+                                          f"{site['hp_lon'][0]}°{site['hp_lon'][1]}'{site['hp_lon'][2]}\"E.", f"{site['file']}, sections 1-2 and 5"),
+        }
+        records.append({
+            "prefix": "RDI",
+            "source_id": site["source_id"],
+            "source_dataset": "RDI/WATSAN (SRHU) DI site hydrogeological assessment report",
+            "source_record_locator": loc,
+            "source_reference": f"{SRHU_TITLE}: {site['area']} ({site['file']}, undated)",
+            "default_locator": loc,
+            "values": values,
+            "value_status_summary": "Coordinates printed to 0.01 second; no discharge or water quality; areas are surface catchments.",
+            "staging_quality_flag": "Verify: no spring discharge is reported; the catchment is a surface delineation, not a recharge area; "
+                                    "the handpump-spring link is the report's interpretation.",
+            "source_notes": "Transcribed from the report text and the land use table; coordinates converted from degrees-minutes-seconds.",
+        })
+    return records
+
+
 # --------------------------------------------------------------------------- Daniel et al. (2021)
 def daniel_records():
     p15 = "Daniel 2021 Table 6, PDF page 15"
@@ -480,7 +581,7 @@ def _normalise(entry, default_locator):
 
 def build(common_columns, point_wkt):
     """Return (wide_records, long_records) for all literature sources."""
-    raw = rathi_records() + chamba_records() + daniel_records() + atlas_records()
+    raw = rathi_records() + chamba_records() + daniel_records() + atlas_records() + srhu_records()
     counters = {}
     wide, long_rows = [], []
     for item in raw:

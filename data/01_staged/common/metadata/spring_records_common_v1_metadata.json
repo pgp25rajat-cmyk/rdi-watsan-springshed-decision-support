@@ -145,16 +145,17 @@
   "watsan_common_records": 299,
   "spring_atlas_common_records": 948,
   "himmotthan_common_records": 542,
-  "literature_common_records": 53,
-  "literature_long_values": 629,
+  "literature_common_records": 55,
+  "literature_long_values": 665,
   "literature_records_by_source_dataset": {
     "Rathi et al. 2021 - Table 1 (Chandrabhaga watershed)": 20,
     "Rathi et al. 2021 - Table 2 (Danda watershed)": 15,
     "RDI/WATSAN Chamba Hydrogeological Assessment Report - summary table": 7,
     "Daniel et al. 2021 - Mathamali spring case study": 1,
-    "Spring Atlas of Uttarakhand - representative spring profiles": 10
+    "Spring Atlas of Uttarakhand - representative spring profiles": 10,
+    "RDI/WATSAN (SRHU) DI site hydrogeological assessment report": 2
   },
-  "combined_common_records": 1843,
+  "combined_common_records": 1845,
   "notes": [
     "All source values are retained as text in the common schema.",
     "The Spring Atlas extract is a PDF table transcription and remains Verify until checked against its cited page.",
