@@ -17,8 +17,8 @@ is_primary_record,1843,100,,,0
 spring_id,1843,100,,,0
 dataset_split,1843,100,,,0
 split_reason,236,13,,,1607
-duplicate_status,449,24,,,1394
-duplicate_group,449,24,,,1394
+duplicate_status,452,25,,,1391
+duplicate_group,452,25,,,1391
 elevation_m,1806,98,,,37
 elevation_source_m,1763,96,,,80
 elevation_check,76,4,,,1767
@@ -100,9 +100,9 @@ discharge_text,1046,57,,,797
 discharge_dry_lpm,299,16,,,1544
 discharge_monsoon_lpm,299,16,,,1544
 discharge_from,1046,57,,,797
-ph,693,38,541,152,1150
-tds_mg_l,694,38,542,152,1149
-water_quality_from,694,38,,,1149
+ph,695,38,541,154,1148
+tds_mg_l,696,38,542,154,1147
+water_quality_from,696,38,,,1147
 recharge_area_ha_low,353,19,344,9,1490
 recharge_area_ha_high,353,19,,,1490
 recharge_area_from,353,19,,,1490

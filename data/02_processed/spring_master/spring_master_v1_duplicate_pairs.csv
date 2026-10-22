@@ -243,8 +243,11 @@ COLOC-0209,same,"names match, elevations within 0 m",ATL-SPR-0940,Jangru,Kudiyal
 COLOC-0210,same,"names match, elevations within 0 m",ATL-SPR-0941,Selwani,Kemari Gaon,1351.0,HIM-SPR-0277,Selwani,Kemari Gaon,1351.0,1347.7
 COLOC-0211,different,different spring names sharing a coordinate,ATL-SPR-0942,Selwani,Arogi & Nakote,1487.0,HIM-SPR-0278,Arogi,Arogi & Nakote,1487.0,1459.4
 COLOC-0212,same,"names match, elevations within 0 m",ATL-SPR-0943,Ludru ka pani,Saud,2268.0,HIM-SPR-0194,Ludru Ka Pani,Saud,2268.0,2252.4
+COLOC-0212,same,"team decision (Rajat, 2026-10-22)",ATL-SPR-0943,Ludru ka pani,Saud,2268.0,RDI-SPR-0007,Rasanulikhal Spring,,2282.0,2252.4
+COLOC-0212,same,"team decision (Rajat, 2026-10-22)",HIM-SPR-0194,Ludru Ka Pani,Saud,2268.0,RDI-SPR-0007,Rasanulikhal Spring,,2282.0,2252.4
 COLOC-0213,same,"names match, elevations within 0 m",ATL-SPR-0946,Dangla Spring,Dangla,1371.0,HIM-SPR-0075,Dangla Dhara,Dangala,1371.0,1398.6
 COLOC-0214,different,source elevations differ by 360 m,HIM-SPR-0201,Malla Dhara,Simalta,1056.0,HIM-SPR-0222,Mungron Dhara,Ghodasil,1416.0,1423.1
 COLOC-0215,different,different spring names sharing a coordinate,HIM-SPR-0357,Nagari naula,Satkhol,1855.0,HIM-SPR-0382,Hedakhan,Satkhol,1833.0,1850.4
 COLOC-0216,different,source elevations differ by 440 m,HIM-SPR-0454,Dadoli,Dadoli,1473.0,HIM-SPR-0457,Saud Gadera,Maroda,1033.0,1472.8
 COLOC-0217,different,different spring names sharing a coordinate,HIM-SPR-0519,Nir Jalara Spring,Thandoli village,,HIM-SPR-0520,Judi Spring,Dagyon village,,941.4
+LINK-0001,same,"team decision (Rajat, 2026-10-22)",HIM-SPR-0413,Ganjarkhala,Kaddukhal,2357.0,RDI-SPR-0003,Ganjrkhanal Spring,,2388.0,2338.2

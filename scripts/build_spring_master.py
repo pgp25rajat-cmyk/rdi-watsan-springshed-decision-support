@@ -259,8 +259,9 @@ def district_from_area(text):
     return ""
 
 
-def richness(record_id, values):
-    return (sum(1 for k in FIELD_ONLY if values[k]), -SOURCE_PRIORITY.get(record_id[:3], 9))
+def richness(record_id, values, field_verified=frozenset()):
+    """Preferred record of a spring: one checked on a field visit, then the richest field data, then the source."""
+    return (record_id in field_verified, sum(1 for k in FIELD_ONLY if values[k]), -SOURCE_PRIORITY.get(record_id[:3], 9))
 
 
 def assign_split(rows, groups):
@@ -291,10 +292,10 @@ def assign_split(rows, groups):
         r["split_reason"] = reason.get(r["record_id"], "")
 
 
-def duplicate_label(rid, group, size, spring_of, pairs):
+def duplicate_label(rid, group, size, spring_of, pairs, team_linked=False):
     if not group:
         return ""
-    parts = [f"{group} ({size} records within 30 m)"]
+    parts = [f"{group} ({size} records " + ("within 30 m or joined by a team decision)" if team_linked else "within 30 m)")]
     same = [b if a == rid else a for a, b, d, _ in pairs if rid in (a, b) and d == "same"]
     if same:
         parts.append(f"same spring as {', '.join(same)}; " + ("this is the primary record" if spring_of[rid] == rid else f"primary is {spring_of[rid]}"))
@@ -330,6 +331,12 @@ def main():
     features = read(FEATURES_CSV)
     own = {f["record_id"]: field_values(common[f["record_id"]], f) for f in features}
     features_by_id = {f["record_id"]: f for f in features}
+    report_flow = {rid: own[rid]["discharge_text"] for rid in field_flow if rid in own}
+    for rid in report_flow:  # field form flow first, so records of the same spring are filled with it too
+        low, high, text = field_flow[rid]
+        own[rid].update(discharge_lpm_low=low, discharge_lpm_high=high, discharge_text=text)
+    field_verified = frozenset(f["record_id"] for f in features
+                               if f["record_id"].startswith("FLD-") or f["coordinate_correction"].startswith("field GPS"))
     groups = {}
     for f in features:
         if f["colocated_group_id"]:
@@ -337,6 +344,26 @@ def main():
     links = {frozenset((rid, c["candidate_match_record_ids"].split()[0])) for rid, c in common.items()
              if "matching name/coordinates" in c["candidate_match_record_ids"]}
     decisions = load_decisions(DECISIONS_CSV)
+    # A team "same" decision also joins records further apart than 30 m (e.g. a field GPS against an older survey point).
+    group_of = {rid: g for g, members in groups.items() for rid in members}
+    team_linked = set()
+    for key, (decision, _) in sorted(decisions.items(), key=lambda item: sorted(item[0])):
+        a, b = sorted(key)
+        if decision != "same" or a not in features_by_id or b not in features_by_id:
+            continue
+        ga, gb = group_of.get(a), group_of.get(b)
+        if ga and ga == gb:
+            continue
+        target = ga or gb or f"LINK-{sum(1 for g in groups if g.startswith('LINK-')) + 1:04d}"
+        groups.setdefault(target, [])
+        for other in {ga, gb} - {target, None}:
+            groups[target].extend(groups.pop(other))
+        for rid in (a, b):
+            if rid not in groups[target]:
+                groups[target].append(rid)
+        for rid in groups[target]:
+            group_of[rid] = target
+        team_linked.add(target)
     spring_of, cluster_of, status_of, group_pairs = {}, {}, {}, {}
     for group, members in groups.items():
         records = [{"record_id": m, "spring_name": common[m]["spring_name"], "village": common[m]["village"],
@@ -344,7 +371,7 @@ def main():
         pairs, clusters, status = resolve_group(records, links, decisions)
         group_pairs[group] = pairs
         for cluster in clusters:
-            main_record = max(cluster, key=lambda rid: richness(rid, own[rid]))
+            main_record = max(cluster, key=lambda rid: richness(rid, own[rid], field_verified))
             for rid in cluster:
                 spring_of[rid], cluster_of[rid], status_of[rid] = main_record, cluster, status
     at_point = {}
@@ -357,7 +384,7 @@ def main():
         rid = f["record_id"]
         c = common[rid]
         partners = [p for p in cluster_of.get(rid, []) if p != rid]
-        partners.sort(key=lambda p: richness(p, own[p]), reverse=True)
+        partners.sort(key=lambda p: richness(p, own[p], field_verified), reverse=True)
 
         def take(keys):
             """Fill a set of keys together from this record, else the richest partner that has them."""
@@ -365,7 +392,8 @@ def main():
                 return {k: own[rid][k] for k in keys}, "this record"
             for p in partners:
                 if any(own[p][k] for k in keys):
-                    return {k: own[p][k] for k in keys}, f"colocated record {p} (same spring, within 30 m)"
+                    near = f["colocated_group_id"] and features_by_id[p]["colocated_group_id"] == f["colocated_group_id"]
+                    return {k: own[p][k] for k in keys}, f"colocated record {p} (same spring, {'within 30 m' if near else 'team decision'})"
             return {k: "" for k in keys}, ""
 
         row = {n: "" for n in NAMES}
@@ -380,8 +408,8 @@ def main():
             "is_primary_record": "Y" if spring_of.get(rid, rid) == rid else "N",
             "spring_id": spring_of.get(rid, rid),
             "duplicate_status": status_of.get(rid, ""),
-            "duplicate_group": duplicate_label(rid, f["colocated_group_id"], f["colocated_group_size"], spring_of,
-                                               group_pairs.get(f["colocated_group_id"], [])),
+            "duplicate_group": duplicate_label(rid, group_of.get(rid, ""), len(groups.get(group_of.get(rid), [])), spring_of,
+                                               group_pairs.get(group_of.get(rid), []), group_of.get(rid) in team_linked),
             "drainage_area_ha": f["dem_drainage_area_ha"], "drainage_area_max30m_ha": f["dem_drainage_area_max30m_ha"],
             "wetness_index_twi": f["dem_twi"], "distance_to_stream_m": f["dem_distance_to_stream_m"],
             "nearest_stream_order": f["dem_nearest_stream_order"], "height_above_stream_m": f["dem_height_above_stream_m"],
@@ -442,7 +470,7 @@ def main():
         row.update(values, discharge_from=source)
         if rid in field_flow:
             low, high, text = field_flow[rid]
-            reference = f"; source report: {row['discharge_text']} L/min" if row["discharge_text"] else ""
+            reference = f"; source report: {report_flow[rid]} L/min" if report_flow[rid] else ""
             row.update(discharge_lpm_low=low, discharge_lpm_high=high, discharge_text=text + reference,
                        discharge_from="DoCC field visit Oct 2026 (field form; the source report value is kept in discharge_text)")
         values, source = take(["ph", "tds_mg_l"])
