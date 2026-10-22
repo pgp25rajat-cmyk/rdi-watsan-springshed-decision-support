@@ -28,4 +28,5 @@ How the visit reaches the spring master (2026-10-22):
 - RDI-SPR-0001 to 0007 move to the field GPS: `scripts/build_spring_features.py` reads this table and names the fix in `coordinate_correction`. The staged report coordinates are not edited.
 - Field springs without a dataset record become FLD-SPR-nnnn rows of the common file (`scripts/field_visit_spring_records.py`; Kokhliyal is FLD-SPR-0001).
 - `scripts/build_spring_master.py` uses the form flow (bucket mean, or the form's estimate range) for the linked RDI springs. Chorghadna was not measured and keeps the report value.
+- Rasanulikhal = HIM-SPR-0194 and ATL-SPR-0943 (Ludru Ka Pani) and Ganjrkhanal = HIM-SPR-0413 are linked as the same spring by team decision (Rajat, 2026-10-22); the field record is the primary one.
 - Only these 8 records' map values were rebuilt, with `python scripts/build_spring_features.py --only field-visit` and the hand-downloaded layers from DOCC\Data\Secondary data. Every other row is unchanged.
