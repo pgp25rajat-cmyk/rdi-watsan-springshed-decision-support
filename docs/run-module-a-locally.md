@@ -39,11 +39,11 @@ The steps below use Rajat's folders. Change the paths if yours differ.
 
    ```
    set SPRING_LAYER_CACHE=C:\Users\rajat\Downloads\DOCC\MapCache
-   set SPRING_LOCAL_LAYERS=C:\Users\rajat\Downloads\DOCC\Data
+   set "SPRING_LOCAL_LAYERS=C:\Users\rajat\Downloads\DOCC\Data\Secondary data"
    ```
 
    - `MapCache` is a new, empty folder for the maps Module A downloads. For springs anywhere in Uttarakhand and Himachal it reaches about 1.3 GB.
-   - `DOCC\Data` must hold the `IMD`, `SoilGrids` and `Bhoonidhi` folders you already downloaded.
+   - `DOCC\Data\Secondary data` must hold the `IMD`, `SoilGrids` and `Bhoonidhi` folders you already downloaded. `start_tool.bat` uses it on its own when it exists (else `DOCC\Data`).
 6. **Check the setup:**
 
    ```
@@ -116,7 +116,7 @@ The joined tool (section 6) uses one approved, versioned set of map files, so ev
   ```
 
 **Adding new data later** (for example the 2026 IMD file):
-1. Put the file in its folder under `DOCC\Data`, named like the others.
+1. Put the file in its folder under `DOCC\Data\Secondary data`, named like the others.
 2. Run `python scripts\module_a_snapshot.py prepare --rebuild-reference --by "Rajat"`. This rebuilds the comparison table for all springs, so it takes a while and needs the data-build packages: `pip install -r requirements.txt` installs them.
 3. Approve the new set. Older results keep the name of the set they used.
 
