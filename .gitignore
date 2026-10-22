@@ -10,6 +10,7 @@ data/02_processed/*
 !data/02_processed/spring_features/
 !data/02_processed/lineaments/
 !data/02_processed/spring_master/
+!data/02_processed/field_visit/
 data/03_outputs/*
 !data/03_outputs/.gitkeep
 # Module A results are small text tables and reports, committed so the team can open them

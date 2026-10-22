@@ -1,0 +1,81 @@
+field_site_id,indicator,team_score,recomputed_score,recompute_note,team_total_written,team_band_written
+FV26-KOK,lean_flow,1,1,,14,Low
+FV26-KOK,monsoon_over_lean,1,1,,14,Low
+FV26-KOK,low_flow_months,2,2,,14,Low
+FV26-KOK,water_quality,2,1,"Form: clear water, no iron, smell, taste or illness",14,Low
+FV26-KOK,flow_vs_past,1,1,,14,Low
+FV26-KOK,households_per_lpm,1,1,,14,Low
+FV26-KOK,pollution_30m,1,1,,14,Low
+FV26-KOK,disturbance_uphill,1,1,,14,Low
+FV26-KOK,protection_committee,1,1,,14,Low
+FV26-KOK,recharge_works,3,3,,14,Low
+FV26-BAL,lean_flow,2,2,,17,Medium
+FV26-BAL,monsoon_over_lean,1,2,"3 / 1 L/min = 3, in the 3-10 band",17,Medium
+FV26-BAL,low_flow_months,2,2,,17,Medium
+FV26-BAL,water_quality,1,2,Form: little iron smell,17,Medium
+FV26-BAL,flow_vs_past,2,1,Form: flow More than 10-20 years ago,17,Medium
+FV26-BAL,households_per_lpm,2,2,,17,Medium
+FV26-BAL,pollution_30m,2,2,,17,Medium
+FV26-BAL,disturbance_uphill,2,2,,17,Medium
+FV26-BAL,protection_committee,1,1,,17,Medium
+FV26-BAL,recharge_works,2,2,,17,Medium
+FV26-PAN,lean_flow,3,3,,22,High
+FV26-PAN,monsoon_over_lean,2,3,Lean flow is zero (dries),22,High
+FV26-PAN,low_flow_months,2,3,9 months low or dry on the monthly row,22,High
+FV26-PAN,water_quality,1,1,,22,High
+FV26-PAN,flow_vs_past,3,3,,22,High
+FV26-PAN,households_per_lpm,2,2,,22,High
+FV26-PAN,pollution_30m,3,3,,22,High
+FV26-PAN,disturbance_uphill,3,3,,22,High
+FV26-PAN,protection_committee,1,1,,22,High
+FV26-PAN,recharge_works,2,2,,22,High
+FV26-CHO,lean_flow,1,1,,,Low
+FV26-CHO,monsoon_over_lean,1,1,,,Low
+FV26-CHO,low_flow_months,1,1,,,Low
+FV26-CHO,water_quality,1,1,,,Low
+FV26-CHO,flow_vs_past,1,1,,,Low
+FV26-CHO,households_per_lpm,2,2,,,Low
+FV26-CHO,pollution_30m,1,1,,,Low
+FV26-CHO,disturbance_uphill,2,1,No uphill threat ticked,,Low
+FV26-CHO,protection_committee,1,1,,,Low
+FV26-CHO,recharge_works,1,1,,,Low
+FV26-NIM,lean_flow,1,1,,,Low
+FV26-NIM,monsoon_over_lean,1,1,,,Low
+FV26-NIM,low_flow_months,1,1,,,Low
+FV26-NIM,water_quality,2,2,,,Low
+FV26-NIM,flow_vs_past,1,1,,,Low
+FV26-NIM,households_per_lpm,1,1,,,Low
+FV26-NIM,pollution_30m,1,1,,,Low
+FV26-NIM,disturbance_uphill,2,2,,,Low
+FV26-NIM,protection_committee,2,2,,,Low
+FV26-NIM,recharge_works,1,1,,,Low
+FV26-MAL,lean_flow,1,1,,13,Low
+FV26-MAL,monsoon_over_lean,1,1,,13,Low
+FV26-MAL,low_flow_months,1,2,May-Jun low on the monthly row,13,Low
+FV26-MAL,water_quality,2,2,,13,Low
+FV26-MAL,flow_vs_past,1,1,,13,Low
+FV26-MAL,households_per_lpm,2,2,,13,Low
+FV26-MAL,pollution_30m,1,1,,13,Low
+FV26-MAL,disturbance_uphill,1,1,,13,Low
+FV26-MAL,protection_committee,2,2,,13,Low
+FV26-MAL,recharge_works,1,1,,13,Low
+FV26-RAS,lean_flow,1,1,,,Low
+FV26-RAS,monsoon_over_lean,1,1,,,Low
+FV26-RAS,low_flow_months,1,1,,,Low
+FV26-RAS,water_quality,1,2,Form: some iron; muddy after rain (cattle),,Low
+FV26-RAS,flow_vs_past,1,1,,,Low
+FV26-RAS,households_per_lpm,2,2,,,Low
+FV26-RAS,pollution_30m,2,3,Two sources within 30 m: cattle and washing,,Low
+FV26-RAS,disturbance_uphill,2,2,,,Low
+FV26-RAS,protection_committee,2,1,Covered and committee active,,Low
+FV26-RAS,recharge_works,1,1,,,Low
+FV26-GAN,lean_flow,2,2,,,Medium
+FV26-GAN,monsoon_over_lean,2,2,,,Medium
+FV26-GAN,low_flow_months,1,1,,,Medium
+FV26-GAN,water_quality,2,2,,,Medium
+FV26-GAN,flow_vs_past,2,1,Form: flow Same,,Medium
+FV26-GAN,households_per_lpm,1,1,,,Medium
+FV26-GAN,pollution_30m,1,1,,,Medium
+FV26-GAN,disturbance_uphill,2,2,,,Medium
+FV26-GAN,protection_committee,3,3,,,Medium
+FV26-GAN,recharge_works,1,3,Form: no recharge works uphill,,Medium
