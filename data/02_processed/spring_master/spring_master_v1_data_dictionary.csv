@@ -91,6 +91,25 @@ gsi_fold_distance_m,m,GSI NGDR folds (Bhukosh),Distance to the nearest mapped fo
 gsi_nearest_fold_type,,GSI NGDR folds,"Anticline, syncline, antiform, synform or overturned."
 gsi_anticline_distance_m,m,GSI NGDR folds,"Nearest anticline or antiform axis (fractured crest, rocks dip away)."
 gsi_syncline_distance_m,m,GSI NGDR folds,Nearest syncline or synform axis (rocks dip inward and can hold water).
+bhukosh_geomorphology_250k,,GSI Bhukosh geomorphology 1:250k,Landform class of the map polygon at the spring (coarse: most hill springs are Highly Dissected Structural Hills and Valleys).
+bhukosh_lineament_distance_m,m,GSI Bhukosh lineaments 1:250k,Distance to the nearest mapped lineament of any kind.
+bhukosh_lineament_nearest_type,,GSI Bhukosh lineaments 1:250k,"Fault, Joint/Fracture, Drainage parallel, Axial trace of fold, Shear zone, ..."
+bhukosh_joint_distance_m,m,GSI Bhukosh lineaments 1:250k,Distance to the nearest mapped joint or fracture lineament.
+landslide_distance_m,m,GSI Bhukosh landslide polygons,Distance to the nearest mapped landslide (0 = inside one).
+landslide_count_500m,count,GSI Bhukosh landslide polygons,Mapped landslides within 500 m.
+landslide_landform_nearest,,GSI Bhukosh landslide polygons,"Landform (geom11) of the nearest landslide, e.g. colluvial foot slope."
+gsi_dip_points_5km,count,GSI Bhukosh Geology 50K structure planes,"Measured bedding/foliation/joint planes within 5 km. Kumaon sheets only (53O, 62C, 53N)."
+gsi_dip_nearest_distance_m,m,GSI Bhukosh Geology 50K structure planes,Distance to the nearest measurement within 5 km.
+gsi_dip_nearest_type,,GSI Bhukosh Geology 50K structure planes,"Bedding, foliation/cleavage/schistosity or joint."
+gsi_dip_nearest_deg,deg,GSI Bhukosh Geology 50K structure planes,Dip amount of the nearest measurement.
+gsi_dip_nearest_direction_deg,deg,GSI Bhukosh Geology 50K structure planes,Dip direction (azimuth) of the nearest measurement.
+gsi_dip_median_5km_deg,deg,GSI Bhukosh Geology 50K structure planes,Median dip amount of bedding and foliation within 5 km.
+ndvi_s2_2025,,Sentinel-2 Oct-Nov 2025 NDVI,Post-monsoon NDVI around the spring (60 m window). Tehri district only.
+forest_dense_500m_pct,%,Sentinel-2 Oct-Nov 2025 NDVI,Share within 500 m with NDVI >= 0.70 (provisional dense-forest cut-off).
+forest_open_500m_pct,%,Sentinel-2 Oct-Nov 2025 NDVI,Share within 500 m with NDVI 0.50-0.70 (provisional open-forest cut-off).
+soil_ksat_0_30cm_mm_h,mm/h,"SoilGrids 2.0, Saxton & Rawls 2006",Topsoil infiltration capacity (texture estimate; ignores cracks and roots).
+soil_depth_to_bedrock_cm,cm,SoilGrids 2017 BDRICM,Depth to bedrock (R horizon). Capped at 200: read 200 as 200 cm or deeper.
+report_catchment_ha,ha,"SRHU geohydrology reports, traced","Catchment drawn by the report geologists, measured from the traced outline (Badeda, Makhdet only; test springs)."
 spring_type_source_text,,Common file / colocated record,
 spring_type_class,,Derived,"Fracture, Contact, Depression, Karst, Seepage, Gravity / seepage, or Stream (not a spring)."
 spring_type_from,,Derived,
