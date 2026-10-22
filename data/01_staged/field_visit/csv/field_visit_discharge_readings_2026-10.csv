@@ -1,0 +1,10 @@
+field_site_id,reading,litres,seconds,measured_at,full_flow_caught,avg_written_on_form_lpm
+FV26-NIM,1,2,4.9,Outlet/pipe,Yes,25
+FV26-NIM,2,2,5.3,Outlet/pipe,Yes,25
+FV26-NIM,3,2,4.8,Outlet/pipe,Yes,25
+FV26-MAL,1,2,7.58,Outlet/pipe,Yes,17
+FV26-MAL,2,2,6.5,Outlet/pipe,Yes,17
+FV26-MAL,3,2,7.07,Outlet/pipe,Yes,17
+FV26-RAS,1,2,5.8,Outlet/pipe,Yes,23-24
+FV26-RAS,2,2,5.5,Outlet/pipe,Yes,23-24
+FV26-RAS,3,2,5.3,Outlet/pipe,Yes,23-24

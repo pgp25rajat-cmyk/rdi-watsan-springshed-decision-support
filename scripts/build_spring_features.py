@@ -118,6 +118,22 @@ COORDINATE_FIXES = {
     "ATL-SPR-0818": (None, 80.029444, "longitude repeated the latitude; taken from HIM-SPR-0204 (Malla Naula, Khatigaon), which has the "
                                       "same latitude 29.59992 and the same elevation 1,279 m"),
 }
+FIELD_VISIT_CSV = ROOT / "data" / "01_staged" / "field_visit" / "csv" / "field_visit_springs_2026-10.csv"
+
+
+def field_visit_fixes(path=FIELD_VISIT_CSV):
+    """Field GPS for dataset springs revisited on the October 2026 field visit (agreed with Rajat 2026-10-22).
+    The source coordinates of these records are rounded to about 1 km."""
+    if not path.exists():
+        return {}
+    with path.open(encoding="utf-8", newline="") as handle:
+        return {r["dataset_spring_id"]: (float(r["latitude"]), float(r["longitude"]),
+                                         f"field GPS from the DoCC field visit on {r['visit_date']} ({r['field_site_id']}: "
+                                         f"{r['coordinate_source']}); the source coordinate is rounded to about 1 km")
+                for r in csv.DictReader(handle) if r["dataset_spring_id"]}
+
+
+COORDINATE_FIXES.update(field_visit_fixes())
 COORDINATE_NOTES = {
     "ATL-SPR-0792": "latitude repeats the longitude (80.05146); probably the Gunagad spring listed as ATL-SPR-0791 (same longitude, "
                     "1,613 m against 1,612 m), but the latitude cannot be recovered with certainty",
@@ -1074,8 +1090,20 @@ def main():
     parser.add_argument("--keep-hwsd", action="store_true",
                         help="Do not open the HWSD soil map (it needs a Linux export step); copy its columns from the "
                              "current table instead. HWSD is a fixed map, so the values do not change.")
+    parser.add_argument("--only", help="Recompute only these records (comma-separated ids, or 'field-visit' for the field-visit "
+                                        "springs) and copy every other row from the current table; used when the hand-downloaded "
+                                        "layers are at hand for a few springs only.")
     args = parser.parse_args()
     cache = Path(args.cache)
+    only, kept = None, {}
+    if args.only:
+        only = set(args.only.split(","))
+        if "field-visit" in only:
+            only.discard("field-visit")
+            only |= set(field_visit_fixes()) | {r["record_id"] for r in csv.DictReader(COMMON_CSV.open(encoding="utf-8", newline=""))
+                                                if r["record_id"].startswith("FLD-")}
+        with (OUT_DIR / "spring_features_v1.csv").open(encoding="utf-8", newline="") as handle:
+            kept = {r["record_id"]: r for r in csv.DictReader(handle) if r["record_id"] not in only}
     kept_soil = {}
     if args.keep_hwsd and (OUT_DIR / "spring_features_v1.csv").exists():
         with (OUT_DIR / "spring_features_v1.csv").open(encoding="utf-8", newline="") as handle:
@@ -1085,13 +1113,25 @@ def main():
         source_rows = list(csv.DictReader(handle))
     rows = [clean_row(src) for src in source_rows]
     colocated_groups(rows)
-    points = [(r["latitude_dd"], r["longitude_dd"]) for r in rows if r["coordinate_status"] == "ok"]
+    if only is not None:
+        missing = only - {r["record_id"] for r in rows}
+        if missing:
+            raise SystemExit(f"--only: not in the common file: {', '.join(sorted(missing))}")
+        for row in rows:
+            if row["record_id"] in kept:  # layer values as last built; the colocated groups are recomputed
+                old_row = kept[row["record_id"]]
+                row.update({k: v for k, v in old_row.items() if not k.startswith("colocated_group")})
+                row["_notes"] = [old_row["processing_notes"]] if old_row["processing_notes"] else []
+            elif row["record_id"] not in only:
+                raise SystemExit(f"--only: {row['record_id']} is new in the common file; add it to --only")
+    points = [(r["latitude_dd"], r["longitude_dd"]) for r in rows
+              if r["coordinate_status"] == "ok" and r["record_id"] not in kept]
 
     layers = open_layers(points, cache, args.local_layers, args.lineaments, soil_hwsd=not args.keep_hwsd)
     print("Reading building counts")
     layers.buildings.prefetch(points)
     for index, row in enumerate(rows):
-        if row["coordinate_status"] != "ok":
+        if row["coordinate_status"] != "ok" or row["record_id"] in kept:
             continue
         row.update(point_features(layers, row["longitude_dd"], row["latitude_dd"], row["source_elevation_m"], row["_notes"]))
         row.update(kept_soil.get(row["record_id"], {}))
@@ -1134,8 +1174,11 @@ def main():
         writer.writerow(["column"] + [f"{p}_pct_filled" for p in prefixes] + ["all_pct_filled"])
         writer.writerows(coverage)
 
+    previous = {}
+    if only is not None and (OUT_DIR / "spring_features_v1_metadata.json").exists():
+        previous = json.loads((OUT_DIR / "spring_features_v1_metadata.json").read_text(encoding="utf-8"))
     metadata = {
-        "built": date.today().isoformat(),
+        "built": previous.get("built", date.today().isoformat()),
         "input": str(COMMON_CSV.relative_to(ROOT)),
         "records": len(rows),
         "records_with_layer_values": len(points),
@@ -1173,11 +1216,16 @@ def main():
                                         "TWI = ln(a / tan slope)", "stream_threshold_km2": STREAM_THRESHOLD_KM2,
                               "window": "+/- 5 km around each spring, +/- 20 km when the D8 catchment reaches the edge"},
         },
-        "local_layers_found": layers.local.found,
+        "local_layers_found": previous.get("local_layers_found", layers.local.found),
         "not_acquired": {
             "Bhuvan LULC 1:50k": "Bhuvan services blocked from the build environment; download needs a request.",
         },
     }
+    metadata["records_with_layer_values"] = sum(1 for r in rows if r["coordinate_status"] == "ok")
+    metadata["partial_rebuilds"] = previous.get("partial_rebuilds", [])
+    if only is not None:
+        metadata["partial_rebuilds"].append({"date": date.today().isoformat(), "records": sorted(only),
+                                             "local_layers_found": layers.local.found})
     (OUT_DIR / "spring_features_v1_metadata.json").write_text(json.dumps(metadata, indent=2), encoding="utf-8")
     print(json.dumps({k: metadata[k] for k in ("records", "records_with_layer_values", "coordinate_status_counts", "colocated_groups")}, indent=2))
 

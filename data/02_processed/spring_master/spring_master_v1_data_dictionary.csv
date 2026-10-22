@@ -1,5 +1,5 @@
 column,unit,from,meaning
-record_id,,Common file,"Record id; prefix shows the source (WAT, HIM, ATL, ATP, RDI, RAT, DAN)."
+record_id,,Common file,"Record id; prefix shows the source (WAT, HIM, ATL, ATP, RDI, RAT, DAN, FLD = field visit)."
 source_dataset,,Common file,Dataset the record came from.
 spring_name,,Common file,Spring name as given by the source.
 village,,Common file,
