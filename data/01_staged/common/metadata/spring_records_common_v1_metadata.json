@@ -154,12 +154,14 @@
     "Daniel et al. 2021 - Mathamali spring case study": 1,
     "Spring Atlas of Uttarakhand - representative spring profiles": 10
   },
-  "combined_common_records": 1842,
+  "combined_common_records": 1843,
   "notes": [
     "All source values are retained as text in the common schema.",
     "The Spring Atlas extract is a PDF table transcription and remains Verify until checked against its cited page.",
     "The WATSAN records are not validated ground truth and must not be used for target-derived features or model training without the prescribed audit.",
     "Literature records (RAT, RDI, DAN, ATP prefixes) are transcribed from papers and reports; each value's source page/table and status is in data/01_staged/literature/csv/literature_spring_values_long_v1.csv.",
-    "Literature columns are appended after source_notes and are blank for WATSAN, Spring Atlas annexure and Himmotthan rows."
-  ]
+    "Literature columns are appended after source_notes and are blank for WATSAN, Spring Atlas annexure and Himmotthan rows.",
+    "Field visit records (FLD prefix) are springs first seen on the October 2026 DoCC field visit; see data/01_staged/field_visit/README.md."
+  ],
+  "field_visit_common_records": 1
 }

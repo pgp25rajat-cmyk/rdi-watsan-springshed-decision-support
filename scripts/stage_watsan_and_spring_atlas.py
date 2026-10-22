@@ -13,6 +13,7 @@ from xml.etree import ElementTree as ET
 import pandas as pd
 import pdfplumber
 
+import field_visit_spring_records as field_visit
 import literature_spring_records as literature
 
 
@@ -312,7 +313,8 @@ def main():
     atlas_records = extract_spring_atlas()
     himmotthan_records = extract_himmotthan()
     literature_records, literature_values = stage_literature()
-    all_records = watsan_records + atlas_records + himmotthan_records + literature_records
+    field_records = field_visit.build(COMMON_COLUMNS, point_wkt)
+    all_records = watsan_records + atlas_records + himmotthan_records + literature_records + field_records
     write_csv(COMMON_DIR / "csv" / "spring_records_common_v1.csv", COMMON_COLUMNS, all_records)
     metadata = {
         "common_schema_columns": COMMON_COLUMNS,
@@ -326,6 +328,7 @@ def main():
             name: sum(1 for record in literature_records if record["source_dataset"] == name)
             for name in dict.fromkeys(record["source_dataset"] for record in literature_records)
         },
+        "field_visit_common_records": len(field_records),
         "combined_common_records": len(all_records),
         "notes": [
             "All source values are retained as text in the common schema.",
@@ -333,6 +336,7 @@ def main():
             "The WATSAN records are not validated ground truth and must not be used for target-derived features or model training without the prescribed audit.",
             "Literature records (RAT, RDI, DAN, ATP prefixes) are transcribed from papers and reports; each value's source page/table and status is in data/01_staged/literature/csv/literature_spring_values_long_v1.csv.",
             "Literature columns are appended after source_notes and are blank for WATSAN, Spring Atlas annexure and Himmotthan rows.",
+            "Field visit records (FLD prefix) are springs first seen on the October 2026 DoCC field visit; see data/01_staged/field_visit/README.md.",
         ],
     }
     metadata_dir = COMMON_DIR / "metadata"

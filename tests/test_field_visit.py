@@ -51,3 +51,18 @@ def test_recomputed_scores_only_differ_with_a_reason():
     for row in read(fv.SCORES_CSV):
         if row["team_score"] != row["recomputed_score"]:
             assert row["recompute_note"], row
+
+
+def test_master_uses_field_gps_and_form_flows():
+    master = {r["record_id"]: r for r in read(fv.MASTER_CSV)}
+    flows = {r["field_site_id"]: r for r in read(fv.OUT_DIR / "field_visit_springs_v1.csv")}
+    for s in read(fv.SPRINGS_CSV):
+        record = master[s["dataset_spring_id"]] if s["dataset_spring_id"] else next(
+            r for r in master.values() if r["record_id"].startswith("FLD-") and r["spring_name"] == s["spring_name"])
+        assert (float(record["latitude"]), float(record["longitude"])) == (float(s["latitude"]), float(s["longitude"])), s["field_site_id"]
+        assert record["dataset_split"] == "test", s["field_site_id"]
+        measured = flows[s["field_site_id"]]["flow_today_lpm"]
+        if measured:
+            assert float(record["discharge_lpm_low"]) == pytest.approx(float(measured), abs=0.05), s["field_site_id"]
+        elif s["flow_today_lpm_low"]:
+            assert float(record["discharge_lpm_low"]) == float(s["flow_today_lpm_low"]), s["field_site_id"]

@@ -4,7 +4,8 @@ Inputs:  data/01_staged/field_visit/csv/field_visit_springs_2026-10.csv         
          data/01_staged/field_visit/csv/field_visit_discharge_readings_2026-10.csv (bucket readings)
          data/01_staged/field_visit/csv/field_visit_di_sites_2026-10.csv           (DI handpumps)
          data/01_staged/field_visit/csv/field_visit_screen_scores_2026-10.csv      (quick vulnerability screen)
-         data/02_processed/spring_master/spring_master_v1.csv                      (to link dataset springs)
+         data/01_staged/common/csv/spring_records_common_v1.csv                    (source coordinate of linked dataset springs)
+         data/02_processed/spring_master/spring_master_v1.csv                      (test/input split of linked dataset springs)
 Output:  data/02_processed/field_visit/field_visit_springs_v1.csv and field_visit_di_sites_v1.csv
 
 Rules agreed with Rajat (2026-10-22):
@@ -38,6 +39,7 @@ SPRINGS_CSV = STAGED / "field_visit_springs_2026-10.csv"
 READINGS_CSV = STAGED / "field_visit_discharge_readings_2026-10.csv"
 DI_CSV = STAGED / "field_visit_di_sites_2026-10.csv"
 SCORES_CSV = STAGED / "field_visit_screen_scores_2026-10.csv"
+COMMON_CSV = ROOT / "data" / "01_staged" / "common" / "csv" / "spring_records_common_v1.csv"
 MASTER_CSV = ROOT / "data" / "02_processed" / "spring_master" / "spring_master_v1.csv"
 OUT_DIR = ROOT / "data" / "02_processed" / "field_visit"
 
@@ -117,6 +119,8 @@ def main():
         readings.setdefault(r["field_site_id"], []).append(r)
     screens = screen_totals(read(SCORES_CSV))
     master = {r["record_id"]: r for r in read(MASTER_CSV)}
+    # The master now carries the field GPS for these springs, so the offset is measured from the source's own coordinate.
+    source = {r["record_id"]: r for r in read(COMMON_CSV)}
 
     points = [(float(r["latitude"]), float(r["longitude"])) for r in springs + di_sites]
     dem = [rasterio.open(p) for p in dem_tiles_for(points, Path(args.cache))]
@@ -143,11 +147,12 @@ def main():
             row.update(flow_today_lpm="", flow_today_basis=f"{s['flow_today_status']} (range from the form)")
         else:
             row.update(flow_today_lpm="", flow_today_basis=s["flow_today_status"])
-        record = master.get(s["dataset_spring_id"])
+        record = source.get(s["dataset_spring_id"])
         if record:
-            row["dataset_latitude"], row["dataset_longitude"] = record["latitude"], record["longitude"]
-            row["dataset_offset_m"] = fmt(distance_m(lat, lon, float(record["latitude"]), float(record["longitude"])), 0)
-            row["dataset_split"] = record["dataset_split"]
+            src_lat, src_lon = record["latitude_source_value"], record["longitude_source_value"]
+            row["dataset_latitude"], row["dataset_longitude"] = src_lat, src_lon
+            row["dataset_offset_m"] = fmt(distance_m(lat, lon, float(src_lat), float(src_lon)), 0)
+            row["dataset_split"] = master[s["dataset_spring_id"]]["dataset_split"]
         else:
             row.update(dataset_latitude="", dataset_longitude="", dataset_offset_m="", dataset_split="test (new spring)")
         row.update(screens[s["field_site_id"]])

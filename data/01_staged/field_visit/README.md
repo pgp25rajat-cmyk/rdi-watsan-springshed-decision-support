@@ -22,3 +22,10 @@ Decisions agreed with Rajat on 2026-10-22:
 - All field springs are test data and must not be used to build or tune the model.
 
 Rebuild the processed tables with `python scripts/build_field_visit.py`. They are written to `data/02_processed/field_visit/`.
+
+How the visit reaches the spring master (2026-10-22):
+
+- RDI-SPR-0001 to 0007 move to the field GPS: `scripts/build_spring_features.py` reads this table and names the fix in `coordinate_correction`. The staged report coordinates are not edited.
+- Field springs without a dataset record become FLD-SPR-nnnn rows of the common file (`scripts/field_visit_spring_records.py`; Kokhliyal is FLD-SPR-0001).
+- `scripts/build_spring_master.py` uses the form flow (bucket mean, or the form's estimate range) for the linked RDI springs. Chorghadna was not measured and keeps the report value.
+- Only these 8 records' map values were rebuilt, with `python scripts/build_spring_features.py --only field-visit` and the hand-downloaded layers from DOCC\Data\Secondary data. Every other row is unchanged.

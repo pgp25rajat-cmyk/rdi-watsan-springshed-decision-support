@@ -31,6 +31,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Alignment, Font, PatternFill
 from openpyxl.utils import get_column_letter
 
+from field_visit_spring_records import field_flows
 from spring_duplicates import load_decisions, resolve_group
 
 
@@ -54,7 +55,7 @@ TEST_BUFFER_M = 2000
 DECISION_COLUMNS = ["record_id_a", "record_id_b", "decision", "decided_by", "decided_on", "note"]
 
 # Preferred record when several sources list the same spring: richest field data first.
-SOURCE_PRIORITY = {"ATP": 0, "RDI": 1, "HIM": 2, "WAT": 3, "DAN": 4, "RAT": 5, "ATL": 6}
+SOURCE_PRIORITY = {"ATP": 0, "FLD": 1, "RDI": 1, "HIM": 2, "WAT": 3, "DAN": 4, "RAT": 5, "ATL": 6}
 
 SPRING_TYPE_CLASSES = [
     ("karst", "Karst"), ("fractur", "Fracture"), ("fault", "Fracture"), ("joint", "Fracture"),
@@ -77,7 +78,7 @@ FIELD_ONLY = ["discharge_lpm_low", "discharge_lpm_high", "ph", "tds_mg_l", "spri
 
 # (column, unit, from, meaning)
 COLUMNS = [
-    ("record_id", "", "Common file", "Record id; prefix shows the source (WAT, HIM, ATL, ATP, RDI, RAT, DAN)."),
+    ("record_id", "", "Common file", "Record id; prefix shows the source (WAT, HIM, ATL, ATP, RDI, RAT, DAN, FLD = field visit)."),
     ("source_dataset", "", "Common file", "Dataset the record came from."),
     ("spring_name", "", "Common file", "Spring name as given by the source."),
     ("village", "", "Common file", ""),
@@ -325,6 +326,7 @@ def elevation_check(f, shared_with, features_by_id):
 def main():
     common = {r["record_id"]: r for r in read(COMMON_CSV)}
     watsan_seasonal = {(r["Latitude"], r["Longitude"]): r for r in read(WATSAN_DISCHARGE_CSV)}
+    field_flow = field_flows()
     features = read(FEATURES_CSV)
     own = {f["record_id"]: field_values(common[f["record_id"]], f) for f in features}
     features_by_id = {f["record_id"]: f for f in features}
@@ -438,6 +440,11 @@ def main():
         row["spring_type_class"] = classify(values["spring_type_source_text"], SPRING_TYPE_CLASSES)
         values, source = take(["discharge_lpm_low", "discharge_lpm_high", "discharge_text"])
         row.update(values, discharge_from=source)
+        if rid in field_flow:
+            low, high, text = field_flow[rid]
+            reference = f"; source report: {row['discharge_text']} L/min" if row["discharge_text"] else ""
+            row.update(discharge_lpm_low=low, discharge_lpm_high=high, discharge_text=text + reference,
+                       discharge_from="DoCC field visit Oct 2026 (field form; the source report value is kept in discharge_text)")
         values, source = take(["ph", "tds_mg_l"])
         row.update(values, water_quality_from=source)
         values, source = take(["recharge_area_ha_low", "recharge_area_ha_high"])
