@@ -99,12 +99,16 @@ function SpringStep({ form, setForm, springs, placing, setPlacing, onPickSpring,
           </ul>
         )}
       </div>
-      <div className="row-buttons">
-        <button type="button" className={`btn${placing === 'spring' ? ' btn-active' : ''}`} onClick={() => setPlacing(placing === 'spring' ? 'none' : 'spring')}>
-          {placing === 'spring' ? 'Click the map…' : point ? 'Move on the map' : 'Pick on the map'}
-        </button>
-        <button type="button" className="btn" onClick={useMyLocation}>Use my location</button>
-      </div>
+      {point ? (
+        <p className="hint">Spring fixed on the map. Use “Clear the form” to choose another.</p>
+      ) : (
+        <div className="row-buttons">
+          <button type="button" className={`btn${placing === 'spring' ? ' btn-active' : ''}`} onClick={() => setPlacing(placing === 'spring' ? 'none' : 'spring')}>
+            {placing === 'spring' ? 'Click the map…' : 'Pick on the map'}
+          </button>
+          <button type="button" className="btn" onClick={useMyLocation}>Use my location</button>
+        </div>
+      )}
       {geoMsg && <p className="hint">{geoMsg}</p>}
       <div className="grid2">
         <div className="field">
