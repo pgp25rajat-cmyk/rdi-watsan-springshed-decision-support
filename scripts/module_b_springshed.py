@@ -95,6 +95,7 @@ GPS_SENSITIVE_RATIO = 3  # warn when allowing 30 m of GPS error makes the catchm
 SNAP_M = 90  # 3 cells of the 30 m DEM
 SNAP_MAX_KM2 = 5.0  # never snap onto a river: a channel draining more than 500 ha is a gad or river, not a spring's valley
 RIDGE_BELOW_M = 10  # ground down to this far below the spring still counts (DEM noise at the outlet)
+VALLEY_MAX_M, VALLEY_MAX_STEPS = 1500, 200  # how far down the flow path the spring's valley is followed
 GSI_DIP_RADIUS_M = 2000  # without a field reading, a GSI bedding or foliation measurement this close gives the tilt
 NDVI_CLASSES = ((0.70, "Tree cover: dense (NDVI 0.70 or more)"), (0.50, "Tree cover: open (NDVI 0.50-0.70)"),
                 (-1.0, "Tree cover: sparse (NDVI under 0.50)"))
@@ -208,8 +209,9 @@ def depth_class(cm):
 
 
 def ridge_catchment(flw, upa, z, row, col, dist, idx):
-    """The whole valley above the spring up to the ridges: the basin of the main drainage line within SNAP_M of the
-    spring (but not a river), kept to ground no lower than the spring. Returns (mask, snapped cell, its drainage km2)."""
+    """The whole valley above the spring up to the ridges, kept to ground no lower than the spring: the basin of the main
+    drainage line within SNAP_M of the spring (but not a river), plus the side slopes of the valley the spring drains
+    into, down to where it meets a stream. Returns (mask, snapped cell, its drainage km2)."""
     from scipy.ndimage import label
     z_s = z[row, col]
     near = (dist <= SNAP_M) & (z <= z_s + BELOW_TOLERANCE_M) & (upa <= SNAP_MAX_KM2) & (z > NODATA)
@@ -221,7 +223,24 @@ def ridge_catchment(flw, upa, z, row, col, dist, idx):
     basin[row, col] = True
     parts, _ = label(basin)
     keep = {parts[row, col], parts[r, c]} - {0}
-    return np.isin(parts, list(keep)), (int(r), int(c)), float(upa[r, c])
+    mask = np.isin(parts, list(keep))
+    # The side slopes: follow the water down from the spring to just before it joins a stream (STREAM_BARRIER_KM2,
+    # the model's own stream size) and take that valley's ground above the spring, ridge to ridge (Rajat 2026-10-23)
+    down, cell = flw.idxs_ds, idx(row, col)
+    outlet = cell
+    for _ in range(VALLEY_MAX_STEPS):
+        nxt = int(down[cell])
+        rr, cc = divmod(nxt, z.shape[1])
+        if nxt == cell or upa[rr, cc] >= STREAM_BARRIER_KM2 or dist[rr, cc] > VALLEY_MAX_M:
+            break
+        cell = outlet = nxt
+    if upa.flat[outlet] < STREAM_BARRIER_KM2:
+        side = flw.basins(idxs=np.array([outlet])) > 0
+        side &= z >= z_s - RIDGE_BELOW_M
+        side[row, col] = True
+        parts, _ = label(side)
+        mask |= parts == parts[row, col]
+    return mask, (int(r), int(c)), float(upa[r, c])
 
 
 def structure_class(dist):
