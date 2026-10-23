@@ -386,7 +386,7 @@ class Report:
             for c in range(step // 2, z.shape[1], step):
                 if not inside[r, c]:
                     continue
-                vx, vy = -gx[r, c], gy[r, c]  # downslope: columns go east, rows go south (so north-up flips y)
+                vx, vy = -gx[r, c], -gy[r, c]  # downhill, in grid steps: columns run east and rows run south, like the SVG x and y
                 norm = math.hypot(vx, vy)
                 if norm < 1e-3:
                     continue
