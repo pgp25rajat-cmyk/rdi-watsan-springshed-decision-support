@@ -19,7 +19,7 @@ export default function Home() {
           </span>
         </nav>
         <div className="lp-hero-text">
-          <p className="eyebrow">Springs of the Garhwal Himalaya</p>
+          <p className="eyebrow">Springs of Uttarakhand</p>
           <h1>Keep the springs flowing</h1>
           <p className="lp-hero-sub">See what recharge has done. Plan where to do it next.</p>
           <span className="lp-hero-rule" aria-hidden="true" />
@@ -31,7 +31,6 @@ export default function Home() {
           <span className="door-kicker"><ChartIcon />WATSAN interventions</span>
           <h2>Dashboard</h2>
           <p>Track the springs and their recharge handpumps. What changed, and by how much.</p>
-          <span className="door-chips"><i>Springs</i><i>DI handpumps</i><i>Impact</i></span>
           <span className="door-go">Open dashboard <Arrow /></span>
           <Contours />
         </a>
@@ -39,9 +38,6 @@ export default function Home() {
           <span className="door-kicker"><LeafIcon />Planning tool</span>
           <h2>Spring health &amp; recharge planner</h2>
           <p>Pick any spring. Get its risk, its recharge zone and the gain from DI, on a 3D map.</p>
-          <span className="door-chips">
-            <i className="chip-a"><b>A</b>Vulnerability</i><i className="chip-b"><b>B</b>Springshed</i><i className="chip-c"><b>C</b>DI impact</i>
-          </span>
           <span className="door-go">Open planner <Arrow /></span>
           <Contours pin />
         </a>

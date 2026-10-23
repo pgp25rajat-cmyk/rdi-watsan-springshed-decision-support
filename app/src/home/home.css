@@ -50,16 +50,10 @@
 .door > * { position: relative; z-index: 1; }
 .door:hover { transform: translateY(-4px); box-shadow: 0 4px 8px rgba(10, 40, 30, 0.08), 0 28px 54px rgba(10, 40, 30, 0.22); }
 .door h2 { font-family: var(--serif); font-size: 27px; font-weight: 600; letter-spacing: -0.2px; color: #16241f; margin-top: 4px; }
-.door p { color: #4a5a55; margin: 2px 0 8px; max-width: 420px; }
+.door p { color: #4a5a55; margin: 2px 0 18px; max-width: 420px; }
 .door-kicker { display: inline-flex; align-items: center; gap: 10px; font-size: 12px; text-transform: uppercase; letter-spacing: 1.8px; font-weight: 650; color: var(--moss); }
 .kicker-icon { width: 26px; height: 26px; fill: none; stroke: var(--moss); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-.door-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; }
-.door-chips i { font-style: normal; font-size: 13px; font-weight: 550; padding: 4px 12px; border-radius: 999px; background: var(--sage); color: #35514a; display: inline-flex; align-items: center; gap: 6px; }
-.door-chips b { width: 16px; height: 16px; border-radius: 50%; display: inline-grid; place-items: center; font-size: 10px; color: #fff; }
-.chip-a { background: #f8e4df !important; color: #9a3a2c !important; } .chip-a b { background: #c8473b; }
-.chip-b { background: #e1efe4 !important; color: #2a6b3f !important; } .chip-b b { background: #2f8a4e; }
-.chip-c { background: #dfecf3 !important; color: #1f5e78 !important; } .chip-c b { background: #0b6e8a; }
-.door-go { display: inline-flex; align-items: center; gap: 6px; margin-top: 16px; font-weight: 650; color: #16241f; }
+.door-go { display: inline-flex; align-items: center; gap: 6px; margin-top: auto; padding-top: 0; font-weight: 650; color: #16241f; }
 .door-go { align-self: flex-start; }
 .door-dash .door-go { border: 1.5px solid var(--forest); color: var(--forest); padding: 9px 19px; border-radius: 999px; }
 .door-dash:hover .door-go { background: var(--sage); }
@@ -170,3 +164,7 @@
   .dash-hero { padding-right: 0; padding-top: 34px; }
   .dash-title { font-size: 15px; }
 }
+
+/* planner: way back to the opening page */
+.home-btn { flex: none; margin-right: 6px; display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.55); color: #fff; text-decoration: none; font-size: 13.5px; font-weight: 600; white-space: nowrap; }
+.home-btn:hover { background: rgba(255, 255, 255, 0.14); }
