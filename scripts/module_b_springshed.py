@@ -896,6 +896,10 @@ def delineate(inputs, session):
         "report_markdown": report_markdown(name, lat, lon, result, summary + rationale, warnings),
         "_zones": {"zones": [{"id": zn["id"], "kind": zn["link"]["kind"], "geom": shape(zn["geojson"]["geometry"])} for zn in zones],
                    "catchment": catchment_geom, "dem": (z, t), "spring_elevation_m": z_s},
+        # the grids behind the result, for the detailed report's maps (scripts/report_builder.py)
+        "_report": {"z": z, "t": t, "xs": xs, "ys": ys, "slope": slope, "catchment": valley, "land": land if wc is not None else None,
+                    "soil": soil, "soil_depth": soil_depth, "unit_names": unit_names, "potential": potential, "show": show,
+                    "used": used, "factors": factors, "row": row, "col": col, "m_lat": m_lat, "m_lon": m_lon, "cell_ha": cell_ha},
     }
     return output
 

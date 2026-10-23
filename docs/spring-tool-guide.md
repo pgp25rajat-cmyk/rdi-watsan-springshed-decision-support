@@ -69,7 +69,13 @@ Every run is saved in `data/03_outputs/tool_runs/<date-time>-<spring>/`:
    | DI impact | DI sites coloured by where they sit, an arrow for the assumed groundwater path from each handpump to the spring, and the recharge zones and catchment drawn faintly for context |
 
    The map is 3D by default: right-drag (or Ctrl + drag) to tilt and turn it. Heights are drawn 1.5 times. The **2D** button flattens it, and the background can be satellite, a topo map or streets. The 3D hills come from the tool's own elevation tiles, so they show even when the background cannot download. Beyond the area those tiles cover, and when zoomed far out, the hills come from public elevation tiles (AWS Terrain Tiles), which are saved under `MapCache\terrain_web` so they also show offline next time. With no internet and no saved copy, the ground there continues at the nearest known height instead of dropping to sea level.
-5. **Print report** prints the three sections.
+5. **Download report** opens the full report in a new tab, laid out like the SRHU geohydrology reports (Badera, Domsi and Makhdet):
+   cover, location, study area, methodology, nine thematic maps (DEM, soil texture, slope, aspect, contours and drainage, geology,
+   geomorphology, soil depth, land cover) with area tables, recharge potential with R1-R3, the groundwater flow path map, a
+   cross-section for each DI handpump, vulnerability, DI impact, suggested works, conclusion and assumptions. Press **Save as PDF / Print**.
+   The maps are drawn by `scripts/report_builder.py` from the model's own grids (no extra package). The location and flow path maps
+   put the Esri satellite image underneath when the computer is online. Runs from before a restart are redrawn from the saved request.
+   The report is also saved as `report.html` in the run folder.
 
 ## 3. What each section does
 

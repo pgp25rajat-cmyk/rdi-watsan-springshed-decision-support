@@ -191,8 +191,11 @@ export default function App() {
         </div>
         <div className="top-actions">
           <StatusPill mode={mode} health={health} />
-          <button type="button" className="btn btn-light" onClick={() => window.print()} disabled={!result} title={result ? 'Print a report of this result' : 'Run an assessment first'}>
-            Print report
+          <button type="button" className="btn btn-light" disabled={!result}
+            // the full report (maps, cross-sections, tables) is built by the tool; the demo only has the short printout
+            onClick={() => (result && !demo ? window.open(`/api/report/${encodeURIComponent(result.run_id)}`, '_blank', 'noopener') : window.print())}
+            title={result ? 'Open the full report with maps, to save as PDF' : 'Run an assessment first'}>
+            Download report
           </button>
         </div>
       </header>
