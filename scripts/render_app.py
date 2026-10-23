@@ -54,6 +54,10 @@ def create_app(tool=None, archive=None):
     def springs():
         return jsonify(tool.springs())
 
+    @app.get('/api/di_sites')
+    def di_sites():
+        return jsonify(core.existing_di_sites())
+
     @app.post('/api/assess')
     def assess():
         if not slot.acquire(blocking=False):

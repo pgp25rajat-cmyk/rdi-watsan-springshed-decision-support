@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { AssessRequest, AssessResponse, DatasetSpring, Health } from './api';
-import { assess, getHealth, getSprings } from './api';
+import type { AssessRequest, AssessResponse, DatasetSpring, ExistingDiSite, Health } from './api';
+import { assess, getExistingDiSites, getHealth, getSprings } from './api';
 import { DEMO_SPRING, MOCK_HEALTH, demoDiSites, mockAssess, mockSprings } from './mock';
 import { emptyForm, loadForm, newSiteId, saveForm, springPoint, toRequest, type FormState } from './form';
 import Form from './components/Form';
@@ -30,6 +30,7 @@ export default function App() {
   const [health, setHealth] = useState<Health | null>(null);
   const [springs, setSprings] = useState<DatasetSpring[]>([]);
   const [springsError, setSpringsError] = useState('');
+  const [existingDi, setExistingDi] = useState<ExistingDiSite[]>([]);
   const [form, setFormState] = useState<FormState>(loadForm);
   const [placing, setPlacing] = useState<Placing>('none');
   const [result, setResult] = useState<AssessResponse | null>(null);
@@ -56,6 +57,7 @@ export default function App() {
       try {
         setSprings(await getSprings());
         setSpringsError('');
+        setExistingDi(await getExistingDiSites().catch(() => []));
       } catch (e) {
         setSprings([]);
         setSpringsError('The spring list could not be loaded. You can still click the map or type the position.');
@@ -99,6 +101,15 @@ export default function App() {
       + `${far.length === 1 ? 'it was' : 'they were'} more than ${MAX_SITE_DISTANCE_M / 1000} km from this spring. Add this spring's own handpumps on the map.`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [point?.lat, point?.lon]);
+
+  // A WATSAN DI handpump clicked on the map joins the DI plan with its known depth and roof
+  const useExistingDi = useCallback((d: ExistingDiSite) => {
+    setForm((f) => (f.sites.some((s) => s.name === d.name && s.latitude === d.latitude && s.longitude === d.longitude) ? f : {
+      ...f,
+      sites: [...f.sites, { id: newSiteId(), name: d.name, latitude: d.latitude, longitude: d.longitude, roof_area_m2: d.roof_area_m2 ?? 100,
+        first_flush: true, filter: true, depth_m: d.depth_m ?? undefined }],
+    }));
+  }, [setForm]);
 
   const effectivePlacing: Placing = placing !== 'none' ? placing : point ? 'none' : 'spring';
 
@@ -243,7 +254,7 @@ export default function App() {
 
         <main className="main">
           <div className="map-area" ref={mapRef}>
-            <MapView springs={springs} point={point} springName={form.spring.name} result={result} tab={tab} sites={form.sites}
+            <MapView springs={springs} existingDi={existingDi} onUseExistingDi={useExistingDi} point={point} springName={form.spring.name} result={result} tab={tab} sites={form.sites}
               placing={effectivePlacing} canCancel={placing !== 'none'} focus={focus} onPlace={onPlace}
               terrainUrl={demo ? DEMO_TERRAIN : LIVE_TERRAIN}
               onCancelPlacing={() => setPlacing('none')}

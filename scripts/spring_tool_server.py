@@ -13,6 +13,7 @@ Runs on 127.0.0.1 only; no account, key or paid service. When an approved map se
 Endpoints:
     GET  /api/health    server, version and map set
     GET  /api/springs   the dataset springs for the search box and the map
+    GET  /api/di_sites  WATSAN's existing DI handpumps (field visit, Oct 2026) for the map
     POST /api/assess    body and reply: see app/src/api.ts
     GET  /api/terrain/{z}/{x}/{y}.png   elevation tiles for the 3D map (Terrarium encoding), cut from the same
                         Copernicus DEM files the modules use, so the 3D view works without internet; gaps are
@@ -52,6 +53,7 @@ VERSION = "v1.2 draft (2026-10-23)"
 DIST = ROOT / "app" / "dist"
 RUNS = Path(os.environ.get("SPRING_RUNS_DIR", str(ROOT / "data" / "03_outputs" / "tool_runs")))
 SPRINGS_CSV = ROOT / "data" / "02_processed" / "spring_master" / "spring_master_v1_clean.csv"
+DI_SITES_CSV = ROOT / "data" / "02_processed" / "field_visit" / "field_visit_di_sites_v1.csv"  # WATSAN's existing DI sites
 MAX_BODY = 1 << 20
 MAX_SITES = 50
 TYPES = {".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css; charset=utf-8",
@@ -287,6 +289,31 @@ def report_memory(stage):
         print('Memory ' + stage + ': ' + json.dumps(values), flush=True)
 
 
+def _leading_number(text):
+    match = re.match(r"\s*(\d+(?:\.\d+)?)", text or "")
+    return float(match.group(1)) if match else None
+
+
+def existing_di_sites():
+    """WATSAN's DI handpumps seen on the October 2026 field visit: position, depth, roof and state."""
+    if not DI_SITES_CSV.exists():
+        return []
+    rows = []
+    with DI_SITES_CSV.open(encoding="utf-8", newline="") as handle:
+        for r in csv.DictReader(handle):
+            try:
+                lat, lon = float(r["latitude"]), float(r["longitude"])
+            except ValueError:
+                continue
+            roof = _leading_number(r["roof_area_m2"])
+            if roof and "total for" in r["roof_area_m2"]:
+                roof /= 2  # one roof figure given for a pair of handpumps
+            rows.append({"id": r["di_site_id"], "name": r["name"], "latitude": lat, "longitude": lon,
+                         "depth_m": _leading_number(r["bore_depth_m"]), "roof_area_m2": roof, "status": r["di_status"],
+                         "linked_spring": r["linked_dataset_spring_id"] or None, "link_status": r["link_status"]})
+    return rows
+
+
 class Tool:
     def __init__(self):
         self.lock = threading.Lock()
@@ -496,6 +523,8 @@ class Handler(BaseHTTPRequestHandler):
             return self._json(HTTPStatus.OK, self.tool.health())
         if path == "/api/springs":
             return self._json(HTTPStatus.OK, self.tool.springs())
+        if path == "/api/di_sites":
+            return self._json(HTTPStatus.OK, existing_di_sites())
         tile = TERRAIN_PATH.fullmatch(path)
         if tile:
             z, x, y = (int(v) for v in tile.groups())

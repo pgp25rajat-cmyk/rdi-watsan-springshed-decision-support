@@ -465,7 +465,7 @@ def estimate(inputs, session=None, features=None, b_output=None):
          "note": f"ERA5 winters 2019-20 to 2024-25, read off the snow-height curve at the spring's elevation"
                  f"{f' (the 27 km cell itself averages {snow_cell:.0f} mm)' if snow_cell is not None else ''}. {SNOW_CAPTURE:.0%} of it ({snow_used:.0f} mm) is counted as melting into the gutters (judgement). "
                  "The rain gauges may already catch some of it."},
-        {"id": "depth", "label": "Handpump depth (injection point)", "value": f"{DEFAULT_DEPTH_M} unless given", "unit": "m",
+        {"id": "depth", "label": "Handpump depth (injection point)", "value": f"{DEFAULT_DEPTH_M} m unless given", "unit": "",
          "note": "Injection below the spring outlet counts less: x1.0 above it, x0.7 about level (within 10 m), x0.4 up to 50 m below, x0.2 deeper. Judgement."},
     ]
     result = {
