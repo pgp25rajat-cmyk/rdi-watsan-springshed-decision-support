@@ -1,0 +1,198 @@
+{
+  "version": "3.0",
+  "scope": "Separate local DI Dashboard within repository; original app stays at root with its existing code",
+  "requirements_source": "User feedback and explicit choice of local module; Open-Meteo coordinate requests approved 23 October 2026; separate spring/pump assessment, source intake and OpenStreetMap tile consent on 23 October 2026",
+  "decisions": {
+    "runtime": "Python 3.11+ standard-library ThreadingHTTPServer, local loopback only",
+    "rationale": "Runs without pip installation; existing local prototype and small single-team workload. Replace transport with FastAPI if shared deployment is required.",
+    "alternative": "FastAPI + PostgreSQL provides stronger generated API schemas and multi-user scaling but adds deployment dependencies unnecessary for this local prototype.",
+    "frontend": "React 18, Vite, bundled local font; built assets included",
+    "api": "REST JSON, versioned /api/v2",
+    "auth": "None, as requested; do not expose beyond localhost",
+    "database": "SQLite WAL; foreign keys; transactions; SQL tables with validated versioned JSON records",
+    "extensibility": "Domain validation, storage, environmental connector, transport and UI modules separated; no LLM calls"
+  },
+  "modules": {
+    "backend/store.py": "SQLite schema, transactions, site versions, immutable submitted visits, corrections, attachments, environmental cache, request replay; public checkout has no seed site records",
+    "backend/rules.py": "Canonical validation, raw readings to SI conversions, active visit selection, comparison rules, 90-day totals and roof arithmetic; never accesses file content",
+    "backend/weather.py": "Approved automatic rainfall retrieval, cache, retry, provider parsing and lineage",
+    "server.py": "Local HTTP transport, API error responses, static UI, original supporting file storage/download",
+    "src/forms.jsx": "One-time setup and three-step portal entry",
+    "src/views.jsx": "Overview, site list/detail, tracking, framework and visit review",
+    "backend/assessment.py": "Independent asset comparisons, maintenance denominators, indicator register version 3.0 and portfolio rollups",
+    "src/maps.jsx": "Local Leaflet maps, independent coordinate pickers, approved OpenStreetMap tiles",
+    "src/controls.jsx": "Accessible custom dropdown and calendar components",
+    "src/evidence.jsx": "Site photographs and paginated manually documented source records"
+  },
+  "api": [
+    {
+      "method": "GET",
+      "path": "/api/v2/health",
+      "result": "Application identifier, version and status"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v2/state",
+      "result": "sites[], visits[], attachments[], weather_jobs[], weather{coordinate_key:record}, assessment.sites[]"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v2/sites",
+      "body": "Site fields",
+      "result": "New site with generated id"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v2/sites/{id}",
+      "body": "Site fields",
+      "result": "Updated site; old version retained"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v2/visits",
+      "body": "Visit fields and submit:boolean; id for existing draft, supersedes and correction_reason for correction",
+      "headers": "Idempotency-Key required when submitting",
+      "result": "Validated submitted visit or incomplete database draft"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v2/attachments",
+      "body": "site_id, visit_id optional, name, base64",
+      "result": "Supporting file metadata with SHA-256; original bytes stored without extraction"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v2/attachments/{id}",
+      "result": "Original bytes"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v2/export.csv",
+      "result": "All visits including drafts and superseded versions, raw detail JSON per row"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v2/export.json",
+      "result": "Stored application state"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v2/backup",
+      "result": "Consistent database snapshot; copy attachment directory separately"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v2/attachments/binary",
+      "body": "Raw bytes, application/octet-stream; site_id, optional visit_id, name, kind, asset query parameters",
+      "result": "Original bytes up to 25 MB; SHA-256 deduplication per site/visit/kind; evidence record; site cover update when requested"
+    }
+  ],
+  "data_contract": {
+    "site_required": [
+      "name",
+      "spring_name",
+      "handpump_name",
+      "village",
+      "district",
+      "gps_later:boolean",
+      "latitude and longitude unless gps_later",
+      "link_basis:reported|field_checked|unknown",
+      "pump_gps_later:boolean",
+      "pump_latitude and pump_longitude unless pump_gps_later"
+    ],
+    "site_optional": [
+      "di_year",
+      "roof_area_m2",
+      "collection_factor",
+      "households",
+      "water_before",
+      "collection_before",
+      "supply",
+      "other_works"
+    ],
+    "visit_required": [
+      "site_id",
+      "visit_date",
+      "visitor",
+      "season:dry|monsoon|post_monsoon|winter|unknown",
+      "spring.status:measured|dry|not_measured",
+      "pump.status:working|no_water|broken|not_checked",
+      "di.status:connected|broken|blocked|not_checked",
+      "change_status:none|some|not_discussed"
+    ],
+    "conditional": [
+      "Measured spring: exactly three positive litres/seconds readings, measurement point, full/partial capture",
+      "Not measured: reason",
+      "Optional handpump delivery: three readings and procedure, only for working pump",
+      "Water test: parameter, value, sample location and kit/lab",
+      "Some changes: at least one area/direction/before/after/basis account; who if people_said",
+      "Correction: valid submitted visit at same site and reason"
+    ],
+    "visit_optional": [
+      "filter/first_flush/overflow conditions",
+      "tests[]",
+      "other_work",
+      "notes",
+      "supporting attachments"
+    ],
+    "evidence": "Portal-entered fields only in the public source package. Uploaded files are supporting evidence and are never parsed.",
+    "history": "Site versions append; submitted visits immutable; a correction supersedes an earlier submitted visit, which remains stored; drafts excluded from assessment. No destructive deletion API. Initial source visits use source_recorded data flags; correction history is retained.",
+    "units": "Raw litres and seconds retained; L/min = mean(litres*60/seconds), m3/s = L/min/60000; rainfall mm and m; roof m2; potential collection m3"
+  },
+  "assessment_rules": {
+    "comparison": "Most recent reading against earlier reading at same site, season, method, point and full capture on different dates. Unknown season and partial capture excluded. No interpolation or annual extrapolation. Spring and handpump compared independently; source date windows excluded. Match handpump identity before applying equipment status.",
+    "missing": "Not measured is missing; observed dry spring is zero; unavailable rain is not zero; percent change from zero undefined",
+    "rain": "90 consecutive available daily values; date range retained; recent window ends at last available provider day",
+    "roof": "rain_mm * roof_area_m2 * collection_factor / 1000; estimate of collectable water only",
+    "attribution": "Changes may reflect rainfall, solar pumping, repairs, pipes or other works. DI share unknown. No impact score, causal claim or predictive model.",
+    "wider_changes": "Repeated dated before/now accounts with seen versus people_said labels, not a survey statistic or guaranteed causal loop",
+    "weights": "No composite DI impact score. Three flow repeats each weight 1/3; each checked asset counts once; missing statuses excluded with visible denominators."
+  },
+  "rainfall_connector": {
+    "endpoint": "https://archive-api.open-meteo.com/v1/archive",
+    "provider_docs": "https://open-meteo.com/en/docs/historical-weather-api",
+    "model": "era5",
+    "variable": "rain_sum",
+    "units": "mm",
+    "timezone": "Asia/Kolkata",
+    "request_fields": [
+      "latitude",
+      "longitude",
+      "start_date",
+      "end_date",
+      "daily",
+      "models",
+      "timezone"
+    ],
+    "privacy": "No site names, people, notes or files sent. User consent recorded in conversation; coordinate transmission explicitly approved.",
+    "cadence": "Check every 60 seconds while service runs; cache successful responses 24h, retry failures after 1h; no request without GPS; reuse identical coordinate cache",
+    "period": "At least two years, extend for older visits; stop seven days before current local date for publication lag",
+    "lineage": "Full response JSON, checksum, coordinate grid/request, model, retrieval time, date vector and unit saved in database",
+    "limits": "ERA5 area estimate about 25km, mountain rainfall may differ; no rainfall-to-recharge inference; source licence/plan review needed for broader deployment",
+    "tls": "HTTPS certificate verification is always enabled. On Windows, a bundled-Python trust-store error falls back to backend/fetch_weather.ps1 using the normal Windows HTTPS client."
+  },
+  "reliability": {
+    "error_statuses": {
+      "403": "Cross-origin save rejected",
+      "404": "Unknown site or file",
+      "409": "Conflicting correction",
+      "422": "Input validation with plain-language message",
+      "500": "Save failed; page keeps entries"
+    },
+    "writes": "Explicit saves; transaction per mutation; idempotent submit replay; unique correction index",
+    "environment": "Loading, ready, needs_gps and failed jobs; failed refresh retains old cache; bounded request timeout",
+    "observability": "Local Python log and weather job status; no analytics, browser storage or tracking",
+    "backup": "Consistent SQLite snapshot plus runtime/attachments, data/00_raw and public/photos",
+    "future": "Shared use requires authenticated roles, managed persistence, migrations, operational logging and deployment hardening"
+  },
+  "map": {
+    "provider": "OpenStreetMap standard raster tiles",
+    "consent": "Explicit user approval 23 October 2026, stored in meta.osm_tiles_consent",
+    "privacy": "Only viewed tile areas sent; no site labels, files or notes",
+    "locations": "Independent spring/pump coordinates; no inferred duplication; association not proof of hydraulic connection",
+    "offline": "Manual coordinates remain available; map failure states visible"
+  },
+  "initial_intake": {
+    "distribution": "Not included in public branch. Field intake scripts, datasets, original documents, photographs and manifests remain local. The public checkout starts empty."
+  }
+}
