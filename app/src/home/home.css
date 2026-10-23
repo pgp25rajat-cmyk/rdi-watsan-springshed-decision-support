@@ -3,15 +3,18 @@
 
 /* ------------------------------------------------------------------ hero */
 .lp-hero { position: relative; min-height: 470px; height: 64vh; max-height: 640px; color: #fff; overflow: hidden; display: flex; flex-direction: column; }
-.ridges { position: absolute; inset: 0; width: 100%; height: 100%; }
-.ripple { transform-origin: 150px 426px; animation: ripple 2.8s ease-out infinite; }
-@keyframes ripple { from { transform: scale(0.6); opacity: 0.7; } to { transform: scale(2.2); opacity: 0; } }
-@media (prefers-reduced-motion: reduce) { .ripple { animation: none; } }
+.lp-hero { background: #1d2a24; }
+.lp-hero-photo {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(90deg, rgba(6, 30, 32, 0.82) 0%, rgba(6, 30, 32, 0.5) 38%, rgba(6, 30, 32, 0.05) 70%),
+    linear-gradient(180deg, rgba(6, 30, 32, 0.45) 0%, rgba(6, 30, 32, 0) 22%, rgba(6, 30, 32, 0) 70%, rgba(6, 30, 32, 0.4) 100%),
+    url('/brand/hero-spring.jpg') 60% 45% / cover no-repeat;
+  /* photo: a spring at Barkoat, Narendra Nagar (field visit, 18 Oct 2026) */
+}
 
 .lp-hero-nav { position: relative; width: 100%; max-width: 1080px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px clamp(16px, 4vw, 48px); }
-.lp-hero-mark { display: flex; align-items: center; gap: 14px; font-weight: 650; letter-spacing: 0.4px; font-size: 14px; }
-.lp-hero-mark > span { display: inline-flex; align-items: center; gap: 6px; }
-.srhu-tile { height: 52px; width: auto; background: #fff; border-radius: 8px; padding: 5px 7px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18); }
+.lp-hero-mark { display: flex; align-items: center; gap: 6px; font-weight: 650; letter-spacing: 0.4px; font-size: 14px; }
 .drop-mark { width: 20px; height: 20px; color: #bfeaf5; }
 .lp-hero-links { display: flex; gap: 4px; }
 .lp-hero-links button { background: none; border: 0; color: #fff; opacity: 0.85; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-weight: 550; }
@@ -73,12 +76,12 @@
 .about, .team { max-width: 1080px; margin: 0 auto; padding: 56px clamp(16px, 4vw, 48px) 0; }
 .sec-h { font-size: 13px; text-transform: uppercase; letter-spacing: 2px; color: var(--ink-3); font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
 .sec-h::after { content: ''; flex: 1; height: 1px; background: var(--line-2); }
-.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+.about-item p { max-width: 760px; }
+.about-item + .about-item { margin-top: 26px; }
 .about h3 { font-size: 18px; margin-bottom: 4px; }
-.about-grid p { color: var(--ink-2); font-size: 15.5px; }
+.about-item p { color: var(--ink-2); font-size: 15.5px; }
 
-.di-strip { margin-top: 26px; padding: 18px 20px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); }
-.di-title { font-weight: 700; font-size: 14px; margin: 0 0 12px; color: var(--water-dark); }
+.di-strip { margin-top: 16px; padding: 18px 20px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); }
 .di-strip ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .di-strip li { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; font-size: 13.5px; color: var(--ink-2); font-weight: 550; }
 .di-strip li:not(:last-child)::after { content: ''; position: absolute; top: 24px; right: -14%; width: 28%; border-top: 2px dashed #9cc7d3; }
@@ -94,7 +97,7 @@
 
 .home-foot { max-width: 984px; margin: 64px auto 0; padding: 26px 0 36px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; border-top: 1px solid var(--line-2); }
 @media (max-width: 1080px) { .home-foot { margin-left: clamp(16px, 4vw, 48px); margin-right: clamp(16px, 4vw, 48px); } }
-.home-foot img { height: 78px; width: auto; background: #fff; border-radius: 10px; padding: 8px 10px; border: 1px solid var(--line); }
+.home-foot img { height: 100px; width: auto; background: #fff; border-radius: 10px; padding: 8px 10px; border: 1px solid var(--line); }
 .home-foot p { color: var(--ink-3); font-size: 13.5px; text-align: right; margin: 0; }
 
 /* ------------------------------------------------------------------ planner: brand links home */
@@ -141,12 +144,11 @@
 @media (max-width: 760px) {
   .lp-hero { height: auto; min-height: 520px; }
   .doors { grid-template-columns: 1fr; margin-top: -90px; }
-  .about-grid, .team-grid { grid-template-columns: 1fr; }
-  .di-strip ol { grid-template-columns: 1fr 1fr; row-gap: 18px; }
+  .team-grid { grid-template-columns: 1fr; }
+    .di-strip ol { grid-template-columns: 1fr 1fr; row-gap: 18px; }
   .di-strip li::after { display: none; }
   .home-foot { justify-content: center; }
   .home-foot p { text-align: center; }
-  .srhu-tile { height: 42px; }
   .door .door-badge { position: static; align-self: flex-start; }
   .ghost-grid { grid-template-columns: 1fr; grid-template-rows: auto; }
   .ghost-chart, .ghost-map { height: 180px; }

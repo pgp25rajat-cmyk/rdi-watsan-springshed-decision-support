@@ -1,5 +1,5 @@
 import { useRef, type ReactNode } from 'react';
-import { Ridges, DropMark } from './art';
+import { DropMark } from './art';
 
 // Opening page: two doors (dashboard, planner), then a short word on the tool, WATSAN and the team.
 export default function Home() {
@@ -10,12 +10,9 @@ export default function Home() {
   return (
     <div className="home">
       <header className="lp-hero">
-        <Ridges />
+        <div className="lp-hero-photo" aria-hidden="true" />
         <nav className="lp-hero-nav">
-          <span className="lp-hero-mark">
-            <img className="srhu-tile" src="/brand/srhu-logo.png" alt="Swami Rama Himalayan University" width="80" height="52" />
-            <span><DropMark />RDI · WATSAN</span>
-          </span>
+          <span className="lp-hero-mark"><DropMark />RDI · WATSAN</span>
           <span className="lp-hero-links">
             <button type="button" onClick={() => go(about.current)}>About</button>
             <button type="button" onClick={() => go(team.current)}>Team</button>
@@ -50,17 +47,16 @@ export default function Home() {
 
       <section className="about" ref={about} aria-labelledby="about-h">
         <h2 id="about-h" className="sec-h">About</h2>
-        <div className="about-grid">
-          <article>
-            <h3>The tool</h3>
-            <p>One place for WATSAN's spring work: track the springs already recharged, and plan new ones from a spring's location and a few field answers.</p>
-          </article>
-          <article>
-            <h3>WATSAN, RDI</h3>
-            <p>The water and sanitation team of the Rural Development Institute works with hill villages in Uttarakhand to revive springs.</p>
-          </article>
-        </div>
-        <DiStrip />
+        <article className="about-item">
+          <h3>The tool</h3>
+          <p>One place for WATSAN's spring work: track the springs already recharged, and plan new ones from a spring's location and a few field answers.</p>
+        </article>
+        <article className="about-item">
+          <h3>WATSAN, RDI</h3>
+          <p>The water and sanitation team of the Rural Development Institute works with hill villages in Uttarakhand to revive springs.</p>
+          <p>One way they do it: rooftop rainwater is sent down old, unused handpumps into the ground, where it feeds the springs below. This is called Direct Injection (DI).</p>
+          <DiStrip />
+        </article>
       </section>
 
       <section className="team" ref={team} aria-labelledby="team-h">
@@ -99,7 +95,6 @@ function DiStrip() {
   ];
   return (
     <div className="di-strip" aria-label="How DI recharge works">
-      <p className="di-title">Direct Injection (DI)</p>
       <ol>
         {steps.map(([label, path]) => (
           <li key={label}>
