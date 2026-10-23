@@ -552,6 +552,8 @@ def main():
             print(f"WARNING: {len(Handler.tool.file_problems)} map-set files are missing or changed; run module_a_snapshot.py verify")
     else:
         print("No approved map set: missing map tiles are downloaded as needed. See docs/spring-tool-guide.md.")
+    # Read the Bhukosh map layers now (15-40 s) rather than during the first assessment
+    threading.Thread(target=lambda: Handler.tool.session.secondary.vectors, daemon=True).start()
     server = ThreadingHTTPServer(("127.0.0.1", args.port), Handler)
     url = f"http://127.0.0.1:{args.port}"
     print(f"Spring tool running at {url}  (keep this window open; Ctrl+C to stop)")

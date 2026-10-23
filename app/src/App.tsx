@@ -229,7 +229,7 @@ export default function App() {
                     </li>
                   ))}
                 </ol>
-                <p className="hint">{Math.floor(elapsed)} s · {mode === 'live' ? 'The first run can take about 30 seconds while the maps load.' : 'Demo data'}</p>
+                <p className="hint">{Math.floor(elapsed)} s · {mode !== 'live' ? 'Demo data' : elapsed < 20 ? 'The first run after starting the tool can take up to a minute while the maps load.' : 'Still loading the map layers (only the first run after starting the tool). The steps above are a rough guide, not exact progress.'}</p>
               </div>
             ) : error ? (
               <p className="msg msg-error">Something went wrong: {error}</p>

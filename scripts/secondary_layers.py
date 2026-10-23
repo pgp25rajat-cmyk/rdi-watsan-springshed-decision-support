@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import io
 import json
+import threading
 import csv
 import zipfile
 from pathlib import Path
@@ -95,6 +96,15 @@ def read_zipped_geojson(path, member_hint):
     return json.loads(data)["features"]
 
 
+def read_zipped_layer(path, member_hint):
+    """Like read_zipped_geojson, but parses the geometries in one GEOS call: (array of shapes, list of properties).
+    Features without a geometry are left out."""
+    import shapely
+    features = [f for f in read_zipped_geojson(path, member_hint) if f["geometry"]]
+    shapes = shapely.from_geojson([json.dumps(f["geometry"]) for f in features])
+    return np.asarray(shapes), [f["properties"] for f in features]
+
+
 def find_zip(folder, prefix):
     return next(iter(sorted(Path(folder).glob(f"{prefix}*.zip"))), None)
 
@@ -139,7 +149,7 @@ class SecondaryLayers:
 
     def __init__(self, folder):
         self.folder = Path(folder) if folder else None
-        self._vectors = None
+        self._vectors, self._vector_lock = None, threading.Lock()
         self._rasters = None
         self.to_utm = to_utm_transformer()
 
@@ -174,38 +184,44 @@ class SecondaryLayers:
     # ---------------------------------------------------------------- vectors
     @property
     def vectors(self):
-        if self._vectors is None:
-            self._vectors = self._load_vectors()
+        with self._vector_lock:  # the tool server warms this up in the background while a request may arrive
+            if self._vectors is None:
+                self._vectors = self._load_vectors()
         return self._vectors
 
     def _load_vectors(self):
         import shapely
         from shapely import STRtree, prepare
-        from shapely.geometry import Point, shape
-        from shapely.ops import unary_union
+        from shapely.geometry import Point
 
-        def utm(geometry):
-            return shapely.transform(geometry, lambda xy: np.c_[self.to_utm.transform(xy[:, 0], xy[:, 1])])
+        def utm(geometries):
+            return shapely.transform(geometries, lambda xy: np.c_[self.to_utm.transform(xy[:, 0], xy[:, 1])])
+
+        def valid(geometries):
+            """Repair only the polygons that need it (buffer(0) on all of them took ~10 s)."""
+            bad = ~shapely.is_valid(geometries)
+            geometries[bad] = shapely.buffer(geometries[bad], 0)
+            return geometries
 
         v = {"ok": False}
         if not self.bhukosh_dir or not self.bhukosh_dir.exists():
             return v
         gm_zip = find_zip(self.bhukosh_dir, "GEOMORPHOLOGY_250K")
         if gm_zip:
-            geomorph = [(shape(f["geometry"]), f["properties"].get("descriptio") or "") for f in
-                        read_zipped_geojson(gm_zip, "GEOMORPHOLOGY") if f["geometry"]]
-            state = unary_union([g.buffer(0) for g, _ in geomorph])
-            prepare(state)
-            lineaments = [(utm(shape(f["geometry"])), f["properties"].get("l2descript") or "") for f in
-                          read_zipped_geojson(gm_zip, "LINEAMENT") if f["geometry"]]
-            v.update(ok=True, state=state, geomorph=geomorph, geomorph_tree=STRtree([g for g, _ in geomorph]),
+            shapes, props = read_zipped_layer(gm_zip, "GEOMORPHOLOGY")
+            shapes = valid(shapes)
+            prepare(shapes)
+            geomorph = [(g, p.get("descriptio") or "") for g, p in zip(shapes, props)]
+            line_shapes, line_props = read_zipped_layer(gm_zip, "LINEAMENT")
+            lineaments = [(g, p.get("l2descript") or "") for g, p in zip(utm(line_shapes), line_props)]
+            v.update(ok=True, geomorph=geomorph, geomorph_tree=STRtree(shapes),
                      lineaments=lineaments, line_tree=STRtree([g for g, _ in lineaments]))
             joints = [g for g, kind in lineaments if "joint" in kind.lower() or "fracture" in kind.lower()]
             v.update(joints=joints, joint_tree=STRtree(joints))
         ls_zip = find_zip(self.bhukosh_dir, "LANDSLIDE_POLYGON")
         if ls_zip:
-            slides = [(utm(shape(f["geometry"]).buffer(0)), f["properties"].get("geom11") or "") for f in
-                      read_zipped_geojson(ls_zip, "LANDSLIDE") if f["geometry"]]
+            shapes, props = read_zipped_layer(ls_zip, "LANDSLIDE")
+            slides = list(zip(valid(utm(shapes)), (p.get("geom11") or "" for p in props)))
             v.update(slides=slides, slide_tree=STRtree([g for g, _ in slides]))
         sp_zip = find_zip(self.bhukosh_dir, "ORIENTED_STRUCTURE_PLANE")
         if sp_zip:
@@ -214,6 +230,11 @@ class SecondaryLayers:
             points = [Point(self.to_utm.transform(*f["geometry"]["coordinates"][:2])) for f in found]
             v.update(planes=planes, plane_points=points, plane_tree=STRtree(points))
         return v
+
+    def in_state(self, point_ll):
+        """True when the point lies on a Bhukosh geomorphology polygon (the Uttarakhand layers cover it)."""
+        v = self.vectors
+        return bool(v.get("ok")) and len(v["geomorph_tree"].query(point_ll, predicate="intersects")) > 0
 
     def lineaments_in(self, box_utm):
         """Mapped (Bhukosh 1:250k) lineaments crossing a UTM box: [(line, kind)]."""
@@ -271,7 +292,7 @@ class SecondaryLayers:
         row = {c[0]: None for c in COLUMNS if c[0] != "report_catchment_ha"}
         v = self.vectors
         point_ll, point = Point(lon, lat), Point(self.to_utm.transform(lon, lat))
-        if v.get("ok") and v["state"].contains(point_ll):
+        if self.in_state(point_ll):
             hits = [v["geomorph"][i][1] for i in v["geomorph_tree"].query(point_ll, predicate="within")]
             row["bhukosh_geomorphology_250k"] = hits[0] if hits else None
             i = v["line_tree"].nearest(point)
