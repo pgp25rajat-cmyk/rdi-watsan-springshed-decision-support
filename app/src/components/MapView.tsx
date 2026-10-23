@@ -501,7 +501,6 @@ export default function MapView(props: Props) {
     for (const c of Object.keys(locationClass) as DiSiteResult['location_class'][]) {
       if (classes.has(c)) legend.push({ key: `di-${c}`, label: `DI site: ${locationClass[c].label.toLowerCase()}`, swatch: <i className="lg-site" style={{ background: locationClass[c].color }} /> });
     }
-    if (classes.has(null)) legend.push({ key: 'di-new', label: 'DI site (not assessed yet)', swatch: <i className="lg-site lg-site-new" /> });
   }
   const overlay = B?.potential_overlay ?? null;
 
