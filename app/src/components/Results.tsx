@@ -64,9 +64,6 @@ function ModuleFrame<R>({ m, children }: { m: ModuleOutput<R>; children: (r: R) 
         <span className={`badge badge-${m.status}`}>{statusLabel[m.status]}</span>
         {!broken && <span className="badge badge-conf" title="How complete the inputs were. It does not say the answer is right.">Evidence: {m.confidence}</span>}
       </div>
-      {m.status === 'provisional' && !broken && (
-        <p className="msg msg-amber small">Provisional: a first answer. Some inputs or checks are still missing.</p>
-      )}
       {broken ? (
         <div className="unavailable">
           <p className="unavailable-title">{m.status === 'failed' ? 'This part could not run.' : 'This part has no answer for this spring yet.'}</p>
