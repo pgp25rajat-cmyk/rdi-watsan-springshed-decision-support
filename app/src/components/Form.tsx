@@ -363,8 +363,6 @@ function DiStep({ form, setForm, placing, setPlacing }: Props) {
             value={a.collection_coefficient} fmt={(v) => `${Math.round(v * 100)}%`} onChange={(v) => setA({ collection_coefficient: v })} />
           <Slider label="Water that goes into the ground" help="What is left after the first flush and overflow in heavy storms." min={0.6} max={0.95} step={0.05}
             value={a.injection_efficiency} fmt={(v) => `${Math.round(v * 100)}%`} onChange={(v) => setA({ injection_efficiency: v })} />
-          <Slider label="Dry months the extra water comes out in" help="Fewer months = a bigger boost in each of them (best case)." min={3} max={7} step={1}
-            value={a.lean_season_months} fmt={(v) => `${v} months`} onChange={(v) => setA({ lean_season_months: v })} />
           <Slider label="Spread of the water mound around the handpump" help="Used only for the water-level rise. Smaller = higher rise." min={20} max={150} step={5}
             value={a.radius_of_influence_m} fmt={(v) => `${v} m`} onChange={(v) => setA({ radius_of_influence_m: v })} />
           <button type="button" className="btn btn-small btn-ghost" onClick={() => setA({ ...DEFAULT_ASSUMPTIONS })}>Reset to defaults</button>

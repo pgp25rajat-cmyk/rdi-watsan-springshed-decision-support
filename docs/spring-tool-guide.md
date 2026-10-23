@@ -57,8 +57,9 @@ Every run is saved in `data/03_outputs/tool_runs/<date-time>-<spring>/`:
    - The rock tilt (dip direction and angle) lets the tool look for recharge ground up-dip of the spring, even beyond the ridge.
 3. **DI plan** (optional). Click **Add DI site** and click the map where the handpump is, or type its latitude and longitude. Enter the roof area and the handpump depth (70 m if left blank; most are 50-80 m), and the water level in the handpump if you know it. You can open **Assumptions** to change:
    - the rainfall;
-   - the share of roof rain collected;
-   - the length of the lean season.
+   - the share of roof rain collected.
+
+   The months the extra water is spread over come from the low- and no-flow months you gave in the field questions (at least 3), or 5 if you left them blank.
 4. Click **Assess this spring**. The three results appear as tabs. The map shows only the layers for the tab you are on:
 
    | Tab | What the map shows |
@@ -189,7 +190,7 @@ Both factors can be changed under Assumptions.
 **Added flow** is shown two ways:
 
 - spread over the year;
-- as a **dry-season water equivalent**: all of it coming out in the lean season (5 months by default). This is a timing assumption, so it is a water-volume equivalent, not an expected gain.
+- as a **dry-season water equivalent**: all of it coming out evenly over the spring's own low- or no-flow months from the vulnerability questions (at least 3), or 5 months when those were not answered. This is a timing assumption, so it is a water-volume equivalent, not an expected gain.
 
 When the lean flow is known, the tool also shows this as a % of today's lean flow and the number of 100 m² roofs needed for +10%. Both carry the same two assumptions (60% reaching the spring, all of it in the dry months).
 

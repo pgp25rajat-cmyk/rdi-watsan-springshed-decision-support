@@ -295,7 +295,7 @@ function moduleC(req: AssessRequest, lat: number, lon: number, elev: number, b: 
   const rain = a.annual_rain_mm ?? 1600;
   const leanFlow = req.field.lean_flow_lpm ?? 4;
   const minutesYear = 365 * 24 * 60;
-  const minutesLean = a.lean_season_months * 30.4 * 24 * 60;
+  const minutesLean = (a.lean_season_months ?? 5) * 30.4 * 24 * 60;
   const shares: Record<DiSiteResult['location_class'], Range> = {
     in_zone_slope: { low: 0.3, mid: 0.6, high: 1.0 },
     in_zone_linked: { low: 0.1, mid: 0.3, high: 0.6 },
@@ -404,7 +404,7 @@ function moduleC(req: AssessRequest, lat: number, lon: number, elev: number, b: 
       { id: 'annual_rain_mm', label: 'Yearly rain', value: rain, unit: 'mm', note: a.annual_rain_mm == null ? 'From rainfall maps at the spring' : 'Entered by you' },
       { id: 'collection_coefficient', label: 'Share of roof rain reaching the handpump', value: a.collection_coefficient, unit: '', note: 'Losses from splashing, gutters and evaporation' },
       { id: 'injection_efficiency', label: 'Share left after first flush and overflow', value: a.injection_efficiency, unit: '', note: 'Heavy storms overflow the pipe' },
-      { id: 'lean_season_months', label: 'Months the extra water comes out in', value: a.lean_season_months, unit: 'months', note: 'Best case: all of it in the dry season' },
+      { id: 'lean_season_months', label: 'Months the extra water comes out in', value: a.lean_season_months ?? 5, unit: 'months', note: 'Best case: all of it in the dry season' },
       { id: 'radius_of_influence_m', label: 'Radius of the water mound', value: a.radius_of_influence_m, unit: 'm', note: 'Used for the water-level rise' },
       { id: 'specific_yield', label: 'Share of rock that holds water', value: '0.02-0.05', unit: '', note: 'Fractured hard rock' },
     ],

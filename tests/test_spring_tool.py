@@ -353,3 +353,15 @@ def test_snow_rises_with_height():
     assert snow_at_elevation(None) is None
     low, mid, high = (snow_at_elevation(z) for z in (1200, 2000, 2900))
     assert low < 5 < mid < high
+
+
+def test_lean_months_come_from_the_field_answers():
+    def months(field, given=None):
+        a = dict(module_c.DEFAULTS)
+        module_c.lean_months_from_field(field, a, given or {})
+        return a["lean_season_months"]
+    assert months({}) == 5
+    assert months({"low_flow_months": 4, "dry_months": 2}) == 4
+    assert months({"low_flow_months": 1}) == 3
+    assert months({"dry_months": 6}) == 6
+    assert months({"low_flow_months": 4}, {"lean_season_months": 7}) == 5  # a sent value is applied by estimate, not here

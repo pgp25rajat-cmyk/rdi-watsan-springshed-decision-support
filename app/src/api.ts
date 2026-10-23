@@ -49,7 +49,7 @@ export type DiAssumptions = {
   annual_rain_mm: number | null; // null = read from the rainfall maps at the spring
   collection_coefficient: number; // share of roof rain that reaches the handpump (0.7-0.9)
   injection_efficiency: number; // share left after first flush and overflow (0.7-0.95)
-  lean_season_months: number; // months the extra water is assumed to come out in (best case)
+  lean_season_months?: number; // months the extra water comes out in; left out = the spring's low-flow months (default 5)
   radius_of_influence_m: number; // mound radius for the water-level estimate
 };
 
@@ -253,7 +253,6 @@ export const DEFAULT_ASSUMPTIONS: DiAssumptions = {
   annual_rain_mm: null,
   collection_coefficient: 0.8,
   injection_efficiency: 0.85,
-  lean_season_months: 5,
   radius_of_influence_m: 50,
 };
 

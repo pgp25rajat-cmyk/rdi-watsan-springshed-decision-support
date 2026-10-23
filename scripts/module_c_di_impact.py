@@ -54,6 +54,7 @@ DEFAULTS = {"annual_rain_mm": None, "collection_coefficient": 0.8, "injection_ef
             "lean_season_months": 5, "radius_of_influence_m": 50}
 LIMITS = {"collection_coefficient": (0.3, 1.0), "injection_efficiency": (0.3, 1.0), "lean_season_months": (1, 12),
           "radius_of_influence_m": (5, 500), "annual_rain_mm": (100, 6000)}
+MIN_LEAN_MONTHS = 3  # shortest spread used when the spring is low for only a month or two
 DEFAULT_DEPTH_M = 70  # RDI: handpumps are usually 50-80 m deep (Rajat, 2026-10-23)
 DEPTH_LIMITS = (5, 200)
 SNOW_CAPTURE = 0.5  # share of the snow on a roof that melts into the gutters (judgement)
@@ -230,6 +231,20 @@ def site_elevation(lat, lon, dem, mod, layers):
     return None
 
 
+def lean_months_from_field(field, assumptions, given):
+    """The months the extra water is spread over: the spring's own low- or no-flow months from the vulnerability
+    questions (at least MIN_LEAN_MONTHS), else the default (Rajat, 2026-10-23). A value sent in the assumptions wins.
+    Sets assumptions["lean_season_months"] and returns a note saying where the number came from."""
+    if given.get("lean_season_months") not in (None, ""):
+        return "Set by the user."
+    months = max(_number(field.get("low_flow_months")) or 0, _number(field.get("dry_months")) or 0)
+    if months > 0:
+        assumptions["lean_season_months"] = min(12, max(MIN_LEAN_MONTHS, round(months)))
+        return (f"From the field answers: {months:g} month{'s' if months != 1 else ''} with low or no flow"
+                f"{f' (at least {MIN_LEAN_MONTHS} used)' if months < MIN_LEAN_MONTHS else ''}.")
+    return f"Default {DEFAULTS['lean_season_months']} months: the low-flow months were not given."
+
+
 def estimate(inputs, session=None, features=None, b_output=None):
     """Module C under the shared contract. inputs: {"spring", "field", "di": {"sites", "assumptions"}}.
     session: Module A's LayerSession (rain pattern, site elevations); features: the layer values at the spring;
@@ -254,6 +269,7 @@ def estimate(inputs, session=None, features=None, b_output=None):
                 warnings.append(f"Assumption ignored: {key} = {value!r} (allowed {lo}-{hi}).")
                 continue
             assumptions[key] = v
+    months_note = lean_months_from_field(field, assumptions, di.get("assumptions") or {})
     layers = getattr(session, "layers", None) if session is not None else None
     mod = getattr(session, "mod", None)
     rain = rainfall(features, layers, lon, lat, assumptions["annual_rain_mm"])
@@ -436,7 +452,7 @@ def estimate(inputs, session=None, features=None, b_output=None):
         {"id": "share", "label": "Share reaching the spring", "value": "0 if not connected; otherwise 0.3-1.0 in a recharge zone on the spring's slope; 0.1-0.6 in one linked by a fault or rock tilt; 0.05-0.5 by a crack; up to 0.3 elsewhere in the catchment",
          "unit": "share", "note": "Judgement until monitoring data exist; not measured connection."},
         {"id": "lean_season_months", "label": "Lean season", "value": lean_months, "unit": "months",
-         "note": "Timing assumption: all extra water comes out in these months. Needs evidence of storage and slow release."},
+         "note": f"{months_note} Timing assumption: all extra water comes out evenly in these months. Needs evidence of storage and slow release."},
         {"id": "specific_yield", "label": "Specific yield of the rock", "value": f"{sy[0] * 100:g}-{sy[1] * 100:g}", "unit": "%",
          "note": f"{aquifer.capitalize()} ({rock_text or 'rock not known'}), from the rock at the spring, which may differ at the injection depth. "
                  "Also used in place of effective porosity for the travel time. CGWB GEC-2015 norms, to confirm with WATSAN."},
