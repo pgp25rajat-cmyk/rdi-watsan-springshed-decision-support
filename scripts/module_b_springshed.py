@@ -93,6 +93,7 @@ GPS_SENSITIVE_RATIO = 3  # warn when allowing 30 m of GPS error makes the catchm
 # Standard GIS practice: snap the outlet to the main drainage line within a few cells (ArcGIS "Snap Pour Point"), then
 # take everything upslope of it that is higher than the spring. Fixed from practice, not fitted to the report maps.
 SNAP_M = 90  # 3 cells of the 30 m DEM
+NEIGHBOUR_M, NEIGHBOUR_MIN_KM2 = 120, 0.005  # neighbouring gullies (draining at least 0.5 ha) this close to the spring, at its height, join the catchment
 SNAP_MAX_KM2 = 5.0  # never snap onto a river: a channel draining more than 500 ha is a gad or river, not a spring's valley
 RIDGE_BELOW_M = 10  # ground down to this far below the spring still counts (DEM noise at the outlet)
 VALLEY_MAX_M, VALLEY_MAX_STEPS = 1500, 200  # how far down the flow path the spring's valley is followed
@@ -240,6 +241,17 @@ def ridge_catchment(flw, upa, z, row, col, dist, idx):
         side[row, col] = True
         parts, _ = label(side)
         mask |= parts == parts[row, col]
+    if NEIGHBOUR_M > 0:
+        # neighbouring gullies: small drainage lines passing close to the spring at or above its height feed the same
+        # shallow rock, even when the 30 m map sends their surface water past it (groundwater does not follow such
+        # small divides). Their ground above the spring joins the catchment.
+        gully = (dist <= NEIGHBOUR_M) & (z >= z_s - BELOW_TOLERANCE_M) & (upa >= NEIGHBOUR_MIN_KM2) & (upa <= SNAP_MAX_KM2) & ~mask
+        if gully.any():
+            extra = flw.basins(idxs=np.flatnonzero(gully)) > 0
+            extra = (extra | mask) & (z >= z_s - RIDGE_BELOW_M)
+            extra[row, col] = True
+            parts, _ = label(extra)
+            mask |= parts == parts[row, col]
     return mask, (int(r), int(c)), float(upa[r, c])
 
 

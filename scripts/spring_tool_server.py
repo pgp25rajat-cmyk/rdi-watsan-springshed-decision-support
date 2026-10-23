@@ -421,6 +421,7 @@ class Tool:
                     spring, field, di = clean_request(request)
                     request = {"spring": spring, "field": field, "di": di}
                     b_output = self._springshed(spring, field)
+                    response["B"] = finite(module_b.public(b_output))  # the redrawn springshed, so the maps and the numbers agree
                 except Exception:
                     traceback.print_exc()
                     request, b_output = {}, None
