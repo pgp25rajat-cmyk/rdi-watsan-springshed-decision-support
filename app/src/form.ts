@@ -79,9 +79,11 @@ export function toRequest(form: FormState): AssessRequest | null {
 
 const KEY = 'spring-planner.form.v1';
 
+// The form is kept for this tab only (a reload keeps it); opening the tool again starts empty (Rajat 2026-10-23).
 export function loadForm(): FormState {
   try {
-    const raw = window.localStorage.getItem(KEY);
+    window.localStorage.removeItem(KEY); // forms remembered across visits by earlier versions
+    const raw = window.sessionStorage.getItem(KEY);
     if (!raw) return emptyForm();
     const saved = JSON.parse(raw) as Partial<FormState>;
     const base = emptyForm();
@@ -100,7 +102,7 @@ export function loadForm(): FormState {
 
 export function saveForm(form: FormState) {
   try {
-    window.localStorage.setItem(KEY, JSON.stringify(form));
+    window.sessionStorage.setItem(KEY, JSON.stringify(form));
   } catch {
     /* storage blocked: the form still works, it is just not remembered */
   }
