@@ -88,7 +88,9 @@ export function loadForm(): FormState {
     return {
       spring: { ...base.spring, ...(saved.spring ?? {}) },
       answers: { ...(saved.answers ?? {}) },
-      sites: Array.isArray(saved.sites) ? saved.sites.filter((s) => Number.isFinite(s?.latitude) && Number.isFinite(s?.longitude)) : [],
+      // 'di-demo-' sites were the made-up school and panchayat roofs of the old example: drop them from saved forms
+      sites: Array.isArray(saved.sites)
+        ? saved.sites.filter((s) => Number.isFinite(s?.latitude) && Number.isFinite(s?.longitude) && !String(s?.id ?? '').startsWith('di-demo-')) : [],
       assumptions: { ...base.assumptions, ...(saved.assumptions ?? {}) },
     };
   } catch {
