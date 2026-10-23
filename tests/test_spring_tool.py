@@ -315,6 +315,25 @@ def test_full_assessment_of_nauli_dhara():
     import json
     json.dumps(response, allow_nan=False)
     assert (server.RUNS / response["run_id"] / "report.md").is_file()
+    page = tool.report(response["run_id"])
+    for title in ("Location map", "Digital Elevation Model (DEM)", "Slope map", "Hydraulic gradient, contour and drainage map",
+                  "Recharge potential and recharge zones R1-R3", "Groundwater flow path map", "Cross-section A1-A1"):
+        assert title in page
+    assert (server.RUNS / response["run_id"] / "report.html").is_file()
+    assert tool.report("not-a-run") is None
+
+
+def test_report_contours_and_a_run_without_maps():
+    import report_builder
+    z = np.add.outer(np.arange(10.0), np.zeros(10)) * 10  # rises 10 m a row
+    lines = report_builder.contour_lines(z, 45)
+    assert len(lines) == 1 and all(abs(r - 4.5) < 1e-9 for _, r in lines[0])
+    assert report_builder.dms(30.5, "N", "S") == "30°30'00.00\"N"
+    spring = {"name": "Test spring", "latitude": 30.3, "longitude": 78.3, "elevation_m": 1500}
+    failed = {m: server.failed(m, spring, "No map here.") for m in "ABC"}
+    response = {"run_id": "20261023-000000-000000-test", "created_at": "2026-10-23T12:00:00", "map_set": "none", "spring": spring, **failed}
+    page = report_builder.build(response, {}, None)
+    assert "Test spring" in page and "could not be drawn" in page and "No map here." in page
 
 
 def test_depth_factor_and_flow_path():

@@ -82,6 +82,21 @@ def create_app(tool=None, archive=None):
         finally:
             slot.release()
 
+    @app.get('/api/report/<run_id>')
+    def report(run_id):
+        if not slot.acquire(blocking=False):
+            return Response('An assessment is running. Please try again in a moment.', 429, {'Retry-After': '15'})
+        try:
+            page = tool.report(run_id)
+        except Exception:
+            app.logger.exception('Report failed')
+            return Response('The report could not be made. Please try again.', 500)
+        finally:
+            slot.release()
+        if page is None:
+            return Response('This run is no longer on the server. Run the assessment again, then download the report.', 404)
+        return Response(page, mimetype='text/html')
+
     @app.get('/api/terrain/<int:z>/<int:x>/<int:y>.png')
     def terrain(z, x, y):
         if not (0 <= z <= 16 and 0 <= x < 2**z and 0 <= y < 2**z):

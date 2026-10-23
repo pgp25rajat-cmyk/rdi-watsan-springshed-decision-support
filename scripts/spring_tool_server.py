@@ -15,6 +15,7 @@ Endpoints:
     GET  /api/springs   the dataset springs for the search box and the map
     GET  /api/di_sites  WATSAN's existing DI handpumps (field visit, Oct 2026) for the map
     POST /api/assess    body and reply: see app/src/api.ts
+    GET  /api/report/{run_id}   the detailed report (HTML with maps, to print or save as PDF) for a run
     GET  /api/terrain/{z}/{x}/{y}.png   elevation tiles for the 3D map (Terrarium encoding), cut from the same
                         Copernicus DEM files the modules use, so the 3D view works without internet; gaps are
                         filled from public Terrarium tiles (saved for offline use) or the nearest local height
@@ -53,6 +54,7 @@ VERSION = "v1.2 draft (2026-10-23)"
 DIST = ROOT / "app" / "dist"
 RUNS = Path(os.environ.get("SPRING_RUNS_DIR", str(ROOT / "data" / "03_outputs" / "tool_runs")))
 SPRINGS_CSV = ROOT / "data" / "02_processed" / "spring_master" / "spring_master_v1_clean.csv"
+FIELD_SPRINGS_CSV = ROOT / "data" / "02_processed" / "field_visit" / "field_visit_springs_v1.csv"
 DI_SITES_CSV = ROOT / "data" / "02_processed" / "field_visit" / "field_visit_di_sites_v1.csv"  # WATSAN's existing DI sites
 MAX_BODY = 1 << 20
 MAX_SITES = 50
@@ -323,6 +325,7 @@ class Tool:
         self.session = CachedSession(module_a.LayerSession(places["layer_cache"], places["local_layers"],
                                                            offline=self.manifest is not None))
         self.zones = OrderedDict()
+        self.runs = OrderedDict()  # run_id -> (cleaned request, Module B output with its grids) for the detailed report
         self._springs = None
         self.terrain = Terrain(places["layer_cache"])
 
@@ -381,9 +384,75 @@ class Tool:
                     **{m: module_b.public(outputs[m]) for m in "ABC"}}
         response = finite(response)
         save_run(response, request)
+        self.runs[run_id] = ({"spring": spring, "field": field, "di": di}, outputs["B"])
+        while len(self.runs) > 6:
+            self.runs.popitem(last=False)
         if not self.manifest:
             self.terrain.refresh()
         return response
+
+    def _springshed(self, spring, field):
+        key = (round(spring["latitude"], 6), round(spring["longitude"], 6), spring.get("elevation_m"),
+               *(field.get(k) for k in ("monsoon_flow_lpm", "lean_flow_lpm", "dip_direction_deg", "dip_angle_deg")))
+        if key not in self.zones:
+            self.zones[key] = module_b.delineate({"spring": spring, "field": field}, self.session)
+            while len(self.zones) > int(os.environ.get("SPRING_ZONE_CACHE", "8")):
+                self.zones.popitem(last=False)
+        return self.zones[key]
+
+    # ------------------------------------------------------------------ detailed report
+    def report(self, run_id):
+        """The detailed report for a run as HTML, or None when the run is not known. Runs from before a restart
+        are rebuilt from the saved request (the springshed is redrawn for the maps)."""
+        import report_builder
+        if not RUN_ID.fullmatch(run_id or ""):
+            return None
+        folder = RUNS / run_id
+        try:
+            response = json.loads((folder / "result.json").read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            return None
+        with self.lock:
+            if run_id in self.runs:
+                request, b_output = self.runs[run_id]
+            else:
+                try:
+                    request = json.loads((folder / "request.json").read_text(encoding="utf-8"))
+                    spring, field, di = clean_request(request)
+                    request = {"spring": spring, "field": field, "di": di}
+                    b_output = self._springshed(spring, field)
+                    response["B"] = finite(module_b.public(b_output))  # the redrawn springshed, so the maps and the numbers agree
+                except Exception:
+                    traceback.print_exc()
+                    request, b_output = {}, None
+            page = report_builder.build(response, request, b_output, self.session, self.place(response["spring"]))
+        try:
+            (folder / "report.html").write_text(page, encoding="utf-8")
+        except OSError:
+            pass
+        return page
+
+    def place(self, spring):
+        """Village, block and district of the nearest dataset spring within 300 m, and the state."""
+        lat, lon = spring["latitude"], spring["longitude"]
+        out = {"village": "", "block": "", "district": ""}
+        for path in (SPRINGS_CSV, FIELD_SPRINGS_CSV):  # the field visit fills in what the dataset lacks
+            best, best_d = None, 300.0
+            try:
+                with path.open(encoding="utf-8", newline="") as handle:
+                    for r in csv.DictReader(handle):
+                        try:
+                            d = math.hypot((float(r["latitude"]) - lat) * 111000, (float(r["longitude"]) - lon) * 111000 * math.cos(math.radians(lat)))
+                        except (TypeError, ValueError, KeyError):
+                            continue
+                        if d < best_d:
+                            best, best_d = r, d
+            except OSError:
+                continue
+            for k in out:
+                out[k] = out[k] or ((best or {}).get(k) or "").split(" (")[0].strip()
+        out["state"] = "Uttarakhand" if 28.7 <= lat <= 31.5 and lon >= 77.6 else "Himachal Pradesh" if lon < 77.9 else ""
+        return out
 
     def _run(self, spring, field, di):
         report_memory('assessment start')
@@ -396,14 +465,8 @@ class Tool:
             out["A"] = failed("A", spring, f"The vulnerability score could not be computed: {error}")
         report_memory('after vulnerability')
         # B works from the map cell's elevation; C compares DI sites with that same elevation
-        key = (round(spring["latitude"], 6), round(spring["longitude"], 6), spring.get("elevation_m"),
-               *(field.get(k) for k in ("monsoon_flow_lpm", "lean_flow_lpm", "dip_direction_deg", "dip_angle_deg")))
         try:
-            if key not in self.zones:
-                self.zones[key] = module_b.delineate(inputs, self.session)
-                while len(self.zones) > int(os.environ.get("SPRING_ZONE_CACHE", "8")):
-                    self.zones.popitem(last=False)
-            out["B"] = self.zones[key]
+            out["B"] = self._springshed(spring, field)
         except Exception as error:
             traceback.print_exc()
             out["B"] = failed("B", spring, f"The springshed could not be drawn: {error}")
@@ -421,6 +484,7 @@ class Tool:
         return out
 
 
+RUN_ID = re.compile(r"[0-9]{8}-[0-9]{6}-[0-9]{6}-[a-z0-9-]{1,40}")
 TITLES = {"A": "Spring vulnerability", "B": "Springshed (recharge area)", "C": "Potential impact of DI recharge"}
 
 
@@ -525,6 +589,16 @@ class Handler(BaseHTTPRequestHandler):
             return self._json(HTTPStatus.OK, self.tool.springs())
         if path == "/api/di_sites":
             return self._json(HTTPStatus.OK, existing_di_sites())
+        if path.startswith("/api/report/"):
+            try:
+                page = self.tool.report(path[len("/api/report/"):])
+            except Exception as error:
+                traceback.print_exc()
+                return self._send(HTTPStatus.INTERNAL_SERVER_ERROR, f"The report could not be made: {error}".encode(), "text/plain; charset=utf-8")
+            if page is None:
+                return self._send(HTTPStatus.NOT_FOUND, b"This run is not on this computer. Run the assessment again, then download the report.",
+                                  "text/plain; charset=utf-8")
+            return self._send(HTTPStatus.OK, page.encode("utf-8"), "text/html; charset=utf-8")
         tile = TERRAIN_PATH.fullmatch(path)
         if tile:
             z, x, y = (int(v) for v in tile.groups())
