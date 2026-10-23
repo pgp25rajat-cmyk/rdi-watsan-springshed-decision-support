@@ -28,7 +28,7 @@ export const classColor = (c: string | undefined) =>
   c === 'High' ? 'var(--risk-high)' : c === 'Medium' ? 'var(--risk-med)' : c === 'Low' ? 'var(--risk-low)' : 'var(--ink-3)';
 
 export function scoreColor(score: number) {
-  if (score >= 65) return 'var(--risk-high)';
+  if (score >= 60) return 'var(--risk-high)';
   if (score >= 35) return 'var(--risk-med)';
   return 'var(--risk-low)';
 }
@@ -64,4 +64,5 @@ export const linkLabel: Record<string, string> = {
   'GSI fault': 'Linked by a fault',
   'Rock layers (up-dip)': 'Linked by rock tilt',
   'DEM lineament': 'Linked by a crack',
+  'Mapped lineament': 'Linked by a mapped fracture',
 };

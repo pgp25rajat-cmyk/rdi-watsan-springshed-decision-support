@@ -14,11 +14,14 @@ export type FieldAnswers = {
   lean_flow_lpm?: number;
   monsoon_flow_lpm?: number;
   low_flow_months?: number;
+  dry_months?: number; // months with no flow at all
   households?: number;
   users_vs_past?: 'fewer' | 'same' | 'more' | 'much_more';
   water_quality?: 'no_issue' | 'muddy_after_rain' | 'contamination';
   pollution_30m?: 'none' | 'one' | 'two_or_more' | 'latrine';
   disturbance_uphill?: 'little' | 'some' | 'major';
+  disaster_prone?: 'no' | 'minor' | 'major';
+  existing_interventions?: string[]; // check_dams, trenches, pits, ponds, plantation, di_handpumps, other, none
   protection?: 'both' | 'one' | 'neither';
   recharge_works?: 'maintained' | 'neglected' | 'none';
   seasonality?: 'perennial' | 'seasonal_perennial' | 'seasonal' | 'highly_seasonal' | 'ephemeral';
@@ -38,6 +41,8 @@ export type DiSite = {
   roof_area_m2: number;
   first_flush: boolean;
   filter: boolean;
+  depth_m?: number | null; // handpump depth; 70 m when not given
+  water_level_m?: number | null; // water level in the handpump, m below ground (optional)
 };
 
 export type DiAssumptions = {
@@ -64,6 +69,7 @@ export type ModuleOutput<R> = {
   status: Status;
   confidence: Confidence; // how complete the inputs were ("Evidence" on the page), not whether the answer is right
   validation?: string; // whether the module has been checked against field evidence yet
+  summary?: string[]; // the result in everyday words, shown first
   rationale: string[];
   missing_inputs: MissingInput[];
   warnings: string[];
@@ -107,7 +113,7 @@ export type Overlay = {
 
 export type SoilSummary = { class: string; clay_pct: number; sand_pct: number };
 
-export type LinkKind = 'Surface slope' | 'GSI fault' | 'Rock layers (up-dip)' | 'DEM lineament';
+export type LinkKind = 'Surface slope' | 'GSI fault' | 'Rock layers (up-dip)' | 'DEM lineament' | 'Mapped lineament';
 
 // One of the top recharge zones (R1-R3), ranked by recharge potential x link to the spring x closeness.
 // It may lie on the spring's own slope or beyond the ridge, linked by a fault, a crack (lineament) or tilted rock layers.
@@ -124,6 +130,7 @@ export type RechargeZone = {
   mean_slope_deg: number;
   land_cover_pct: Record<string, number>;
   soil: SoilSummary | null;
+  soil_depth_cm?: number | null;
   rock_unit: string;
   valley_between_m: number;
   crosses_fault: boolean;
@@ -133,7 +140,8 @@ export type RechargeZone = {
 
 export type BResult = {
   spring_cell: { latitude: number; longitude: number; elevation_m: number; moved_m: number; note: string };
-  surface_catchment: { area_ha: number; geojson: Feature | null; note?: string }; // allowing 30 m of GPS error
+  surface_catchment: { area_ha: number; geojson: Feature | null; note?: string; snapped_m?: number; snapped_drainage_ha?: number }; // the valley up to the ridges
+  outlet_catchment?: { area_ha: number; geojson: Feature | null; note?: string }; // land running off straight to the outlet (30 m GPS allowance)
   exact_cell_catchment?: { area_ha: number; geojson: Feature | null; note?: string }; // the map cell at the exact coordinate
   target_area_ha: Range & { basis: string; kind?: 'monsoon flow' | 'lean flow' | 'default' }; // recharge area the flow needs
   streams_block_zones?: boolean;
@@ -144,6 +152,7 @@ export type BResult = {
   geology: { rock_class: string; unit: string; nearest_fault_m: number | null; nearest_fault_name: string } | null;
   faults: FeatureCollection; // GSI faults and thrusts in the window (properties.name, properties.type)
   lineaments: FeatureCollection; // DEM lineament candidates in the window
+  mapped_lineaments?: FeatureCollection; // GSI Bhukosh 1:250k lineaments in the window (properties.type)
   streams: FeatureCollection; // DEM streams in the window (properties.order)
 };
 
@@ -160,6 +169,11 @@ export type DiSiteResult = {
   zone_id?: string | null;
   location_note: string;
   share_reaching_spring: Range;
+  reaching_m3_per_year?: Range;
+  depth_m?: number;
+  depth_given?: boolean;
+  water_level_m?: number | null;
+  flow_path?: FlowPath | null;
   added_flow_lpm_annual: Range;
   added_flow_lpm_lean: Range;
   water_level_rise_m: { low: number; high: number };
@@ -169,11 +183,30 @@ export type DiSiteResult = {
   flags: string[];
 };
 
+// Ground profile from a handpump to the spring, for the cross-section drawing
+export type FlowPath = {
+  profile: [number, number][]; // [distance from the handpump m, ground height m]
+  length_m: number;
+  ground_at_handpump_m: number;
+  depth_m: number;
+  injection_elevation_m: number;
+  spring_elevation_m: number;
+  water_level_m: number | null;
+  head_at_handpump_m: number | null;
+  hydraulic_gradient: number;
+  gradient_basis: string;
+  travel_time_days: { low: number; high: number } | null;
+  valley_between_m: number | null;
+  depth_factor?: number;
+  depth_words?: string;
+};
+
 export type CResult = {
-  rain: { annual_mm: number; source: string; monthly_mm: number[] | null }; // monthly: Jan..Dec
+  rain: { annual_mm: number; source: string; monthly_mm: number[] | null; snow_mm?: number; snow_used_mm?: number }; // monthly: Jan..Dec
   sites: DiSiteResult[];
   totals: {
     volume_m3_per_year: number;
+    reaching_m3_per_year?: Range;
     added_flow_lpm_annual: Range;
     added_flow_lpm_lean: Range;
     lean_flow_lpm: number | null;

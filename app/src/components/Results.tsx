@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import type { AResult, AssessResponse, BResult, CResult, Feature, Indicator, ModuleOutput, RechargeZone } from '../api';
 import { MONTHS, ZONE_RANK_COLORS, classColor, flow, litres, linkLabel, locationClass, num, pct, range, scoreColor, statusLabel } from '../format';
-import { Gauge, MonthlyBars, RangeStrip, StackedBar } from './charts';
+import { CrossSection, Gauge, MonthlyBars, RangeStrip, StackedBar } from './charts';
 import type { Tab } from './MapView';
 
 type Props = {
@@ -91,6 +91,17 @@ function Bullets({ title, items }: { title: string; items: string[] }) {
   );
 }
 
+/** The module's answer in everyday words, shown first. */
+function Plain({ items, title = 'In simple words' }: { items?: string[]; title?: string }) {
+  if (!items?.length) return null;
+  return (
+    <section className="plain">
+      <h4>{title}</h4>
+      {items.map((x, i) => <p key={i}>{x}</p>)}
+    </section>
+  );
+}
+
 function Warnings({ items }: { items: string[] }) {
   if (!items.length) return null;
   return (
@@ -102,7 +113,7 @@ function Warnings({ items }: { items: string[] }) {
 }
 
 function MissingList<R>({ m }: { m: ModuleOutput<R> }) {
-  const items = [...m.missing_inputs].sort((a, b) => (b.weight ?? 0) - (a.weight ?? 0)).slice(0, 5);
+  const items = [...m.missing_inputs].sort((a, b) => Number(a.id !== 'flow_vs_past') - Number(b.id !== 'flow_vs_past') || (b.weight ?? 0) - (a.weight ?? 0)).slice(0, 5);
   if (!items.length) return null;
   return (
     <section className="block">
@@ -151,7 +162,8 @@ function VulnerabilityTab({ m, r }: { m: ModuleOutput<AResult>; r: AResult }) {
           <div className="coverage" aria-hidden="true"><span style={{ width: `${Math.min(100, r.coverage_pct)}%` }} /></div>
         </div>
       </div>
-      <Bullets title="Why this score" items={m.rationale} />
+      <Plain title="Why this score" items={m.summary} />
+      <Bullets title="Biggest contributors" items={m.rationale.slice(m.summary?.length ?? 0)} />
       <MissingList m={m} />
       <section className="block">
         <h4>What makes up the score</h4>
@@ -202,17 +214,18 @@ function SpringshedTab({ m, r, onFocus }: { m: ModuleOutput<BResult>; r: BResult
   return (
     <>
       <p className="msg msg-caution">Candidate zones from maps: places to inspect, not sites ready for works. Walk them with a geologist before spending money.</p>
+      <Plain title="How this area was mapped" items={m.summary} />
       <div className="stats">
         <Stat label="Recharge area needed" accent="var(--green)"
           value={<>{num(r.target_area_ha.mid, 1)} <small>ha</small></>}
           sub={r.target_area_ha.kind === 'default'
             ? <><b className="flag-default">Default size</b>: no flow reading was given</>
             : `Could be ${num(r.target_area_ha.low, 1)} – ${num(r.target_area_ha.high, 1)} ha`} />
-        <Stat label="Surface catchment" accent="var(--water)"
+        <Stat label="Catchment to the ridge" accent="var(--water)"
           value={r.surface_catchment.geojson || r.surface_catchment.area_ha ? <>{num(r.surface_catchment.area_ha, 1)} <small>ha</small></> : '–'}
-          sub={r.exact_cell_catchment
-            ? `Allowing 30 m GPS error. At the exact point: ${num(r.exact_cell_catchment.area_ha, 1)} ha`
-            : 'Where rain runs off towards the spring'} />
+          sub={r.outlet_catchment
+            ? `The valley above the spring. ${num(r.outlet_catchment.area_ha, 1)} ha runs off straight to the outlet`
+            : 'The valley above the spring'} />
         <Stat label="Top recharge zones" accent="var(--earth)"
           value={<>{zones.length}</>}
           sub={zones.length === 0 ? 'None found' : onSlope === zones.length ? 'All on the spring slope'
@@ -295,6 +308,7 @@ function ZoneCard({ z, onFocus }: { z: RechargeZone; onFocus: Props['onFocus'] }
           <div><dt>Recharge potential</dt><dd>{Math.round(z.mean_potential * 100)}%</dd></div>
           <div><dt>Mean slope</dt><dd>{num(z.mean_slope_deg)}°</dd></div>
           {z.soil && <div><dt>Soil (top 30 cm)</dt><dd>{z.soil.class.split(' (')[0]}</dd></div>}
+          {z.soil_depth_cm != null && <div><dt>Soil depth</dt><dd>{z.soil_depth_cm >= 200 ? '200 cm or more' : `about ${num(z.soil_depth_cm)} cm`}</dd></div>}
           <div><dt>Inside the catchment</dt><dd>{z.in_catchment_pct}%</dd></div>
           {linked && <div className="wide"><dt>Link to the spring</dt><dd>{z.link.name}</dd></div>}
           {z.rock_unit && <div className="wide"><dt>Rock</dt><dd>{z.rock_unit}</dd></div>}
@@ -305,6 +319,10 @@ function ZoneCard({ z, onFocus }: { z: RechargeZone; onFocus: Props['onFocus'] }
 }
 
 // ------------------------------------------------------------------ C
+function days(d: number) {
+  return d < 1 ? 'under a day' : d < 60 ? `${num(d)} days` : d < 730 ? `${num(d / 30.4)} months` : `${num(d / 365)} years`;
+}
+
 function oneRoofM3(r: CResult): number | null {
   const get = (id: string) => {
     const a = r.assumptions.find((x) => x.id === id);
@@ -345,6 +363,7 @@ function DiTab({ m, r, onAddSite }: { m: ModuleOutput<CResult>; r: CResult; onAd
   const maxLean = Math.max(t.added_flow_lpm_lean.high, 0.01);
   return (
     <>
+      <Plain title="Where the water goes" items={m.summary} />
       {r.safety && (
         <section className={`safety ${r.safety.ready ? 'safety-ok' : 'safety-stop'}`}>
           <h4>{r.safety.ready ? 'Before any injection' : 'Not ready for DI yet'}</h4>
@@ -354,6 +373,11 @@ function DiTab({ m, r, onAddSite }: { m: ModuleOutput<CResult>; r: CResult; onAd
       <div className="stats">
         <Stat label="Water put into the ground" accent="var(--water)"
           value={<>{num(t.volume_m3_per_year)} <small>m³/year</small></>} sub={litres(t.volume_m3_per_year)} />
+        {t.reaching_m3_per_year && (
+          <Stat label="Of that, reaching the spring" accent="var(--green)"
+            value={<>{num(t.reaching_m3_per_year.mid)} <small>m³/year</small></>}
+            sub={`Range ${num(t.reaching_m3_per_year.low)} – ${num(t.reaching_m3_per_year.high)} m³; 0 if not connected`} />
+        )}
         <Stat label="Dry-season water equivalent" accent="var(--green)"
           value={<>{flow(t.added_flow_lpm_lean.mid)} <small>L/min</small></>}
           sub={<>Range {range(t.added_flow_lpm_lean)} L/min; 0 if not connected<RangeStrip {...t.added_flow_lpm_lean} max={maxLean * 1.1} /></>} />
@@ -384,12 +408,22 @@ function DiTab({ m, r, onAddSite }: { m: ModuleOutput<CResult>; r: CResult; onAd
                 <p className="small site-note">{s.location_note}</p>
                 <dl className="site-facts">
                   <div><dt>Injected / year</dt><dd>{num(s.volume_m3_per_year)} m³{s.runoff_m3_per_year != null && <span className="muted"> of {num(s.runoff_m3_per_year)} m³ roof runoff</span>}</dd></div>
-                  <div><dt>Assumed to reach spring</dt><dd>{pct(s.share_reaching_spring.mid)} <span className="muted">({pct(s.share_reaching_spring.low)}–{pct(s.share_reaching_spring.high)}; 0 if not connected)</span></dd></div>
+                  <div><dt>Assumed to reach spring</dt><dd>{s.reaching_m3_per_year ? `${num(s.reaching_m3_per_year.mid)} m³ (` : ''}{pct(s.share_reaching_spring.mid)}{s.reaching_m3_per_year ? ')' : ''} <span className="muted">({pct(s.share_reaching_spring.low)}–{pct(s.share_reaching_spring.high)}; 0 if not connected)</span></dd></div>
+                  {s.depth_m != null && <div><dt>Handpump depth</dt><dd>{num(s.depth_m)} m{s.depth_given === false ? <span className="muted"> (assumed)</span> : null}{s.flow_path ? <span className="muted"> · injects {Math.abs(s.flow_path.injection_elevation_m - s.flow_path.spring_elevation_m)} m {s.flow_path.injection_elevation_m >= s.flow_path.spring_elevation_m ? 'above' : 'below'} the spring</span> : null}</dd></div>}
+                  {s.flow_path && <div><dt>Hydraulic gradient</dt><dd>{s.flow_path.hydraulic_gradient.toFixed(2)} <span className="muted">({num(s.flow_path.length_m)} m path)</span></dd></div>}
                   <div><dt>Dry-season equivalent</dt><dd>{flow(s.added_flow_lpm_lean.mid)} L/min <span className="muted">({range(s.added_flow_lpm_lean)})</span></dd></div>
                   <div><dt>Storage rise (illustration)</dt><dd>{range(s.water_level_rise_m, (n) => n.toFixed(2))} m</dd></div>
-                  <div><dt>Travel time (rough)</dt><dd>{s.travel_time_days ? `${num(s.travel_time_days.low)}–${num(s.travel_time_days.high)} days` : '–'}</dd></div>
+                  <div><dt>Travel time (rough)</dt><dd>{s.travel_time_days ? `${days(s.travel_time_days.low)} – ${days(s.travel_time_days.high)}` : '–'}</dd></div>
                   <div><dt>Roof · distance</dt><dd>{num(s.roof_area_m2)} m² · {num(s.distance_to_spring_m)} m{s.height_above_spring_m != null ? `, ${s.height_above_spring_m >= 0 ? `${num(s.height_above_spring_m)} m above` : `${num(-s.height_above_spring_m)} m below`}` : ''}</dd></div>
                 </dl>
+                {s.flow_path && s.flow_path.profile.length > 1 && (
+                  <details className="xsec-box" open={i === 0}>
+                    <summary>How the water would travel to the spring (cross-section)</summary>
+                    <CrossSection path={s.flow_path} name={s.name} />
+                    <p className="hint">Ground along the straight line from the handpump to the spring (heights stretched to be readable). The dashed blue arrow is the assumed path of the injected water; {s.flow_path.gradient_basis}.
+                      {s.flow_path.valley_between_m ? ` The ground dips about ${s.flow_path.valley_between_m} m below the spring on the way, so some water may come out in that valley first.` : ''}</p>
+                  </details>
+                )}
                 {s.flags.length > 0 && <ul className="flags">{s.flags.map((f, k) => <li key={k}>{f}</li>)}</ul>}
               </li>
             );
@@ -405,7 +439,7 @@ function DiTab({ m, r, onAddSite }: { m: ModuleOutput<CResult>; r: CResult; onAd
             {r.rain.monthly_mm && <MonthlyBars title="Rain" unit="mm" values={r.rain.monthly_mm} color="#7fb3d8" />}
             {r.monthly_injection_m3 && <MonthlyBars title="Water put into the ground, all sites" unit="m³" values={r.monthly_injection_m3} color="#0b6e8a" />}
           </div>
-          <p className="hint">Rain: {num(r.rain.annual_mm)} mm a year ({r.rain.source}).</p>
+          <p className="hint">Rain: {num(r.rain.annual_mm)} mm a year ({r.rain.source}).{r.rain.snow_mm ? ` Snow: about ${num(r.rain.snow_mm)} mm of water a winter (ERA5); ${num(r.rain.snow_used_mm ?? 0)} mm counted as melting off the roofs in January–March.` : ''}</p>
           <details className="table-view">
             <summary>Show as a table</summary>
             <div className="table-wrap">

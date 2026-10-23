@@ -1,5 +1,5 @@
 {
-  "built": "2026-10-22",
+  "built": "2026-10-23",
   "records": 1845,
   "filled": {
     "bhukosh_geomorphology_250k": 1766,
@@ -20,16 +20,22 @@
     "forest_open_500m_pct": 344,
     "soil_ksat_0_30cm_mm_h": 1799,
     "soil_depth_to_bedrock_cm": 1807,
+    "era5_snowfall_winter_mm": 1808,
+    "snow_at_elevation_mm": 1808,
     "report_catchment_ha": 2
   },
-  "layers": {
-    "ndvi": "Sentinel2/S2_NDVI_Tehri_OctNov2025_20m.tif",
-    "ksat": "Infiltration/Ksat_0-30cm_SaxtonRawls_mmh.tif",
-    "depth": "SoilGrids/BDRICM_M_250m_Uttarakhand.tif"
-  },
+  "layers": [
+    "NGDR(Bhukosh)/GEOMORPHOLOGY_250K_LINEAMENT_250K_STATE_UTTARAKHAND_geojson_1792667501.zip",
+    "NGDR(Bhukosh)/LANDSLIDE_POLYGON_STATE_UTTARAKHAND_geojson_1792667846.zip",
+    "NGDR(Bhukosh)/ORIENTED_STRUCTURE_PLANE_STATE_UTTARAKHAND_geojson_1792668947.zip",
+    "Sentinel2/S2_NDVI_Tehri_OctNov2025_20m.tif",
+    "Infiltration/Ksat_0-30cm_SaxtonRawls_mmh.tif",
+    "SoilGrids/BDRICM_M_250m_Uttarakhand.tif",
+    "data/02_processed/climate/era5_snowfall_winter_mean_v1.tif"
+  ],
   "missing_layers": [],
   "notes": [
-    "Data columns only; not used by Modules A-C yet.",
+    "Module A scores shallow soil and landslides from these columns; Modules B and C read the layers directly.",
     "Bhukosh layers cover Uttarakhand; Sentinel-2 NDVI covers Tehri district; dip points cover Kumaon sheets only.",
     "Forest cut-offs are provisional: dense NDVI >= 0.7, open 0.5-0.7."
   ]

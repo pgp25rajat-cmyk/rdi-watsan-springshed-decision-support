@@ -109,6 +109,8 @@ forest_dense_500m_pct,344,19,,,1501
 forest_open_500m_pct,344,19,,,1501
 soil_ksat_0_30cm_mm_h,1799,98,,,46
 soil_depth_to_bedrock_cm,1807,98,,,38
+era5_snowfall_winter_mm,1808,98,,,37
+snow_at_elevation_mm,1808,98,,,37
 report_catchment_ha,2,0,,,1843
 spring_type_source_text,1015,55,860,155,830
 spring_type_class,1015,55,,,830

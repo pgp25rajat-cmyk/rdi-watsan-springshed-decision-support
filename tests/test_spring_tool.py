@@ -38,7 +38,7 @@ def test_target_area_from_flow_readings():
 
 def test_factor_weights_sum_to_100():
     factors = module_b.load_factors()
-    assert set(factors) == {"slope", "land_cover", "rock", "structure", "soil"}
+    assert set(factors) == {"slope", "land_cover", "rock", "structure", "soil", "soil_depth"}
     assert sum(f["weight"] for f in factors.values()) == 100
     assert all(0 <= s <= 1 for f in factors.values() for s in f["classes"].values())
 
@@ -315,3 +315,41 @@ def test_full_assessment_of_nauli_dhara():
     import json
     json.dumps(response, allow_nan=False)
     assert (server.RUNS / response["run_id"] / "report.md").is_file()
+
+
+def test_depth_factor_and_flow_path():
+    assert module_c.depth_factor(1500, 1480)[0] == 1.0
+    assert module_c.depth_factor(1475, 1480)[0] == 0.7
+    assert module_c.depth_factor(1450, 1480)[0] == 0.4
+    assert module_c.depth_factor(1400, 1480)[0] == 0.2
+    points = [[0, 1560], [100, 1530], [200, 1500], [300, 1480]]
+    path = module_c.flow_path(points, 70, None, 1480, (0.005, 0.03), (0.05, 5.0))
+    assert path["injection_elevation_m"] == 1490 and path["hydraulic_gradient"] == pytest.approx(80 / 300, abs=1e-3)
+    assert path["valley_between_m"] is None and path["travel_time_days"]["low"] < path["travel_time_days"]["high"]
+    dip = module_c.flow_path([[0, 1560], [150, 1440], [400, 1480]], 70, 20, 1480, (0.005, 0.03), (0.05, 5.0))
+    assert dip["valley_between_m"] == 40 and dip["head_at_handpump_m"] == 1540
+
+
+def test_di_site_depth_changes_the_share():
+    """A shallow handpump injecting above the outlet keeps the full share; a deep one below it gets less."""
+    z = np.full((40, 40), 1480.0)
+    z[:, :20] = 1600.0
+    from rasterio.transform import from_origin
+    t = from_origin(78.5, 30.0, 0.0003, 0.0003)
+    spring = {"name": "S", "latitude": 30.0 - 0.0003 * 20.5, "longitude": 78.5 + 0.0003 * 25.5, "elevation_m": 1480}
+    site = {"id": "a", "latitude": 30.0 - 0.0003 * 20.5, "longitude": 78.5 + 0.0003 * 5.5, "roof_area_m2": 100,
+            "first_flush": True, "filter": True}
+    b = {"_zones": {"zones": [], "catchment": None, "dem": (z, t), "spring_elevation_m": 1480.0}, "result": {}}
+    shallow = module_c.estimate({"spring": spring, "di": {"sites": [{**site, "depth_m": 60}], "assumptions": {"annual_rain_mm": 1600}}}, b_output=b)
+    deep = module_c.estimate({"spring": spring, "di": {"sites": [{**site, "depth_m": 140}], "assumptions": {"annual_rain_mm": 1600}}}, b_output=b)
+    s, d = shallow["result"]["sites"][0], deep["result"]["sites"][0]
+    assert s["flow_path"]["depth_factor"] == 1.0 and d["flow_path"]["depth_factor"] == 0.4
+    assert d["reaching_m3_per_year"]["mid"] < s["reaching_m3_per_year"]["mid"]
+    assert shallow["summary"] and "may reach the spring" in shallow["summary"][0]
+
+
+def test_snow_rises_with_height():
+    from secondary_layers import snow_at_elevation
+    assert snow_at_elevation(None) is None
+    low, mid, high = (snow_at_elevation(z) for z in (1200, 2000, 2900))
+    assert low < 5 < mid < high

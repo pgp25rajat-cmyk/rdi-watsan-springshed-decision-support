@@ -10,7 +10,8 @@ function answerList(form: FormState): [string, string][] {
   for (const q of vulnerabilityQuestions) {
     const v = form.answers[q.id];
     if (v == null || v === '') continue;
-    out.push([q.label, q.kind === 'choice' ? q.options.find(([k]) => k === v)?.[1] ?? v : `${v} ${q.unit}`]);
+    out.push([q.label, q.kind === 'choice' ? q.options.find(([k]) => k === v)?.[1] ?? v
+      : q.kind === 'multi' ? v.split(',').map((x) => q.options.find(([k]) => k === x)?.[1] ?? x).join(', ') : `${v} ${q.unit}`]);
   }
   for (const q of textQuestions) if (form.answers[q.key]) out.push([q.label, form.answers[q.key]]);
   for (const q of dipQuestions) if (form.answers[q.key]) out.push([q.label, `${form.answers[q.key]} ${q.unit}`]);
@@ -96,8 +97,8 @@ export default function PrintReport({ result, form, demo }: { result: AssessResp
             <p className="p-key">
               Recharge area this flow needs: about <b>{num(B.target_area_ha.mid, 1)} ha</b> (range {num(B.target_area_ha.low, 1)}–{num(B.target_area_ha.high, 1)} ha)
               {B.target_area_ha.kind === 'default' ? ', a default size: no flow reading was given' : ''}.
-              Surface catchment {num(B.surface_catchment.area_ha, 1)} ha allowing 30 m GPS error
-              {B.exact_cell_catchment ? `, ${num(B.exact_cell_catchment.area_ha, 1)} ha at the exact point` : ''}.
+              Catchment to the ridge {num(B.surface_catchment.area_ha, 1)} ha
+              {B.outlet_catchment ? ` (${num(B.outlet_catchment.area_ha, 1)} ha runs off straight to the outlet)` : ''}.
             </p>
             {B.recharge_zones.length > 0 && (
               <>
@@ -105,7 +106,7 @@ export default function PrintReport({ result, form, demo }: { result: AssessResp
                 <ol>{B.recharge_zones.map((z) => <li key={z.id}>{z.id} ({linkLabel[z.link.kind].toLowerCase()}): {z.why}</li>)}</ol>
               </>
             )}
-            <List items={result.B.rationale} />
+            <List items={[...(result.B.summary ?? []), ...result.B.rationale]} />
             <p className="p-caution">A first estimate from maps. Walk the zones with a geologist before spending money.</p>
           </>
         ) : <List items={[...result.B.rationale, ...result.B.warnings]} />}
@@ -117,6 +118,7 @@ export default function PrintReport({ result, form, demo }: { result: AssessResp
           <>
             <p className="p-key">
               Water put into the ground: <b>{num(C.totals.volume_m3_per_year)} m³ a year</b> ({litres(C.totals.volume_m3_per_year)}).
+              {C.totals.reaching_m3_per_year ? <> Of that, about <b>{num(C.totals.reaching_m3_per_year.mid)} m³</b> may reach the spring (range {num(C.totals.reaching_m3_per_year.low)}–{num(C.totals.reaching_m3_per_year.high)}).</> : null}
               Dry-season water equivalent <b>{flow(C.totals.added_flow_lpm_lean.mid)} L/min</b> (range {range(C.totals.added_flow_lpm_lean)}; 0 if not connected)
               {C.totals.pct_of_lean_flow ? <>, about <b>+{flow(C.totals.pct_of_lean_flow.mid)}%</b> of today's {flow(C.totals.lean_flow_lpm)} L/min</> : null}.
               {C.roofs_for_10pct != null && <> About {num(C.roofs_for_10pct)} roofs of 100 m² in a recharge zone on the spring slope could add 10%, if the assumptions hold.</>}
@@ -128,21 +130,22 @@ export default function PrintReport({ result, form, demo }: { result: AssessResp
               </>
             )}
             <table className="p-table p-small">
-              <thead><tr><th>Site</th><th>Where</th><th className="num">m³/year</th><th className="num">Assumed to reach spring</th><th className="num">Dry-season equivalent L/min</th><th className="num">Storage rise m (illustration)</th></tr></thead>
+              <thead><tr><th>Site</th><th>Where</th><th className="num">Depth m</th><th className="num">m³/year</th><th className="num">Assumed to reach spring</th><th className="num">Dry-season equivalent L/min</th><th className="num">Storage rise m (illustration)</th></tr></thead>
               <tbody>
                 {C.sites.map((s) => (
                   <tr key={s.id}>
                     <td>{s.name} ({num(s.roof_area_m2)} m²)</td>
                     <td>{locationClass[s.location_class].label}</td>
+                    <td className="num">{s.depth_m != null ? num(s.depth_m) : '–'}</td>
                     <td className="num">{num(s.volume_m3_per_year)}</td>
-                    <td className="num">{pct(s.share_reaching_spring.low)}–{pct(s.share_reaching_spring.high)}</td>
+                    <td className="num">{s.reaching_m3_per_year ? `${num(s.reaching_m3_per_year.mid)} m³, ` : ''}{pct(s.share_reaching_spring.low)}–{pct(s.share_reaching_spring.high)}</td>
                     <td className="num">{flow(s.added_flow_lpm_lean.mid)} ({range(s.added_flow_lpm_lean)})</td>
                     <td className="num">{range(s.water_level_rise_m, (n) => n.toFixed(2))}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            <List items={result.C.rationale} />
+            <List items={[...(result.C.summary ?? []), ...result.C.rationale]} />
             <p><b>How to check if it works</b></p>
             <List items={C.monitoring_plan} />
           </>
