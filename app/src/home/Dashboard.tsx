@@ -11,6 +11,7 @@ export default function Dashboard() {
   return (
     <div className="dash">
       <header className="dash-top">
+        <div className="dash-banner" aria-hidden="true" />
         <a className="dash-back" href="#/">← Home</a>
         <span className="dash-title">WATSAN intervention dashboard</span>
         <a className="btn btn-light btn-small" href="#/planner">Open planner</a>
@@ -18,9 +19,8 @@ export default function Dashboard() {
 
       <main className="dash-main">
         <div className="dash-hero">
-          <span className="door-badge">Coming soon</span>
           <h1>Springs and their recharge handpumps</h1>
-          <p>Abhishek is building this page. It will show each WATSAN spring, its DI handpumps, and how flow changed after recharge.</p>
+          <p>Each WATSAN spring, its DI handpumps, and how flow changed after recharge.</p>
         </div>
 
         <div className="ghost-grid" aria-hidden="true">

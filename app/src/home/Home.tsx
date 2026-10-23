@@ -28,12 +28,11 @@ export default function Home() {
 
       <section className="doors" aria-label="Open a section">
         <a className="door door-dash" href="#/dashboard">
-          <span className="door-badge">Coming soon</span>
           <span className="door-kicker"><ChartIcon />WATSAN interventions</span>
           <h2>Dashboard</h2>
           <p>Track the springs and their recharge handpumps. What changed, and by how much.</p>
           <span className="door-chips"><i>Springs</i><i>DI handpumps</i><i>Impact</i></span>
-          <span className="door-go">Preview <Arrow /></span>
+          <span className="door-go">Open dashboard <Arrow /></span>
           <Contours />
         </a>
         <a className="door door-plan" href="#/planner">
@@ -50,6 +49,8 @@ export default function Home() {
 
       <section className="about" ref={about} aria-labelledby="about-h">
         <h2 id="about-h" className="sec-h">About</h2>
+        <div className="about-body">
+        <div className="about-text">
         <article className="about-item">
           <h3>The tool</h3>
           <p>One place for WATSAN's spring work: track the springs already recharged, and plan new ones from a spring's location and a few field answers.</p>
@@ -60,6 +61,9 @@ export default function Home() {
           <p>One way they do it: rooftop rainwater is sent down old, unused handpumps into the ground, where it feeds the springs below. This is called Direct Injection (DI).</p>
           <DiStrip />
         </article>
+        </div>
+        <img className="about-photo" src="/brand/about-spring.jpg" alt="A spring stream below snow peaks in the Himalaya" width="1024" height="572" loading="lazy" />
+        </div>
       </section>
 
       <section className="team" ref={team} aria-labelledby="team-h">

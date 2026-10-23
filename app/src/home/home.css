@@ -17,11 +17,10 @@
 .lp-hero { position: relative; min-height: 500px; height: 66vh; max-height: 660px; color: #fff; overflow: hidden; display: flex; flex-direction: column; background: var(--forest); }
 .lp-hero-photo {
   position: absolute; inset: 0;
-  /* photo: a spring at Barkoat, Narendra Nagar (field visit, 18 Oct 2026) */
   background:
     linear-gradient(90deg, rgba(8, 36, 30, 0.86) 0%, rgba(8, 36, 30, 0.55) 40%, rgba(8, 36, 30, 0.08) 75%),
     linear-gradient(180deg, rgba(8, 36, 30, 0.5) 0%, rgba(8, 36, 30, 0) 24%, rgba(8, 36, 30, 0) 66%, rgba(8, 36, 30, 0.55) 100%),
-    url('/brand/hero-spring.jpg') 60% 45% / cover no-repeat;
+    url('/brand/hero-spring.jpg') 70% 55% / cover no-repeat;
 }
 .lp-hero-nav { position: relative; width: 100%; max-width: 1080px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 20px clamp(16px, 4vw, 48px); }
 .lp-hero-mark { display: flex; align-items: center; gap: 8px; font-weight: 600; letter-spacing: 0.6px; font-size: 15px; }
@@ -61,7 +60,10 @@
 .chip-b { background: #e1efe4 !important; color: #2a6b3f !important; } .chip-b b { background: #2f8a4e; }
 .chip-c { background: #dfecf3 !important; color: #1f5e78 !important; } .chip-c b { background: #0b6e8a; }
 .door-go { display: inline-flex; align-items: center; gap: 6px; margin-top: 16px; font-weight: 650; color: #16241f; }
-.door-plan .door-go { align-self: flex-start; background: var(--forest); color: #fff; padding: 10px 20px; border-radius: 999px; box-shadow: 0 4px 12px rgba(15, 59, 51, 0.3); }
+.door-go { align-self: flex-start; }
+.door-dash .door-go { border: 1.5px solid var(--forest); color: var(--forest); padding: 9px 19px; border-radius: 999px; }
+.door-dash:hover .door-go { background: var(--sage); }
+.door-plan .door-go { background: var(--forest); color: #fff; padding: 10px 20px; border-radius: 999px; box-shadow: 0 4px 12px rgba(15, 59, 51, 0.3); }
 .door-plan:hover .door-go { background: var(--forest-2); }
 .arrow { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.18s; }
 .door:hover .arrow { transform: translateX(3px); }
@@ -76,15 +78,17 @@
 .about, .team { max-width: 1080px; margin: 0 auto; padding: 64px clamp(16px, 4vw, 48px) 0; }
 .sec-h { font-size: 12.5px; text-transform: uppercase; letter-spacing: 2.6px; color: var(--moss); font-weight: 650; margin-bottom: 18px; display: flex; align-items: center; gap: 14px; }
 .sec-h::after { content: ''; flex: 1; height: 1px; background: var(--sage-2); }
+.about-body { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 40px; align-items: start; }
+.about-photo { width: 100%; height: 100%; min-height: 360px; max-height: 560px; object-fit: cover; border-radius: 16px; box-shadow: 0 14px 34px rgba(10, 40, 30, 0.16); position: sticky; top: 24px; }
 .about-item + .about-item { margin-top: 30px; }
 .about h3 { font-family: var(--serif); font-size: 26px; font-weight: 600; color: #16241f; margin-bottom: 6px; }
 .about-item p { max-width: 760px; color: #4a5a55; font-size: 16px; }
 
-.di-strip { margin-top: 20px; padding: 26px 24px 22px; border-radius: 16px; background: var(--sage); }
+.di-strip { margin-top: 18px; padding: 18px 14px 16px; border-radius: 16px; background: var(--sage); }
 .di-strip ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-.di-strip li { position: relative; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; font-size: 14px; color: #2d3f3a; font-weight: 500; }
-.di-strip li:not(:last-child)::after { content: ''; position: absolute; top: 30px; right: -16%; width: 32%; border-top: 1.6px dashed rgba(47, 111, 92, 0.55); }
-.di-strip svg { width: 40px; height: 36px; fill: none; stroke: var(--forest); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; background: var(--sage-2); border-radius: 50%; padding: 12px; box-sizing: content-box; }
+.di-strip li { position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; font-size: 13px; line-height: 1.3; color: #2d3f3a; font-weight: 500; }
+.di-strip li:not(:last-child)::after { content: ''; position: absolute; top: 24px; right: -12%; width: 24%; border-top: 1.6px dashed rgba(47, 111, 92, 0.55); }
+.di-strip svg { width: 30px; height: 28px; fill: none; stroke: var(--forest); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; background: var(--sage-2); border-radius: 50%; padding: 10px; box-sizing: content-box; }
 
 .team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
 .person { display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-radius: 14px; background: var(--card); border: 1px solid rgba(15, 59, 51, 0.1); }
@@ -143,15 +147,18 @@
 
 /* dashboard slot in the opening page's colours */
 .dash { background: var(--cream); }
-.dash-top { background: var(--forest) !important; background-image: none !important; }
+.dash-top { position: relative; overflow: hidden; min-height: 150px; align-items: flex-start; padding-top: 14px; background: var(--forest) !important; background-image: none !important; }
+.dash-top > *:not(.dash-banner) { position: relative; }
+.dash-banner { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(8, 36, 30, 0.55), rgba(8, 36, 30, 0.75)), url('/brand/dash-banner.jpg') center 60% / cover no-repeat; }
 .dash-hero h1 { font-family: var(--serif); font-weight: 600; }
-.dash-hero .door-badge { position: absolute; }
 
 /* ------------------------------------------------------------------ phones */
 @media (max-width: 760px) {
   .lp-hero { height: auto; min-height: 540px; }
   .doors { grid-template-columns: 1fr; margin-top: -90px; }
   .team-grid { grid-template-columns: 1fr; }
+  .about-body { grid-template-columns: 1fr; }
+  .about-photo { position: static; min-height: 0; height: 220px; }
   .di-strip ol { grid-template-columns: 1fr 1fr; row-gap: 18px; }
   .di-strip li::after { display: none; }
   .home-foot-in { justify-content: center; }
