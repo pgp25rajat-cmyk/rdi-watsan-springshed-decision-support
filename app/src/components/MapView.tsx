@@ -29,7 +29,6 @@ type Props = {
   terrainUrl: string; // Terrarium-encoded elevation tiles for the 3D view
   onPlace: (lat: number, lon: number) => void;
   onCancelPlacing: () => void;
-  onSpringDrag: (lat: number, lon: number) => void;
   onSiteMove: (id: string, lat: number, lon: number) => void;
   onUseSpring: (s: DatasetSpring) => void;
 };
@@ -404,8 +403,8 @@ export default function MapView(props: Props) {
     if (point) {
       const node = el('pin pin-spring', '<span></span>');
       node.title = props.springName || 'Your spring';
-      const m = add(new maplibregl.Marker({ element: node, anchor: 'bottom', draggable: true }).setLngLat([point.lon, point.lat]));
-      m.on('dragend', () => { const ll = m.getLngLat(); live.current.onSpringDrag(ll.lat, ll.lng); });
+      // fixed once chosen, so panning the map cannot move the spring by accident (Rajat 2026-10-23); Clear form frees it
+      add(new maplibregl.Marker({ element: node, anchor: 'bottom' }).setLngLat([point.lon, point.lat]));
     }
     if (B && (tab === 'B' || tab === 'C')) {
       for (const z of zones) {

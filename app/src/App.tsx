@@ -259,7 +259,6 @@ export default function App() {
               placing={effectivePlacing} canCancel={placing !== 'none'} focus={focus} onPlace={onPlace}
               terrainUrl={demo ? DEMO_TERRAIN : LIVE_TERRAIN}
               onCancelPlacing={() => setPlacing('none')}
-              onSpringDrag={(lat, lon) => setForm((f) => ({ ...f, spring: { ...f.spring, lat: lat.toFixed(6), lon: lon.toFixed(6), datasetId: undefined } }))}
               onSiteMove={(id, lat, lon) => setForm((f) => ({ ...f, sites: f.sites.map((s) => (s.id === id ? { ...s, latitude: +lat.toFixed(6), longitude: +lon.toFixed(6) } : s)) }))}
               onUseSpring={pickSpring} />
           </div>
