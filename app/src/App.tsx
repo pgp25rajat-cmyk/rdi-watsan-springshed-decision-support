@@ -129,10 +129,8 @@ export default function App() {
     setForm(() => ({
       ...emptyForm(),
       spring: { name: DEMO_SPRING.name, lat: String(DEMO_SPRING.latitude), lon: String(DEMO_SPRING.longitude), elevation: String(DEMO_SPRING.elevation_m) },
-      answers: {
-        flow_vs_past: 'a_bit_less', lean_flow_lpm: '4', low_flow_months: '3', households: '35', seasonality: 'seasonal_perennial',
-        users_vs_past: 'more', water_quality: 'muddy_after_rain', disturbance_uphill: 'some', protection: 'one', recharge_works: 'none',
-      },
+      // Balench as recorded on the field form (18 Oct 2026)
+      answers: { flow_vs_past: 'more', lean_flow_lpm: '1', monsoon_flow_lpm: '3', low_flow_months: '3', dry_months: '0' },
       sites: demoDiSites(),
     }));
     flyTo(DEMO_SPRING.latitude, DEMO_SPRING.longitude, 16);

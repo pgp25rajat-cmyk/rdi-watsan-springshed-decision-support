@@ -6,7 +6,8 @@ import type {
 } from './api';
 import { DEFAULT_ASSUMPTIONS } from './api';
 
-export const DEMO_SPRING = { name: 'Nauli Dhara', latitude: 29.91903, longitude: 78.55647, elevation_m: 1481 };
+// the example is a real field-visit spring (Balench, Oct 2026) with the two WATSAN DI handpumps reported to feed it
+export const DEMO_SPRING = { name: 'Balench', latitude: 30.361833, longitude: 78.378175, elevation_m: 1710 };
 
 export const MOCK_HEALTH: Health = { ok: true, version: 'demo', map_set: null, offline: false };
 
@@ -151,7 +152,7 @@ function moduleA(req: AssessRequest, elevation: number): AssessResponse['A'] {
       'Soil 0-30 cm (SoilGrids): clay 21%, sand 44%',
       'Yearly rain (CHIRPS 2018-2025): 1,600 mm (IMD 2001-2025: 1,540 mm)',
     ],
-    nearest_dataset_spring: { record_id: 'SPR-0417', spring_name: 'Nauli Dhara', distance_m: 38 },
+    nearest_dataset_spring: { record_id: 'RDI-SPR-0001', spring_name: 'Balench', distance_m: 0 },
     elevation_gap_m: 9,
     map: {
       rings: [
@@ -280,11 +281,6 @@ function moduleB(lat: number, lon: number, elev: number): AssessResponse['B'] {
     result,
     report_markdown: '',
   };
-}
-
-function pt(lat: number, lon: number, east: number, north: number) {
-  const [lo, la] = offset(lat, lon, east, north);
-  return { latitude: la, longitude: lo };
 }
 
 // ------------------------------------------------------------------ Module C
@@ -455,22 +451,19 @@ export function mockAssess(req: AssessRequest): AssessResponse {
   };
 }
 
-/** Two example DI sites for the demo spring: one inside a recharge zone, one further out. */
+/** The example spring's DI handpumps: WATSAN's Arakot 1 and 2 (field visit, Oct 2026; data/02_processed/field_visit). */
 export function demoDiSites(): DiSite[] {
-  const { latitude: lat, longitude: lon } = DEMO_SPRING;
-  const a = pt(lat, lon, -95, 120);
-  const b = pt(lat, lon, -260, 360);
   return [
-    { id: 'di-demo-1', name: 'School handpump', ...a, roof_area_m2: 180, first_flush: true, filter: true },
-    { id: 'di-demo-2', name: 'Panchayat bhawan', ...b, roof_area_m2: 120, first_flush: true, filter: false },
+    { id: 'di-example-ark1', name: 'Arakot 1', latitude: 30.365046, longitude: 78.379673, roof_area_m2: 150, depth_m: 70, first_flush: true, filter: true },
+    { id: 'di-example-ark2', name: 'Arakot 2', latitude: 30.365313, longitude: 78.379288, roof_area_m2: 150, depth_m: 70, first_flush: true, filter: true },
   ];
 }
 
 /** A ready-made answer for the demo spring, with two DI sites. */
 export const mockResponse = (): AssessResponse => mockAssess({
   spring: DEMO_SPRING,
-  field: { flow_vs_past: 'a_bit_less', lean_flow_lpm: 4, low_flow_months: 3, households: 35, seasonality: 'seasonal_perennial' },
-  di: { sites: demoDiSites(), assumptions: { annual_rain_mm: 1600 } },
+  field: { flow_vs_past: 'more', lean_flow_lpm: 1, monsoon_flow_lpm: 3, low_flow_months: 3, dry_months: 0 },
+  di: { sites: demoDiSites(), assumptions: {} },
 });
 
 // ------------------------------------------------------------------ spring list
@@ -493,7 +486,7 @@ export function mockSprings(): DatasetSpring[] {
   let seed = 7;
   const rand = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
   const list: DatasetSpring[] = [{
-    id: 'SPR-0417', name: DEMO_SPRING.name, village: 'Nauli', district: 'Pauri Garhwal',
+    id: 'RDI-SPR-0001', name: DEMO_SPRING.name, village: 'Arakot', district: 'Tehri Garhwal',
     latitude: DEMO_SPRING.latitude, longitude: DEMO_SPRING.longitude, elevation_m: DEMO_SPRING.elevation_m, source: 'Demo list',
   }];
   NAMES.forEach((name, i) => {
