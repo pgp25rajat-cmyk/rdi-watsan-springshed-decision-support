@@ -33,6 +33,8 @@ SPRING_COLOR, HP_COLOR, CATCH_COLOR, STREAM_COLOR = "#0b63c5", "#c0392b", "#1111
 
 SATELLITE = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
 SATELLITE_CREDIT = "Satellite image: Esri World Imagery (Esri, Maxar, Earthstar Geographics), loaded when the report is opened online."
+STREETS = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"
+STREETS_CREDIT = "Road map: Esri World Street Map (Esri, HERE, Garmin, OpenStreetMap contributors), loaded when the report is opened online."
 MAP_W = 660  # px of the map frame (the page is A4 portrait)
 MAP_H_MAX = 560
 MIN_SPAN_M = 700
@@ -121,12 +123,12 @@ def contour_lines(z, level):
     return [list(g.coords) for g in geoms]  # (col, row) pairs
 
 
-def satellite_tiles(frame):
-    """Esri World Imagery tiles covering the frame, as SVG images. The browser fetches them when the report opens;
-    offline they stay blank and the shaded relief underneath shows through."""
+def satellite_tiles(frame, url=SATELLITE, max_zoom=18):
+    """Web map tiles (Esri World Imagery by default) covering the frame, as SVG images. The browser fetches them when
+    the report opens; offline they stay blank and the shaded relief underneath shows through."""
     lat0 = (frame.north + frame.south) / 2
     want = 1 / (2 * frame.px_per_m)  # ground metres per image pixel, for a sharp print
-    zoom = int(max(12, min(18, round(math.log2(156543.03 * math.cos(math.radians(lat0)) / want)))))
+    zoom = int(max(12, min(max_zoom, round(math.log2(156543.03 * math.cos(math.radians(lat0)) / want)))))
     n = 2 ** zoom
 
     def tile_x(lon):
@@ -147,7 +149,7 @@ def satellite_tiles(frame):
         for tx in range(int(tile_x(frame.west)), int(tile_x(frame.east)) + 1):
             x0, y0 = frame.xy(lon_of(tx), lat_of(ty))
             x1, y1 = frame.xy(lon_of(tx + 1), lat_of(ty + 1))
-            out.append(f'<image href="{SATELLITE.format(z=zoom, x=tx, y=ty)}" x="{x0:.2f}" y="{y0:.2f}" width="{x1 - x0 + 0.6:.2f}" '
+            out.append(f'<image href="{url.format(z=zoom, x=tx, y=ty)}" x="{x0:.2f}" y="{y0:.2f}" width="{x1 - x0 + 0.6:.2f}" '
                        f'height="{y1 - y0 + 0.6:.2f}" preserveAspectRatio="none"/>')
     return "".join(out)
 
@@ -342,7 +344,8 @@ class Report:
                 x, y = f.xy(s["longitude"], s["latitude"])
                 out.append(f'<rect x="{x - 6:.1f}" y="{y - 6:.1f}" width="12" height="12" fill="{HP_COLOR}" stroke="#fff" stroke-width="1.5"/>')
                 if labels:
-                    out.append(self.label(x + 9, y - 8, f"HP{i}: {s['name']}", size=11))
+                    out.append(self.label(x + 9, y - 8 - (12 if labels == "short" and i % 2 == 0 else 0),
+                                          f"HP{i}" if labels == "short" else f"HP{i}: {s['name']}", size=11))
             x, y = f.xy(self.r["spring"]["longitude"], self.r["spring"]["latitude"])
             out.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="7" fill="{SPRING_COLOR}" stroke="#fff" stroke-width="2"/>')
             if labels:
@@ -517,12 +520,13 @@ They are not field-verified; walk the recharge zones with a geologist before spe
             out += "<p>" + "; ".join(words) + ".</p>"
         if self.g is not None:
             near = self.frame
-            self.frame = MapFrame(self.g, self._extent(grow=2.6, min_span=1600))
-            svg = self.svg(self.raster(None) + satellite_tiles(self.frame) + self.overlays(zones=False, catchment_color="#ffe94d"))
+            self.frame = MapFrame(self.g, self._extent(grow=4, min_span=3000))
+            svg = self.svg(self.raster(None) + satellite_tiles(self.frame, STREETS, 16)
+                           + self.overlays(zones=False, streams=False, labels="short", catchment_color="#d6336c"))
             self.frame = near
             out += self.figure("Location map", svg, [("Spring", SPRING_COLOR, "dot"), ("DI handpump", HP_COLOR, "square"),
-                                                     ("Catchment to the ridge", "#e0c400", "line"), ("Drainage line", STREAM_COLOR, "line")],
-                               "The spring's catchment (yellow) on the satellite image. " + SATELLITE_CREDIT)
+                                                     ("Catchment to the ridge", "#d6336c", "line")],
+                               "The spring, the DI handpumps and the catchment on a road map, for finding the site. " + STREETS_CREDIT)
         return out
 
     def study_area(self):
@@ -1172,10 +1176,11 @@ ul.facts,ul.bullets{margin:6px 0 10px;padding-left:22px}ul.facts li,ul.bullets l
 ul.small{font-size:12.5px}
 figure{margin:18px 0 22px;break-inside:avoid;page-break-inside:avoid}
 .map-title{font-size:12px;font-weight:700;text-align:center;letter-spacing:.03em;margin-bottom:4px}
-svg.map,svg.chart{width:100%;height:auto;display:block}
+svg.chart{width:100%;height:auto;display:block}
+svg.map{width:82%;height:auto;display:block;margin:0 auto}
 figcaption,.tcap{text-align:center;color:#2b6a99;font-size:12.5px;margin-top:6px}
 .fig-note{font-size:12px;color:var(--muted);text-align:left;margin:4px 0}
-.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:11.5px;margin:6px 0 0 78px}
+.legend{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 14px;font-size:11.5px;margin:6px 9% 0}
 .legend span{display:inline-flex;align-items:center;gap:5px}
 .legend i{display:inline-block;width:14px;height:11px}
 .legend i.line{height:0;border-top:2.5px solid}.legend i.dash{height:0;border-top:2.5px dashed}.legend i.dot-line{height:0;border-top:2.5px dotted}
@@ -1190,7 +1195,7 @@ table.t.small{font-size:11.5px}
 .key .big{font-size:34px;font-weight:800;color:#1f5f8b}
 .scorebar{margin:10px 0}
 .theme{break-before:auto}
-@media (max-width:700px){main{padding:20px 16px}.legend{margin-left:0}.cover{min-height:auto}}
+@media (max-width:700px){main{padding:20px 16px}.legend{margin:6px 0 0}svg.map{width:100%}.cover{min-height:auto}}
 @page{size:A4;margin:14mm 12mm}
 @media print{body{background:#fff;font-size:12px}.toolbar{display:none}main{max-width:none;padding:0}
 .cover,.toc,section{break-after:page}h2{break-after:avoid}h3{break-after:avoid}}
