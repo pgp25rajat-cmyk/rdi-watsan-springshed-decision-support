@@ -117,3 +117,15 @@ def test_landslide_band_and_plain_summary():
                                       "elevation_m": 1197}, "field": {"flow_vs_past": "same", "lean_flow_lpm": 8}}, session)
     assert out["summary"][0].startswith("This spring has a ") and "because" in out["summary"][0]
     assert out["rationale"][: len(out["summary"])] == out["summary"]
+
+
+def test_critical_signs_force_high():
+    indicators = module_a.load_indicators()
+    calm = {"lean_flow_lpm": 8, "monsoon_flow_lpm": 12, "low_flow_months": 0, "flow_vs_past": "same"}
+    base = module_a.score_spring({}, module_a.clean_answers(calm)[0], indicators, {}, 1500)
+    assert base["class"] == "Low" and not base["critical_signs"]
+    for change in ({"flow_vs_past": "much_less"}, {"flow_vs_past": "dries_at_times"}, {"lean_flow_lpm": 0}, {"dry_months": 1}):
+        r = module_a.score_spring({}, module_a.clean_answers({**calm, **change})[0], indicators, {}, 1500)
+        assert r["class"] == "High" and r["score"] >= module_a.CLASS_CUTS[1] and r["critical_signs"], change
+        assert r["weighted_score"] < module_a.CLASS_CUTS[1]
+        assert module_a.plain_summary(r)[0].startswith("This spring is rated highly vulnerable because")
