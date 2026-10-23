@@ -1,0 +1,156 @@
+/* Opening page and dashboard slot. Uses the planner's palette from styles.css. */
+.home { min-height: 100vh; background: var(--bg); }
+
+/* ------------------------------------------------------------------ hero */
+.lp-hero { position: relative; min-height: 470px; height: 64vh; max-height: 640px; color: #fff; overflow: hidden; display: flex; flex-direction: column; }
+.ridges { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ripple { transform-origin: 150px 426px; animation: ripple 2.8s ease-out infinite; }
+@keyframes ripple { from { transform: scale(0.6); opacity: 0.7; } to { transform: scale(2.2); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .ripple { animation: none; } }
+
+.lp-hero-nav { position: relative; width: 100%; max-width: 1080px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px clamp(16px, 4vw, 48px); }
+.lp-hero-mark { display: flex; align-items: center; gap: 14px; font-weight: 650; letter-spacing: 0.4px; font-size: 14px; }
+.lp-hero-mark > span { display: inline-flex; align-items: center; gap: 6px; }
+.srhu-tile { height: 52px; width: auto; background: #fff; border-radius: 8px; padding: 5px 7px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18); }
+.drop-mark { width: 20px; height: 20px; color: #bfeaf5; }
+.lp-hero-links { display: flex; gap: 4px; }
+.lp-hero-links button { background: none; border: 0; color: #fff; opacity: 0.85; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-weight: 550; }
+.lp-hero-links button:hover { opacity: 1; background: rgba(255, 255, 255, 0.12); }
+
+.lp-hero-text { position: relative; width: 100%; max-width: 1080px; margin: 0 auto; padding: clamp(18px, 5vh, 56px) clamp(16px, 4vw, 48px) 0; }
+.lp-hero-text > * { max-width: 680px; }
+.eyebrow { text-transform: uppercase; letter-spacing: 2.2px; font-size: 12.5px; font-weight: 650; color: #bfeaf5; margin: 0 0 10px; }
+.lp-hero h1 { font-size: clamp(34px, 5.4vw, 60px); font-weight: 760; letter-spacing: -1px; line-height: 1.04; text-shadow: 0 2px 18px rgba(0, 30, 40, 0.35); }
+.lp-hero-sub { font-size: clamp(16px, 1.8vw, 19px); color: rgba(255, 255, 255, 0.88); margin-top: 14px; }
+
+/* ------------------------------------------------------------------ the two doors */
+.doors {
+  position: relative; z-index: 2; display: grid; grid-template-columns: 1fr 1fr; gap: clamp(14px, 2vw, 24px);
+  max-width: 1080px; margin: -120px auto 0; padding: 0 clamp(16px, 4vw, 48px);
+}
+.door {
+  position: relative; display: flex; flex-direction: column; gap: 6px; padding: 22px 24px 20px; border-radius: 16px;
+  background: var(--surface); color: var(--ink); text-decoration: none; border: 1px solid var(--line);
+  box-shadow: 0 2px 4px rgba(10, 40, 50, 0.06), 0 18px 40px rgba(10, 40, 50, 0.14);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.door:hover { transform: translateY(-4px); box-shadow: 0 4px 8px rgba(10, 40, 50, 0.08), 0 26px 50px rgba(10, 40, 50, 0.2); }
+.door h2 { font-size: 23px; font-weight: 720; letter-spacing: -0.3px; }
+.door p { color: var(--ink-2); margin: 2px 0 6px; }
+.door-kicker { font-size: 12px; text-transform: uppercase; letter-spacing: 1.6px; font-weight: 700; color: var(--ink-3); margin-top: 6px; }
+.door-plan { background: linear-gradient(160deg, #ffffff 40%, #e6f3f1); border-color: #bfdcd8; }
+.door-plan .door-kicker { color: var(--water); }
+.door-dash .door-kicker { color: var(--earth); }
+.door-art { width: 100%; height: 76px; margin-bottom: 4px; }
+.door-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; }
+.door-chips i { font-style: normal; font-size: 12.5px; font-weight: 600; padding: 3px 10px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); color: var(--ink-2); display: inline-flex; align-items: center; gap: 6px; }
+.door-chips b { width: 17px; height: 17px; border-radius: 50%; display: inline-grid; place-items: center; font-size: 10.5px; color: #fff; background: var(--water); }
+.door-chips i:nth-child(2) b { background: var(--green); }
+.door-chips i:nth-child(3) b { background: var(--earth); }
+.door-go { display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; font-weight: 700; color: var(--water-dark); }
+.door-dash .door-go { color: var(--earth); }
+.door-plan .door-go { align-self: flex-start; background: var(--water); color: #fff; padding: 9px 16px; border-radius: 10px; box-shadow: 0 3px 10px rgba(11, 110, 138, 0.28); }
+.arrow { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.18s; }
+.door:hover .arrow { transform: translateX(3px); }
+.door-badge {
+  position: absolute; top: 16px; right: 16px; font-size: 11.5px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 999px; background: var(--amber-bg); color: var(--amber-ink); border: 1px solid #f0d9a4;
+}
+
+/* door drawings */
+.art-before { fill: #d9cdb6; }
+.art-after { fill: var(--water); }
+.art-split { stroke: var(--line-2); stroke-dasharray: 3 3; }
+.art-label { font-size: 9px; fill: var(--ink-3); text-anchor: middle; font-weight: 600; }
+.art-contour { fill: none; stroke: #9cc7bf; stroke-width: 1.2; }
+.art-zone { stroke-width: 1.5; }
+.art-zone.z1 { fill: rgba(47, 138, 78, 0.35); stroke: var(--green); }
+.art-zone.z2 { fill: rgba(47, 138, 78, 0.22); stroke: var(--green); stroke-dasharray: 3 2; }
+.art-zone.z3 { fill: rgba(47, 138, 78, 0.14); stroke: var(--green); stroke-dasharray: 2 2; }
+.art-drop { fill: var(--water); }
+
+/* ------------------------------------------------------------------ about and team */
+.about, .team { max-width: 1080px; margin: 0 auto; padding: 56px clamp(16px, 4vw, 48px) 0; }
+.sec-h { font-size: 13px; text-transform: uppercase; letter-spacing: 2px; color: var(--ink-3); font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+.sec-h::after { content: ''; flex: 1; height: 1px; background: var(--line-2); }
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+.about h3 { font-size: 18px; margin-bottom: 4px; }
+.about-grid p { color: var(--ink-2); font-size: 15.5px; }
+
+.di-strip { margin-top: 26px; padding: 18px 20px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); }
+.di-title { font-weight: 700; font-size: 14px; margin: 0 0 12px; color: var(--water-dark); }
+.di-strip ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.di-strip li { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; font-size: 13.5px; color: var(--ink-2); font-weight: 550; }
+.di-strip li:not(:last-child)::after { content: ''; position: absolute; top: 24px; right: -14%; width: 28%; border-top: 2px dashed #9cc7d3; }
+.di-strip svg { width: 52px; height: 48px; fill: none; stroke: var(--water); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; background: var(--water-soft); border-radius: 50%; padding: 4px; box-sizing: content-box; }
+
+.team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.person { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); }
+.person b { display: block; font-size: 16px; }
+.person small { color: var(--ink-3); font-size: 13px; }
+.avatar { width: 44px; height: 44px; flex: none; border-radius: 50%; display: grid; place-items: center; font-weight: 750; font-size: 18px; color: #fff; background: linear-gradient(140deg, var(--water), var(--green)); }
+.person-tbc { border-style: dashed; background: transparent; }
+.person-tbc .avatar { background: var(--surface-3); color: var(--water-dark); }
+
+.home-foot { max-width: 984px; margin: 64px auto 0; padding: 26px 0 36px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; border-top: 1px solid var(--line-2); }
+@media (max-width: 1080px) { .home-foot { margin-left: clamp(16px, 4vw, 48px); margin-right: clamp(16px, 4vw, 48px); } }
+.home-foot img { height: 78px; width: auto; background: #fff; border-radius: 10px; padding: 8px 10px; border: 1px solid var(--line); }
+.home-foot p { color: var(--ink-3); font-size: 13.5px; text-align: right; margin: 0; }
+
+/* ------------------------------------------------------------------ planner: brand links home */
+.brand-link { color: inherit; text-decoration: none; }
+.brand-link:hover h1 { text-decoration: underline; text-underline-offset: 3px; }
+
+/* ------------------------------------------------------------------ dashboard slot */
+.dash { min-height: 100vh; background: var(--bg); }
+.dash-top { display: flex; align-items: center; gap: 14px; padding: 10px 18px; color: #fff; background-image: linear-gradient(100deg, #5c4a2f 0%, #9a7b4f 60%, #2f7d5c 100%); }
+.dash-back { color: #fff; text-decoration: none; font-weight: 600; opacity: 0.9; }
+.dash-back:hover { opacity: 1; text-decoration: underline; }
+.dash-title { flex: 1; font-weight: 650; font-size: 17px; }
+.dash-top .btn { text-decoration: none; }
+.dash-main { max-width: 1080px; margin: 0 auto; padding: 32px clamp(16px, 4vw, 48px) 48px; }
+.dash-hero { position: relative; padding-right: 130px; }
+.dash-hero .door-badge { top: 4px; right: 0; }
+.dash-hero h1 { font-size: clamp(24px, 3.4vw, 34px); letter-spacing: -0.5px; }
+.dash-hero p { color: var(--ink-2); max-width: 640px; font-size: 16px; }
+
+.ghost-grid { margin-top: 24px; display: grid; grid-template-columns: 2fr 1fr; grid-template-rows: auto 220px; gap: 14px; }
+.ghost { border-radius: 14px; background: var(--surface); border: 1px solid var(--line); padding: 16px; position: relative; overflow: hidden; }
+.ghost::after { content: ''; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.7) 50%, transparent 70%); transform: translateX(-100%); animation: shimmer 2.4s infinite; }
+@keyframes shimmer { to { transform: translateX(100%); } }
+@media (prefers-reduced-motion: reduce) { .ghost::after { animation: none; display: none; } }
+.ghost-kpis { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.ghost-kpi i, .ghost-kpi b { display: block; border-radius: 6px; background: var(--surface-3); }
+.ghost-kpi i { height: 10px; width: 60%; }
+.ghost-kpi b { height: 26px; width: 45%; margin-top: 10px; background: #dfe9e7; }
+.ghost-chart { display: flex; align-items: flex-end; gap: 10px; }
+.ghost-chart span { flex: 1; border-radius: 6px 6px 2px 2px; background: #e6dfd0; }
+.ghost-chart span.after { background: #b9d9e2; }
+.ghost-map { background: repeating-radial-gradient(circle at 60% 55%, #eef3f2 0 14px, #e3ecea 14px 15px); }
+.pin { position: absolute; width: 14px; height: 14px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: var(--water); opacity: 0.55; }
+.pin.p1 { left: 30%; top: 30%; } .pin.p2 { left: 62%; top: 52%; } .pin.p3 { left: 44%; top: 70%; }
+.ghost-list { display: none; }
+
+.dash-data { margin-top: 30px; }
+.dash-data h2 { font-size: 17px; }
+.dash-data ul { list-style: none; padding: 0; margin: 12px 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px; }
+.dash-data li { padding: 10px 12px; border-radius: 10px; background: var(--surface); border: 1px solid var(--line); display: flex; flex-direction: column; }
+.dash-data li span { font-size: 13px; color: var(--ink-3); }
+
+/* ------------------------------------------------------------------ phones */
+@media (max-width: 760px) {
+  .lp-hero { height: auto; min-height: 520px; }
+  .doors { grid-template-columns: 1fr; margin-top: -90px; }
+  .about-grid, .team-grid { grid-template-columns: 1fr; }
+  .di-strip ol { grid-template-columns: 1fr 1fr; row-gap: 18px; }
+  .di-strip li::after { display: none; }
+  .home-foot { justify-content: center; }
+  .home-foot p { text-align: center; }
+  .srhu-tile { height: 42px; }
+  .door .door-badge { position: static; align-self: flex-start; }
+  .ghost-grid { grid-template-columns: 1fr; grid-template-rows: auto; }
+  .ghost-chart, .ghost-map { height: 180px; }
+  .ghost-kpis { grid-template-columns: 1fr 1fr; }
+  .dash-hero { padding-right: 0; padding-top: 34px; }
+  .dash-title { font-size: 15px; }
+}
