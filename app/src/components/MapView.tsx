@@ -421,6 +421,8 @@ export default function MapView(props: Props) {
         const r = siteClass.get(s.id);
         const moved = r && (Math.abs(r.latitude - s.latitude) > 1e-6 || Math.abs(r.longitude - s.longitude) > 1e-6);
         const cls = r && !moved ? r.location_class : null;
+        // a WATSAN site already in the plan shows as its orange dot until it is assessed
+        if (!cls && existingDi.some((d) => Math.abs(d.latitude - s.latitude) < 1e-4 && Math.abs(d.longitude - s.longitude) < 1e-4)) return;
         const size = tab === 'C' ? 30 : 24;
         const node = el(`site-icon${cls ? '' : ' site-new'}`, String(i + 1));
         node.style.background = cls ? locationClass[cls].color : '#ffffff';
@@ -435,7 +437,7 @@ export default function MapView(props: Props) {
       });
     }
     return () => made.forEach((m) => m.remove());
-  }, [ready, point?.lat, point?.lon, props.springName, B, tab, zones, showSites, sites, siteClass]);
+  }, [ready, point?.lat, point?.lon, props.springName, B, tab, zones, showSites, sites, siteClass, existingDi]);
 
   // ------------------------------------------------------------------ where the camera goes
   const lastFocus = useRef(0);
