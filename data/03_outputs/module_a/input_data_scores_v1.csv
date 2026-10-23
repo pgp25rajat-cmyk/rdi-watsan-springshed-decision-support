@@ -254,10 +254,10 @@ WAT-SPR-0299,,Pauri Garhwal,1713.1,38.4,Medium,Low,37.6,seasonal,4.0,4.0,50,0,50
 ATL-SPR-0001,Ghopagadhera Dhara,Nainital,1915.7,46.7,Medium,Low,46.7,,,,,,,56.9,94.0,39.7,5.3,53.6,40.7,52.8,69.2,3.9,0
 ATL-SPR-0002,Kafli Dhara,Nainital,1932.9,49.9,Medium,Low,49.9,,,,,,,73.1,87.8,39.7,5.3,50.4,54.4,92.5,28.7,3.9,0
 ATL-SPR-0003,Bhumka Naula,Nainital,1966.7,52.5,Medium,Low,52.5,,,,,,,73.1,87.8,39.7,5.3,67.7,64.6,59.8,47.1,11.8,0
-ATL-SPR-0004,Nar Da Naula,Nainital,2049.8,64.8,Medium,Low,64.8,,,,,,,73.1,87.8,87.8,39.3,50.4,57.7,98.8,78.1,3.9,50
+ATL-SPR-0004,Nar Da Naula,Nainital,2049.8,64.8,High,Low,64.8,,,,,,,73.1,87.8,87.8,39.3,50.4,57.7,98.8,78.1,3.9,50
 ATL-SPR-0005,Gajar Naula,Nainital,2051.2,67.1,High,Low,67.1,,,,,,,73.1,87.8,87.8,39.3,72.3,44.5,98.4,83.5,3.9,50
-ATL-SPR-0006,Sunkiya Dhara,Nainital,2049.3,62.7,Medium,Low,62.7,,,,,,,73.1,87.8,87.8,39.3,72.4,55.2,64.6,85.9,3.9,0
-ATL-SPR-0007,Sunkiya Dhara -2,Nainital,2025.1,63.4,Medium,Low,63.4,,,,,,,73.1,87.8,87.8,39.3,70.7,45.3,57.0,80.6,29.7,0
+ATL-SPR-0006,Sunkiya Dhara,Nainital,2049.3,62.7,High,Low,62.7,,,,,,,73.1,87.8,87.8,39.3,72.4,55.2,64.6,85.9,3.9,0
+ATL-SPR-0007,Sunkiya Dhara -2,Nainital,2025.1,63.4,High,Low,63.4,,,,,,,73.1,87.8,87.8,39.3,70.7,45.3,57.0,80.6,29.7,0
 ATL-SPR-0009,Diggi Naula,Nainital,1743.1,53.8,Medium,Low,53.8,,,,,,,56.9,94.0,39.7,5.3,93.5,7.8,97.3,91.0,3.9,0
 ATL-SPR-0011,ShailaGadhera,Nainital,1817.0,55.4,Medium,Low,55.4,,,,,,,56.9,94.0,87.8,39.3,25.1,43.8,96.1,28.7,10.1,50
 ATL-SPR-0014,Bhadune Dhara,Nainital,1263.8,43.5,Medium,Low,43.5,,,,,,,33.2,47.4,39.7,5.3,69.5,54.4,60.2,55.6,60.5,0
@@ -267,32 +267,32 @@ ATL-SPR-0018,Dhoina Naula,Nainital,1325.4,51.3,Medium,Low,51.3,,,,,,,63.0,68.9,3
 ATL-SPR-0019,Keligad Dhara,Nainital,1258.2,43.8,Medium,Low,43.8,,,,,,,33.2,47.4,39.7,5.3,53.8,81.6,30.5,54.9,87.3,0
 ATL-SPR-0020,Mungru Naula,Nainital,1293.8,52.3,Medium,Low,52.3,,,,,,,63.0,68.9,39.7,5.3,78.0,22.9,73.0,65.3,51.5,0
 ATL-SPR-0022,Lohali Dhara,Nainital,1295.6,43.2,Medium,Low,43.2,,,,,,,20.7,46.0,39.7,5.3,59.2,90.0,79.9,9.7,96.5,0
-ATL-SPR-0025,Pyura Pani,Nainital,1377.9,62.6,Medium,Low,62.6,,,,,,,97.0,44.4,73.4,64.1,46.2,88.9,27.6,49.1,70.1,0
-ATL-SPR-0026,PadaGadhera,Nainital,1531.9,62.8,Medium,Low,62.8,,,,,,,97.0,44.4,73.4,64.1,22.8,96.0,6.5,79.8,91.7,0
+ATL-SPR-0025,Pyura Pani,Nainital,1377.9,62.6,High,Low,62.6,,,,,,,97.0,44.4,73.4,64.1,46.2,88.9,27.6,49.1,70.1,0
+ATL-SPR-0026,PadaGadhera,Nainital,1531.9,62.8,High,Low,62.8,,,,,,,97.0,44.4,73.4,64.1,22.8,96.0,6.5,79.8,91.7,0
 ATL-SPR-0027,Gairadi Dhara,Nainital,1553.9,54.5,Medium,Low,54.5,,,,,,,86.5,53.6,73.4,64.1,18.5,93.6,4.4,60.2,37.7,0
 ATL-SPR-0028,Harsia Dhar,Nainital,1693.3,46.9,Medium,Low,46.9,,,,,,,86.5,53.6,3.4,47.9,28.6,85.9,4.5,65.5,48.3,0
 ATL-SPR-0030,Keligad,Nainital,1106.7,39.9,Medium,Low,39.9,,,,,,,33.2,52.2,39.7,5.3,50.4,87.6,19.8,24.1,34.2,50
 ATL-SPR-0031,Ghat,Nainital,332.6,0,No score,Low,,,,,,,,,,,,,,,,,
 ATL-SPR-0033,road,Nainital,1037.7,48.6,Medium,Low,48.6,,,,,,,33.2,47.4,39.7,5.3,94.8,60.6,84.2,55.8,27.6,50
 ATL-SPR-0037,Dumtana,Nainital,1132.7,58.5,Medium,Low,58.5,,,,,,,66.4,80.6,39.7,5.3,62.9,56.0,94.1,37.6,62.4,50
-ATL-SPR-0039,Shiv,Nainital,1325.6,60.0,Medium,Low,60.0,,,,,,,65.4,83.5,39.7,5.3,67.7,24.3,90.1,77.2,68.7,50
+ATL-SPR-0039,Shiv,Nainital,1325.6,60.0,High,Low,60.0,,,,,,,65.4,83.5,39.7,5.3,67.7,24.3,90.1,77.2,68.7,50
 ATL-SPR-0044,Chapar,Nainital,1268.3,53.8,Medium,Low,53.8,,,,,,,65.4,83.5,87.8,39.3,27.1,10.0,42.9,63.9,53.0,0
 ATL-SPR-0045,Naag,Nainital,1347.0,51.5,Medium,Low,51.5,,,,,,,65.4,83.5,87.8,39.3,8.2,10.0,38.8,83.1,43.8,0
 ATL-SPR-0047,Para,Nainital,1780.1,55.0,Medium,Low,55.0,,,,,,,65.4,83.5,87.8,39.3,13.8,12.4,98.9,71.4,39.1,0
 ATL-SPR-0049,Dansil,Nainital,1820.9,52.0,Medium,Low,52.0,,,,,,,56.9,94.0,39.7,5.3,58.7,46.9,69.7,59.9,11.2,50
 ATL-SPR-0050,Aamgad,Nainital,879.5,56.7,Medium,Low,56.7,,,,,,,97.0,44.4,3.4,47.9,21.1,79.2,85.4,19.6,98.6,50
-ATL-SPR-0051,Jala,Nainital,849.7,61.9,Medium,Low,61.9,,,,,,,97.0,44.4,73.4,64.1,15.2,87.0,36.5,10.3,91.7,50
+ATL-SPR-0051,Jala,Nainital,849.7,61.9,High,Low,61.9,,,,,,,97.0,44.4,73.4,64.1,15.2,87.0,36.5,10.3,91.7,50
 ATL-SPR-0052,Dhara,Nainital,1612.8,47.4,Medium,Low,47.4,,,,,,,78.9,28.5,3.4,47.9,45.0,53.6,51.1,87.4,25.6,50
 ATL-SPR-0053,Datta,Nainital,1755.6,39.6,Medium,Low,39.6,,,,,,,47.7,42.1,3.4,47.9,31.8,74.4,76.5,88.9,16.0,0
 ATL-SPR-0054,Talla,Nainital,1344.4,56.9,Medium,Low,56.9,,,,,,,86.5,53.6,73.4,64.1,3.4,94.7,17.6,11.0,73.4,50
 ATL-SPR-0055,Brahampani,Nainital,1344.4,56.9,Medium,Low,56.9,,,,,,,86.5,53.6,73.4,64.1,3.4,94.7,17.6,11.0,73.4,50
 ATL-SPR-0056,Kholi,Nainital,1769.8,39.9,Medium,Low,39.9,,,,,,,47.7,42.1,3.4,47.9,31.8,76.3,77.1,91.8,16.0,0
-ATL-SPR-0057,Bhateliya,Nainital,2179.6,63.3,Medium,Low,63.3,,,,,,,73.1,87.8,87.8,39.3,76.7,44.5,62.4,99.6,3.9,0
-ATL-SPR-0058,Pradhan,Nainital,2037.7,64.6,Medium,Low,64.6,,,,,,,68.9,97.1,87.8,39.3,79.7,32.7,97.4,88.3,3.9,0
-ATL-SPR-0059,Dikki,Nainital,2112.3,63.5,Medium,Low,63.5,,,,,,,68.9,97.1,87.8,39.3,57.8,52.4,94.8,98.0,3.9,0
-ATL-SPR-0060,Malla,Nainital,1964.4,60.1,Medium,Low,60.1,,,,,,,68.9,97.1,87.8,39.3,31.8,56.8,54.1,72.4,10.1,50
-ATL-SPR-0061,Bhumiya,Nainital,2126.8,64.5,Medium,Low,64.5,,,,,,,68.9,97.1,87.8,39.3,83.3,26.3,89.3,93.7,3.9,0
-ATL-SPR-0062,Bhakhali,Nainital,1921.6,63.0,Medium,Low,63.0,,,,,,,73.1,87.8,87.8,39.3,81.7,33.3,87.3,72.0,3.9,0
+ATL-SPR-0057,Bhateliya,Nainital,2179.6,63.3,High,Low,63.3,,,,,,,73.1,87.8,87.8,39.3,76.7,44.5,62.4,99.6,3.9,0
+ATL-SPR-0058,Pradhan,Nainital,2037.7,64.6,High,Low,64.6,,,,,,,68.9,97.1,87.8,39.3,79.7,32.7,97.4,88.3,3.9,0
+ATL-SPR-0059,Dikki,Nainital,2112.3,63.5,High,Low,63.5,,,,,,,68.9,97.1,87.8,39.3,57.8,52.4,94.8,98.0,3.9,0
+ATL-SPR-0060,Malla,Nainital,1964.4,60.1,High,Low,60.1,,,,,,,68.9,97.1,87.8,39.3,31.8,56.8,54.1,72.4,10.1,50
+ATL-SPR-0061,Bhumiya,Nainital,2126.8,64.5,High,Low,64.5,,,,,,,68.9,97.1,87.8,39.3,83.3,26.3,89.3,93.7,3.9,0
+ATL-SPR-0062,Bhakhali,Nainital,1921.6,63.0,High,Low,63.0,,,,,,,73.1,87.8,87.8,39.3,81.7,33.3,87.3,72.0,3.9,0
 ATL-SPR-0064,Panditji,Nainital,1084.9,32.6,Low,Low,32.6,,,,,,,9.4,16.0,39.7,5.3,59.4,48.1,68.8,43.0,28.6,50
 ATL-SPR-0065,Dhara,Nainital,1091.9,33.7,Low,Low,33.7,,,,,,,9.4,16.0,39.7,5.3,65.7,37.5,74.1,65.5,54.5,0
 ATL-SPR-0066,Jogyari,Nainital,1177.2,37.7,Medium,Low,37.7,,,,,,,9.4,16.0,39.7,5.3,63.9,26.3,75.6,86.3,91.7,0
@@ -306,14 +306,14 @@ ATL-SPR-0073,Harijan Dhara II,Nainital,1702.6,48.5,Medium,Low,48.5,,,,,,,78.9,28
 ATL-SPR-0074,Harijan Dhara,Nainital,1529.4,46.8,Medium,Low,46.8,,,,,,,78.9,28.5,3.4,47.9,48.3,67.8,89.8,31.4,50.4,0
 ATL-SPR-0075,Naul Naula,Nainital,1462.5,44.7,Medium,Low,44.7,,,,,,,78.9,28.5,3.4,47.9,50.4,43.8,91.1,56.0,23.7,0
 ATL-SPR-0076,Naul Dhara,Nainital,1325.0,44.5,Medium,Low,44.5,,,,,,,78.9,28.5,3.4,47.9,92.9,0.4,98.0,35.0,3.9,0
-ATL-SPR-0077,Galani Gadhara,Nainital,1369.5,60.3,Medium,Low,60.3,,,,,,,93.5,81.0,73.4,64.1,36.5,78.8,29.5,16.1,45.3,0
+ATL-SPR-0077,Galani Gadhara,Nainital,1369.5,60.3,High,Low,60.3,,,,,,,93.5,81.0,73.4,64.1,36.5,78.8,29.5,16.1,45.3,0
 ATL-SPR-0078,Banoliya ChinaraGadhera,Nainital,1644.4,59.4,Medium,Low,59.4,,,,,,,95.5,79.9,73.4,64.1,3.4,96.0,8.2,12.9,81.4,0
 ATL-SPR-0079,Niglat HartapaGadhera,Nainital,1348.6,25.3,Low,Low,25.3,,,,,,,11.8,10.5,39.7,5.3,26.3,65.2,76.2,15.0,32.5,0
 ATL-SPR-0080,ChampagarhGadhera,Nainital,630.5,0,No score,Low,,,,,,,,,,,,,,,,,
 ATL-SPR-0081,Seem Dhara,Nainital,1591.5,57.5,Medium,Low,57.5,,,,,,,65.4,83.5,87.8,39.3,20.1,38.7,91.6,74.3,42.7,0
 ATL-SPR-0082,Silori Dhara,Nainital,1261.1,56.2,Medium,Low,56.2,,,,,,,65.4,83.5,87.8,39.3,29.8,11.9,62.0,60.5,29.7,50
 ATL-SPR-0083,Bhumka Naula,Nainital,1433.8,58.3,Medium,Low,58.3,,,,,,,65.4,83.5,87.8,39.3,66.2,16.0,90.3,53.6,20.1,0
-ATL-SPR-0084,Gadhera Naula,Nainital,1492.4,60.7,Medium,Low,60.7,,,,,,,65.4,83.5,87.8,39.3,61.3,16.8,95.6,42.1,22.3,50
+ATL-SPR-0084,Gadhera Naula,Nainital,1492.4,60.7,High,Low,60.7,,,,,,,65.4,83.5,87.8,39.3,61.3,16.8,95.6,42.1,22.3,50
 ATL-SPR-0085,Malla Bakhli Naula,Nainital,1542.6,54.1,Medium,Low,54.1,,,,,,,65.4,83.5,39.7,5.3,65.4,16.0,93.4,66.9,18.9,50
 ATL-SPR-0087,Chichna Dhara,Nainital,1041.0,45.2,Medium,Low,45.2,,,,,,,20.7,46.0,39.7,5.3,96.2,45.9,83.1,6.0,64.1,50
 ATL-SPR-0088,Jadapani Dhara,Nainital,1384.7,41.9,Medium,Low,41.9,,,,,,,20.7,46.0,39.7,5.3,51.7,93.4,76.8,8.7,92.7,0
@@ -329,12 +329,12 @@ ATL-SPR-0111,Bilora Dhara,Nainital,777.0,47.2,Medium,Low,47.2,,,,,,,97.0,44.4,3.
 ATL-SPR-0112,Loharpani Dhara,Nainital,1683.7,49.1,Medium,Low,49.1,,,,,,,86.5,53.6,3.4,47.9,69.5,17.3,65.2,77.8,14.8,0
 ATL-SPR-0113,Dhorapani,Nainital,1696.0,51.8,Medium,Low,51.8,,,,,,,86.5,53.6,3.4,47.9,67.4,19.7,80.3,80.8,32.5,0
 ATL-SPR-0114,Gajaar Dhara,Nainital,1730.7,49.5,Medium,Low,49.5,,,,,,,86.5,53.6,3.4,47.9,54.6,17.3,64.6,88.0,32.5,0
-ATL-SPR-0115,Bagiyapani Dhara,Nainital,1571.0,60.6,Medium,Low,60.6,,,,,,,86.5,53.6,73.4,64.1,51.7,84.8,15.1,32.2,75.1,0
-ATL-SPR-0116,Budadhura Dhara,Nainital,1690.2,62.7,Medium,Low,62.7,,,,,,,86.5,53.6,73.4,64.1,60.3,69.2,5.7,64.7,81.4,0
+ATL-SPR-0115,Bagiyapani Dhara,Nainital,1571.0,60.6,High,Low,60.6,,,,,,,86.5,53.6,73.4,64.1,51.7,84.8,15.1,32.2,75.1,0
+ATL-SPR-0116,Budadhura Dhara,Nainital,1690.2,62.7,High,Low,62.7,,,,,,,86.5,53.6,73.4,64.1,60.3,69.2,5.7,64.7,81.4,0
 ATL-SPR-0117,Amlaani Dhaara,Nainital,1313.8,58.4,Medium,Low,58.4,,,,,,,97.0,44.4,73.4,64.1,3.4,98.7,28.1,14.2,97.9,0
 ATL-SPR-0118,Ghatgaad Dhaara,Nainital,1198.2,69.3,High,Low,69.3,,,,,,,97.0,44.4,73.4,64.1,22.0,95.6,91.0,7.5,87.3,100
 ATL-SPR-0119,Kwairala Dhara,Nainital,803.7,65.1,High,Low,65.1,,,,,,,97.0,44.4,73.4,64.1,61.3,54.4,97.5,6.9,46.8,50
-ATL-SPR-0120,Kanaaligaad Dhara,Nainital,953.0,64.1,Medium,Low,64.1,,,,,,,97.0,44.4,73.4,64.1,3.4,92.1,82.7,9.4,97.1,50
+ATL-SPR-0120,Kanaaligaad Dhara,Nainital,953.0,64.1,High,Low,64.1,,,,,,,97.0,44.4,73.4,64.1,3.4,92.1,82.7,9.4,97.1,50
 ATL-SPR-0121,Kilwan Dhara,Nainital,974.2,66.8,High,Low,66.8,,,,,,,97.0,44.4,73.4,64.1,16.9,94.0,56.6,20.0,83.4,100
 ATL-SPR-0122,Malla Dhara,Nainital,1096.6,30.5,Low,Low,30.5,,,,,,,11.8,10.5,39.7,5.3,80.2,27.1,60.2,30.7,8.2,50
 ATL-SPR-0123,Naula,Nainital,1124.4,30.6,Low,Low,30.6,,,,,,,11.8,10.5,39.7,5.3,76.1,22.0,62.9,42.6,8.2,50
@@ -348,8 +348,8 @@ ATL-SPR-0132,Bhowaligaon Gadhara,Nainital,1413.5,22.3,Low,Low,22.3,,,,,,,11.8,10
 ATL-SPR-0133,Bhowaligaon Gadhara,Nainital,1519.4,24.1,Low,Low,24.1,,,,,,,11.8,10.5,39.7,5.3,15.2,63.0,84.8,10.7,33.4,0
 ATL-SPR-0134,Bhowaligaon Gadhara,Nainital,1611.7,28.9,Low,Low,28.9,,,,,,,11.8,10.5,39.7,5.3,8.2,70.1,94.9,15.8,78.6,0
 ATL-SPR-0135,Gadhera,Nainital,1114.9,43.7,Medium,Low,43.7,,,,,,,86.5,53.6,3.4,47.9,10.7,88.0,25.3,8.3,60.5,0
-ATL-SPR-0136,Handpump,Nainital,1452.1,61.2,Medium,Low,61.2,,,,,,,86.5,53.6,73.4,64.1,51.0,91.0,4.5,53.9,71.3,0
-ATL-SPR-0137,Udunga Gadhara,Nainital,1030.9,63.2,Medium,Low,63.2,,,,,,,95.9,56.2,73.4,64.1,52.9,94.0,13.5,6.4,88.3,0
+ATL-SPR-0136,Handpump,Nainital,1452.1,61.2,High,Low,61.2,,,,,,,86.5,53.6,73.4,64.1,51.0,91.0,4.5,53.9,71.3,0
+ATL-SPR-0137,Udunga Gadhara,Nainital,1030.9,63.2,High,Low,63.2,,,,,,,95.9,56.2,73.4,64.1,52.9,94.0,13.5,6.4,88.3,0
 ATL-SPR-0138,Gathgarh Gadhara,Nainital,789.7,55.2,Medium,Low,55.2,,,,,,,97.0,44.4,3.4,47.9,43.0,67.8,50.8,37.8,72.3,50
 ATL-SPR-0139,Handpump,Nainital,1141.4,65.6,High,Low,65.6,,,,,,,97.0,44.4,73.4,64.1,10.7,96.6,32.5,26.1,89.2,100
 ATL-SPR-0140,Kawakan Gadhara,Nainital,683.5,0,No score,Low,,,,,,,,,,,,,,,,,
@@ -358,7 +358,7 @@ ATL-SPR-0142,Dewali Gadhara,Nainital,1639.6,53.8,Medium,Low,53.8,,,,,,,80.4,90.8
 ATL-SPR-0143,Putpuri Gadhara,Nainital,1404.3,55.1,Medium,Low,55.1,,,,,,,81.6,89.8,73.4,64.1,13.8,88.5,6.8,52.5,19.7,0
 ATL-SPR-0144,Remaila Gadhara,Nainital,1244.9,51.0,Medium,Low,51.0,,,,,,,81.6,89.8,73.4,64.1,19.4,60.6,11.2,23.0,3.9,0
 ATL-SPR-0145,Jamrari Gadhara,Nainital,1359.9,57.4,Medium,Low,57.4,,,,,,,84.0,94.0,73.4,64.1,16.9,94.0,25.8,3.9,45.3,0
-ATL-SPR-0146,Raikuna Gadhara,Nainital,1394.2,64.1,Medium,Low,64.1,,,,,,,84.0,94.0,73.4,64.1,73.1,75.7,80.8,15.9,9.0,0
+ATL-SPR-0146,Raikuna Gadhara,Nainital,1394.2,64.1,High,Low,64.1,,,,,,,84.0,94.0,73.4,64.1,73.1,75.7,80.8,15.9,9.0,0
 ATL-SPR-0147,Gajar Gadhara,Nainital,2058.2,66.8,High,Low,66.8,,,,,,,73.1,87.8,87.8,39.3,69.7,43.8,98.5,85.5,3.9,50
 ATL-SPR-0148,Buribana Gadhara,Nainital,1974.3,53.2,Medium,Low,53.2,,,,,,,73.1,87.8,39.7,5.3,65.0,58.3,77.1,43.6,17.4,0
 ATL-SPR-0149,Khopa Gadhara,Nainital,1834.6,45.4,Medium,Low,45.4,,,,,,,56.9,94.0,39.7,5.3,31.8,36.5,64.1,67.0,16.0,0
@@ -419,10 +419,10 @@ ATL-SPR-0205,Kanegad II,Nainital,1168.4,71.0,High,Low,71.0,,,,,,,98.6,46.0,73.4,
 ATL-SPR-0206,Sari Tok Spring,Nainital,1223.0,71.1,High,Low,71.1,,,,,,,98.6,46.0,73.4,64.1,60.9,51.1,58.1,87.4,80.3,50
 ATL-SPR-0207,Ghar Tok Naula I,Nainital,1241.8,65.8,High,Low,65.8,,,,,,,98.6,46.0,73.4,64.1,40.7,37.5,62.9,91.1,88.3,0
 ATL-SPR-0208,Jogithoi Spring,Nainital,1083.4,59.4,Medium,Low,59.4,,,,,,,98.6,46.0,73.4,64.1,26.3,63.0,52.3,52.0,54.5,0
-ATL-SPR-0209,Salanidhar Spring,Nainital,1106.7,62.6,Medium,Low,62.6,,,,,,,98.6,46.0,73.4,64.1,31.8,49.6,54.1,59.0,84.6,0
-ATL-SPR-0210,Khawegad Spring II,Nainital,1124.3,64.7,Medium,Low,64.7,,,,,,,98.6,46.0,73.4,64.1,40.7,35.7,57.5,63.2,65.8,50
+ATL-SPR-0209,Salanidhar Spring,Nainital,1106.7,62.6,High,Low,62.6,,,,,,,98.6,46.0,73.4,64.1,31.8,49.6,54.1,59.0,84.6,0
+ATL-SPR-0210,Khawegad Spring II,Nainital,1124.3,64.7,High,Low,64.7,,,,,,,98.6,46.0,73.4,64.1,40.7,35.7,57.5,63.2,65.8,50
 ATL-SPR-0211,Khawegad Spring I,Nainital,1137.0,67.7,High,Low,67.7,,,,,,,98.6,46.0,73.4,64.1,61.3,38.7,58.1,66.6,65.8,50
-ATL-SPR-0212,Haida Kanala Naula,Nainital,1127.8,64.2,Medium,Low,64.2,,,,,,,98.6,46.0,73.4,64.1,29.8,48.9,64.6,64.0,95.1,0
+ATL-SPR-0212,Haida Kanala Naula,Nainital,1127.8,64.2,High,Low,64.2,,,,,,,98.6,46.0,73.4,64.1,29.8,48.9,64.6,64.0,95.1,0
 ATL-SPR-0213,Bhumka Dhara,Nainital,1081.2,59.4,Medium,Low,59.4,,,,,,,98.6,46.0,73.4,64.1,31.8,45.9,56.6,51.4,57.0,0
 ATL-SPR-0214,Gulamadi Spring II,Nainital,1081.8,58.7,Medium,Low,58.7,,,,,,,98.6,46.0,73.4,64.1,26.3,48.1,54.1,51.6,57.0,0
 ATL-SPR-0215,Gulamadi Spring I,Nainital,1081.8,58.7,Medium,Low,58.7,,,,,,,98.6,46.0,73.4,64.1,26.3,48.1,54.1,51.6,57.0,0
@@ -454,16 +454,16 @@ ATL-SPR-0240,Jalna,Nainital,1023.7,51.7,Medium,Low,51.7,,,,,,,94.8,19.2,3.4,47.9
 ATL-SPR-0241,Songarh KaGadhera,Nainital,1182.8,69.5,High,Low,69.5,,,,,,,97.0,44.4,73.4,64.1,22.0,96.3,91.6,9.2,87.3,100
 ATL-SPR-0242,Sisrana,Nainital,678.4,0,No score,Low,,,,,,,,,,,,,,,,,
 ATL-SPR-0243,Nauda Naula,Nainital,1032.6,54.8,Medium,Low,54.8,,,,,,,94.8,19.2,3.4,47.9,84.9,8.2,91.0,92.1,60.5,0
-ATL-SPR-0244,Bhorsiya Nala,Nainital,778.3,63.9,Medium,Low,63.9,,,,,,,95.9,56.2,73.4,64.1,85.3,32.0,18.9,25.8,76.9,0
+ATL-SPR-0244,Bhorsiya Nala,Nainital,778.3,63.9,High,Low,63.9,,,,,,,95.9,56.2,73.4,64.1,85.3,32.0,18.9,25.8,76.9,0
 ATL-SPR-0245,Badolpher,Nainital,308.7,0,No score,Low,,,,,,,,,,,,,,,,,
 ATL-SPR-0246,Tanda,Nainital,319.1,0,No score,Low,,,,,,,,,,,,,,,,,
 ATL-SPR-0247,Talli Sunptla Spring,Nainital,310.8,0,No score,Low,,,,,,,,,,,,,,,,,
-ATL-SPR-0248,Sunpatla Chilapani,Nainital,1679.6,60.3,Medium,Low,60.3,,,,,,,91.4,76.9,73.4,64.1,8.2,99.7,16.0,20.7,84.6,0
+ATL-SPR-0248,Sunpatla Chilapani,Nainital,1679.6,60.3,High,Low,60.3,,,,,,,91.4,76.9,73.4,64.1,8.2,99.7,16.0,20.7,84.6,0
 ATL-SPR-0249,Nakana,Nainital,302.0,0,No score,Low,,,,,,,,,,,,,,,,,
 ATL-SPR-0250,Malla Sunpatla,Nainital,313.3,0,No score,Low,,,,,,,,,,,,,,,,,
 ATL-SPR-0251,Aratanda Spring,Nainital,1678.1,60.0,Medium,Low,60.0,,,,,,,76.0,60.5,87.8,39.3,95.6,20.9,60.2,29.6,3.9,50
 ATL-SPR-0252,Naula,Nainital,1889.3,32.3,Low,Low,32.3,,,,,,,7.8,8.3,39.7,5.3,45.0,91.5,27.6,66.8,41.5,50
-ATL-SPR-0253,Dhari kaGadhera,Nainital,1761.1,60.3,Medium,Low,60.3,,,,,,,76.0,60.5,87.8,39.3,84.6,43.8,40.8,53.0,3.9,50
+ATL-SPR-0253,Dhari kaGadhera,Nainital,1761.1,60.3,High,Low,60.3,,,,,,,76.0,60.5,87.8,39.3,84.6,43.8,40.8,53.0,3.9,50
 ATL-SPR-0254,Kau kaGadhera,Nainital,995.6,55.7,Medium,Low,55.7,,,,,,,95.9,56.2,73.4,64.1,8.2,99.6,13.2,0.6,68.7,0
 ATL-SPR-0255,Bhugara,Nainital,1435.4,52.5,Medium,Low,52.5,,,,,,,76.0,78.2,73.4,64.1,3.4,94.7,20.1,1.7,22.8,50
 ATL-SPR-0256,Rautora Naula,Nainital,2177.4,53.7,Medium,Low,53.7,,,,,,,60.1,88.9,87.8,39.3,39.0,25.6,28.1,99.2,16.7,0
@@ -478,9 +478,9 @@ ATL-SPR-0264,MotiyapatharGadhera,Nainital,2179.9,58.1,Medium,Low,58.1,,,,,,,61.1
 ATL-SPR-0265,Bhumka,Nainital,2143.9,55.3,Medium,Low,55.3,,,,,,,61.1,96.3,87.8,39.3,30.8,28.7,52.3,91.0,19.7,0
 ATL-SPR-0266,JhabarGadhera,Nainital,1852.8,52.6,Medium,Low,52.6,,,,,,,60.1,88.9,87.8,39.3,36.5,61.2,62.0,36.3,3.9,0
 ATL-SPR-0267,PanyaliGadhera,Nainital,1702.9,45.0,Medium,Low,45.0,,,,,,,76.0,60.5,39.7,5.3,35.8,59.7,50.8,30.1,23.7,0
-ATL-SPR-0268,GijuwagadGadhera,Nainital,2007.1,61.9,Medium,Low,61.9,,,,,,,68.9,97.1,87.8,39.3,51.0,53.6,96.4,83.0,3.9,0
-ATL-SPR-0269,Buda Banj,Nainital,1963.5,64.4,Medium,Low,64.4,,,,,,,68.9,97.1,87.8,39.3,89.7,25.6,88.0,81.0,3.9,0
-ATL-SPR-0270,KathnaulaGadhera,Nainital,2103.9,63.6,Medium,Low,63.6,,,,,,,68.9,97.1,87.8,39.3,58.7,52.4,95.0,97.5,3.9,0
+ATL-SPR-0268,GijuwagadGadhera,Nainital,2007.1,61.9,High,Low,61.9,,,,,,,68.9,97.1,87.8,39.3,51.0,53.6,96.4,83.0,3.9,0
+ATL-SPR-0269,Buda Banj,Nainital,1963.5,64.4,High,Low,64.4,,,,,,,68.9,97.1,87.8,39.3,89.7,25.6,88.0,81.0,3.9,0
+ATL-SPR-0270,KathnaulaGadhera,Nainital,2103.9,63.6,High,Low,63.6,,,,,,,68.9,97.1,87.8,39.3,58.7,52.4,95.0,97.5,3.9,0
 ATL-SPR-0271,Tiquanaula Spring,Nainital,1995.2,65.6,High,Low,65.6,,,,,,,68.9,97.1,87.8,39.3,91.2,29.5,93.6,87.8,3.9,0
 ATL-SPR-0272,Tikhawa Naula,Nainital,1990.3,65.5,High,Low,65.5,,,,,,,68.9,97.1,87.8,39.3,91.2,29.5,93.8,86.4,3.9,0
 ATL-SPR-0273,Kangari Naula,Nainital,2069.2,57.4,Medium,Low,57.4,,,,,,,60.1,88.9,87.8,39.3,71.8,16.8,50.2,90.8,9.0,0
@@ -497,11 +497,11 @@ ATL-SPR-0283,RaturaGadhera Naula,Nainital,2180.7,54.0,Medium,Low,54.0,,,,,,,60.1
 ATL-SPR-0284,Banrava Patthar Srot,Nainital,869.7,37.4,Medium,Low,37.4,,,,,,,89.8,26.6,7.0,68.0,33.7,22.0,21.3,10.6,18.9,0
 ATL-SPR-0285,Kagrad MallaGadhera,Nainital,896.4,28.7,Low,Low,28.7,,,,,,,41.4,15.2,7.0,68.0,41.8,49.6,33.8,11.9,15.4,0
 ATL-SPR-0287,Kaligarh,Nainital,1213.0,37.4,Medium,Low,37.4,,,,,,,41.4,15.2,7.0,68.0,12.6,91.5,97.0,9.9,45.3,50
-ATL-SPR-0288,BasodGadhera,Nainital,1167.6,61.5,Medium,Low,61.5,,,,,,,95.7,63.5,94.6,60.0,16.9,75.0,34.3,8.9,80.3,0
-ATL-SPR-0289,Bhalu Udiyar Spring,Nainital,1558.6,62.1,Medium,Low,62.1,,,,,,,94.2,64.4,94.6,60.0,3.4,95.1,6.7,53.7,82.3,0
+ATL-SPR-0288,BasodGadhera,Nainital,1167.6,61.5,High,Low,61.5,,,,,,,95.7,63.5,94.6,60.0,16.9,75.0,34.3,8.9,80.3,0
+ATL-SPR-0289,Bhalu Udiyar Spring,Nainital,1558.6,62.1,High,Low,62.1,,,,,,,94.2,64.4,94.6,60.0,3.4,95.1,6.7,53.7,82.3,0
 ATL-SPR-0290,Padiyapani Spring,Nainital,1567.3,57.8,Medium,Low,57.8,,,,,,,94.2,64.4,94.6,60.0,3.4,91.3,5.8,56.4,37.7,0
-ATL-SPR-0291,Pathharkhani Spring,Nainital,1203.4,62.9,Medium,Low,62.9,,,,,,,95.7,63.5,94.6,60.0,22.8,95.1,1.9,8.5,62.4,50
-ATL-SPR-0292,Udisani Spring,Nainital,1203.4,62.9,Medium,Low,62.9,,,,,,,95.7,63.5,94.6,60.0,22.8,95.1,1.9,8.5,62.4,50
+ATL-SPR-0291,Pathharkhani Spring,Nainital,1203.4,62.9,High,Low,62.9,,,,,,,95.7,63.5,94.6,60.0,22.8,95.1,1.9,8.5,62.4,50
+ATL-SPR-0292,Udisani Spring,Nainital,1203.4,62.9,High,Low,62.9,,,,,,,95.7,63.5,94.6,60.0,22.8,95.1,1.9,8.5,62.4,50
 ATL-SPR-0293,Dal Spring,Nainital,1527.9,75.7,High,Low,75.7,,,,,,,95.3,69.8,73.4,64.1,77.8,77.8,84.2,75.6,89.2,0
 ATL-SPR-0294,Sunaarpani,Nainital,1718.8,60.0,Medium,Low,60.0,,,,,,,92.1,85.2,73.4,64.1,12.6,88.9,3.4,22.9,76.9,0
 ATL-SPR-0295,Silani,Nainital,1445.5,54.6,Medium,Low,54.6,,,,,,,77.3,63.1,79.2,57.4,3.4,99.1,7.7,24.7,81.4,0
@@ -512,10 +512,10 @@ ATL-SPR-0299,Sewani,Nainital,1149.3,66.0,High,Low,66.0,,,,,,,95.3,69.8,73.4,64.1
 ATL-SPR-0300,Mavani Spring,Nainital,1417.0,75.1,High,Low,75.1,,,,,,,93.5,81.0,73.4,64.1,64.5,88.5,74.1,84.6,83.4,0
 ATL-SPR-0301,Paninaula Spring,Nainital,1198.0,70.0,High,Low,70.0,,,,,,,88.2,85.5,73.4,64.1,65.9,57.7,48.3,97.6,62.4,0
 ATL-SPR-0302,MurtipaniGadhera,Nainital,1177.5,65.8,High,Low,65.8,,,,,,,88.2,85.5,73.4,64.1,60.1,46.9,48.7,89.1,37.7,0
-ATL-SPR-0303,BhagnaulaGadhera,Nainital,1551.4,63.2,Medium,Low,63.2,,,,,,,71.9,87.1,73.4,64.1,42.5,76.8,50.2,84.3,18.9,50
-ATL-SPR-0304,Bhagnaula palaGadhera,Nainital,1574.4,60.8,Medium,Low,60.8,,,,,,,71.9,87.1,73.4,64.1,31.8,81.2,32.5,90.2,12.7,50
+ATL-SPR-0303,BhagnaulaGadhera,Nainital,1551.4,63.2,High,Low,63.2,,,,,,,71.9,87.1,73.4,64.1,42.5,76.8,50.2,84.3,18.9,50
+ATL-SPR-0304,Bhagnaula palaGadhera,Nainital,1574.4,60.8,High,Low,60.8,,,,,,,71.9,87.1,73.4,64.1,31.8,81.2,32.5,90.2,12.7,50
 ATL-SPR-0305,Jamar ChudaGadhera,Nainital,1307.8,55.6,Medium,Low,55.6,,,,,,,84.5,78.7,87.8,39.3,35.5,40.7,11.5,75.4,14.8,0
-ATL-SPR-0306,Kachlakot Dhara,Nainital,1224.7,61.2,Medium,Low,61.2,,,,,,,84.5,92.3,73.4,64.1,66.2,49.6,47.6,43.3,10.1,0
+ATL-SPR-0306,Kachlakot Dhara,Nainital,1224.7,61.2,High,Low,61.2,,,,,,,84.5,92.3,73.4,64.1,66.2,49.6,47.6,43.3,10.1,0
 ATL-SPR-0307,Pinani Dhara,Nainital,1279.9,59.0,Medium,Low,59.0,,,,,,,84.5,92.3,73.4,64.1,37.4,61.2,44.9,52.2,13.3,0
 ATL-SPR-0308,Aroli Simar Spring,Nainital,1827.7,56.2,Medium,Low,56.2,,,,,,,71.9,82.2,87.8,39.3,55.9,38.7,19.8,92.3,3.9,0
 ATL-SPR-0309,KakadjaatGadhera,Nainital,1729.1,53.9,Medium,Low,53.9,,,,,,,71.9,82.2,87.8,39.3,45.0,52.4,15.0,69.1,3.9,0
@@ -526,27 +526,27 @@ ATL-SPR-0313,Malli MatiyalGadhera,Nainital,1884.1,58.3,Medium,Low,58.3,,,,,,,71.
 ATL-SPR-0314,GadakhetGadhera,Nainital,1996.7,59.3,Medium,Low,59.3,,,,,,,71.9,82.2,87.8,39.3,86.5,18.2,13.2,99.4,9.0,0
 ATL-SPR-0315,BudhichhorGadhera,Nainital,1115.8,71.4,High,Low,71.4,,,,,,,99.6,53.6,73.4,64.1,65.0,56.8,79.4,68.0,94.6,0
 ATL-SPR-0316,GanjaGadhera Source,Nainital,1081.4,65.9,High,Low,65.9,,,,,,,99.6,53.6,73.4,64.1,81.0,40.7,79.5,41.8,42.7,0
-ATL-SPR-0317,Churani Spring,Nainital,1189.0,63.0,Medium,Low,63.0,,,,,,,99.6,53.6,73.4,64.1,16.9,77.8,76.8,90.7,41.5,0
+ATL-SPR-0317,Churani Spring,Nainital,1189.0,63.0,High,Low,63.0,,,,,,,99.6,53.6,73.4,64.1,16.9,77.8,76.8,90.7,41.5,0
 ATL-SPR-0318,BajhpaniGadhera,Nainital,1112.4,67.8,High,Low,67.8,,,,,,,99.6,53.6,73.4,64.1,50.4,71.9,76.2,73.2,64.1,0
-ATL-SPR-0319,KhaliGadhera,Nainital,1124.3,62.0,Medium,Low,62.0,,,,,,,99.6,53.6,73.4,64.1,23.7,72.5,64.6,78.5,41.5,0
+ATL-SPR-0319,KhaliGadhera,Nainital,1124.3,62.0,High,Low,62.0,,,,,,,99.6,53.6,73.4,64.1,23.7,72.5,64.6,78.5,41.5,0
 ATL-SPR-0320,Malla KauntaGadhera,Nainital,1221.4,72.0,High,Low,72.0,,,,,,,99.6,53.6,73.4,64.1,74.1,56.0,74.1,73.8,89.2,0
 ATL-SPR-0321,KakeraGadhera,Nainital,1135.2,70.3,High,Low,70.3,,,,,,,99.6,53.6,73.4,64.1,83.1,46.9,76.2,50.3,78.6,0
 ATL-SPR-0322,Sivani Source,Nainital,995.2,66.8,High,Low,66.8,,,,,,,99.6,53.6,73.4,64.1,75.8,46.9,77.5,38.2,58.5,0
-ATL-SPR-0323,SimalkhetGadhera,Nainital,1051.6,60.9,Medium,Low,60.9,,,,,,,99.6,53.6,73.4,64.1,33.7,65.2,58.1,59.8,37.7,0
-ATL-SPR-0324,FulbaghGadhera,Nainital,1162.5,60.6,Medium,Low,60.6,,,,,,,95.3,69.8,73.4,64.1,36.5,42.8,43.4,41.0,57.0,0
+ATL-SPR-0323,SimalkhetGadhera,Nainital,1051.6,60.9,High,Low,60.9,,,,,,,99.6,53.6,73.4,64.1,33.7,65.2,58.1,59.8,37.7,0
+ATL-SPR-0324,FulbaghGadhera,Nainital,1162.5,60.6,High,Low,60.6,,,,,,,95.3,69.8,73.4,64.1,36.5,42.8,43.4,41.0,57.0,0
 ATL-SPR-0325,Dhanuwagad,Nainital,1114.6,59.3,Medium,Low,59.3,,,,,,,80.4,90.8,73.4,64.1,77.4,25.6,26.7,34.8,22.3,0
-ATL-SPR-0326,DhankholaGadhera,Nainital,1060.6,61.1,Medium,Low,61.1,,,,,,,94.5,76.6,73.4,64.1,26.3,89.7,8.2,0.8,87.3,0
+ATL-SPR-0326,DhankholaGadhera,Nainital,1060.6,61.1,High,Low,61.1,,,,,,,94.5,76.6,73.4,64.1,26.3,89.7,8.2,0.8,87.3,0
 ATL-SPR-0327,NutkaGadhera,Nainital,877.5,58.3,Medium,Low,58.3,,,,,,,94.5,76.6,73.4,64.1,47.6,28.0,14.3,40.2,40.4,0
-ATL-SPR-0328,Chapadsheel Naula,Nainital,1660.7,61.9,Medium,Low,61.9,,,,,,,71.9,87.1,73.4,64.1,80.2,49.6,23.4,97.0,15.4,0
+ATL-SPR-0328,Chapadsheel Naula,Nainital,1660.7,61.9,High,Low,61.9,,,,,,,71.9,87.1,73.4,64.1,80.2,49.6,23.4,97.0,15.4,0
 ATL-SPR-0329,Simidhaar Naula,Nainital,1698.1,55.0,Medium,Low,55.0,,,,,,,71.9,87.1,73.4,64.1,55.1,24.3,11.7,91.4,3.9,0
-ATL-SPR-0330,ShalaGadhera,Nainital,1151.7,60.3,Medium,Low,60.3,,,,,,,93.5,81.0,73.4,64.1,16.9,83.9,82.5,5.0,39.1,0
+ATL-SPR-0330,ShalaGadhera,Nainital,1151.7,60.3,High,Low,60.3,,,,,,,93.5,81.0,73.4,64.1,16.9,83.9,82.5,5.0,39.1,0
 ATL-SPR-0331,Bedukhet Silani Spring,Nainital,1056.3,58.0,Medium,Low,58.0,,,,,,,93.5,81.0,73.4,64.1,25.1,76.8,86.3,9.4,3.9,0
 ATL-SPR-0332,Bedukhet Naula,Nainital,1064.9,57.6,Medium,Low,57.6,,,,,,,93.5,81.0,73.4,64.1,21.1,78.3,87.3,8.2,3.9,0
 ATL-SPR-0333,Naula,Nainital,1370.5,59.2,Medium,Low,59.2,,,,,,,92.1,85.2,73.4,64.1,57.8,79.2,12.8,13.8,14.8,0
-ATL-SPR-0334,JhaluwaGadhera,Nainital,1117.0,61.2,Medium,Low,61.2,,,,,,,93.5,81.0,73.4,64.1,46.5,81.6,49.6,6.6,32.5,0
-ATL-SPR-0335,Aati Spring,Nainital,1507.5,60.5,Medium,Low,60.5,,,,,,,91.4,76.9,73.4,64.1,47.8,86.5,68.0,28.2,3.9,0
-ATL-SPR-0336,Shiv Mandir Spring,Nainital,1362.3,61.8,Medium,Low,61.8,,,,,,,91.4,76.9,73.4,64.1,28.6,84.4,84.5,5.2,48.3,0
-ATL-SPR-0337,DhantoliGadhera,Nainital,1413.6,62.0,Medium,Low,62.0,,,,,,,91.4,76.9,73.4,64.1,70.5,45.9,51.5,8.1,40.4,0
+ATL-SPR-0334,JhaluwaGadhera,Nainital,1117.0,61.2,High,Low,61.2,,,,,,,93.5,81.0,73.4,64.1,46.5,81.6,49.6,6.6,32.5,0
+ATL-SPR-0335,Aati Spring,Nainital,1507.5,60.5,High,Low,60.5,,,,,,,91.4,76.9,73.4,64.1,47.8,86.5,68.0,28.2,3.9,0
+ATL-SPR-0336,Shiv Mandir Spring,Nainital,1362.3,61.8,High,Low,61.8,,,,,,,91.4,76.9,73.4,64.1,28.6,84.4,84.5,5.2,48.3,0
+ATL-SPR-0337,DhantoliGadhera,Nainital,1413.6,62.0,High,Low,62.0,,,,,,,91.4,76.9,73.4,64.1,70.5,45.9,51.5,8.1,40.4,0
 ATL-SPR-0338,KivaniGadhera,Nainital,1595.7,55.7,Medium,Low,55.7,,,,,,,81.6,89.8,73.4,64.1,3.4,89.7,5.3,5.8,71.3,0
 ATL-SPR-0339,DhungigadGadhera,Nainital,1636.6,55.9,Medium,Low,55.9,,,,,,,81.6,89.8,73.4,64.1,3.4,92.1,6.1,7.1,71.3,0
 ATL-SPR-0340,Dharegad Spring,Nainital,1477.2,52.0,Medium,Low,52.0,,,,,,,81.6,89.8,73.4,64.1,8.2,73.9,14.1,23.8,18.2,0
@@ -556,7 +556,7 @@ ATL-SPR-0343,Khetala Selani Spring,Nainital,1311.4,49.8,Medium,Low,49.8,,,,,,,81
 ATL-SPR-0344,PatalGadhera,Nainital,1600.0,57.6,Medium,Low,57.6,,,,,,,81.6,89.8,73.4,64.1,3.4,89.3,8.7,4.3,24.7,100
 ATL-SPR-0345,DiggiGadhera,Nainital,219.9,0,No score,Low,,,,,,,,,,,,,,,,,
 ATL-SPR-0346,PanigarhGadhera,Nainital,1360.8,41.0,Medium,Low,41.0,,,,,,,47.7,42.1,3.4,47.9,99.2,1.5,90.3,53.9,3.9,0
-ATL-SPR-0347,AnarbanGadhera,Nainital,1507.9,60.3,Medium,Low,60.3,,,,,,,93.5,81.0,73.4,64.1,12.6,71.9,58.7,42.9,43.8,0
+ATL-SPR-0347,AnarbanGadhera,Nainital,1507.9,60.3,High,Low,60.3,,,,,,,93.5,81.0,73.4,64.1,12.6,71.9,58.7,42.9,43.8,0
 ATL-SPR-0348,TulaGadhera,Nainital,1625.8,55.5,Medium,Low,55.5,,,,,,,84.5,79.7,87.8,39.3,8.2,66.9,81.0,48.1,3.9,0
 ATL-SPR-0349,Jhalwari GairGadhera,Nainital,1725.7,50.6,Medium,Low,50.6,,,,,,,71.9,82.2,87.8,39.3,18.5,44.5,37.4,54.6,3.9,0
 ATL-SPR-0350,BedchulaGadhera,Nainital,1913.3,56.9,Medium,Low,56.9,,,,,,,71.9,82.2,87.8,39.3,62.9,22.9,13.3,93.4,16.0,0
@@ -566,7 +566,7 @@ ATL-SPR-0353,ThanaGadhera,Nainital,1390.3,60.0,Medium,Low,60.0,,,,,,,94.2,64.4,9
 ATL-SPR-0354,Asar,Nainital,1312.3,65.5,High,Low,65.5,,,,,,,94.2,64.4,94.6,60.0,18.5,93.2,37.6,23.4,99.1,0
 ATL-SPR-0355,Bhawan,Nainital,1267.0,67.9,High,Low,67.9,,,,,,,94.2,64.4,94.6,60.0,43.5,85.9,43.8,15.5,97.5,0
 ATL-SPR-0356,Pokhari TalliGadhera,Nainital,1260.6,67.8,High,Low,67.8,,,,,,,94.2,64.4,94.6,60.0,43.5,85.9,43.4,14.5,97.5,0
-ATL-SPR-0357,Gairadi Spring,Nainital,1245.7,63.2,Medium,Low,63.2,,,,,,,97.9,64.0,73.4,64.1,3.4,97.3,75.6,47.4,68.7,0
+ATL-SPR-0357,Gairadi Spring,Nainital,1245.7,63.2,High,Low,63.2,,,,,,,97.9,64.0,73.4,64.1,3.4,97.3,75.6,47.4,68.7,0
 ATL-SPR-0358,Shivji Spring,Nainital,1493.9,56.8,Medium,Low,56.8,,,,,,,84.0,79.0,87.8,39.3,49.4,75.0,21.6,11.7,22.8,0
 ATL-SPR-0359,Garampani Dhara,Nainital,1536.0,57.3,Medium,Low,57.3,,,,,,,84.0,79.0,87.8,39.3,46.5,86.5,21.5,8.0,27.6,0
 ATL-SPR-0360,Belwalgaon I,Nainital,1277.3,41.1,Medium,Low,41.1,,,,,,,47.7,20.1,39.7,5.3,66.9,81.6,91.4,2.6,3.9,50
@@ -576,29 +576,29 @@ ATL-SPR-0365,Talla Dhara,Nainital,1272.1,51.1,Medium,Low,51.1,,,,,,,63.0,68.9,39
 ATL-SPR-0366,Chantarikhal Naula,Nainital,1378.8,52.5,Medium,Low,52.5,,,,,,,63.0,68.9,39.7,5.3,91.0,8.2,70.4,84.4,34.2,0
 ATL-SPR-0367,Bhanguda Naula,Nainital,1394.6,53.8,Medium,Low,53.8,,,,,,,63.0,68.9,39.7,5.3,86.7,8.8,68.3,85.1,54.5,0
 ATL-SPR-0368,Kankar Naula,Nainital,1221.8,50.8,Medium,Low,50.8,,,,,,,63.0,68.9,39.7,5.3,79.4,17.7,68.8,54.3,46.8,0
-ATL-SPR-0370,Bachi Singh Ka Naula,Nainital,1752.1,61.7,Medium,Low,61.7,,,,,,,56.9,94.0,87.8,39.3,98.2,4.5,96.8,81.5,3.9,0
-ATL-SPR-0371,Chorani Ka Naula II,Nainital,1752.1,61.6,Medium,Low,61.6,,,,,,,56.9,94.0,87.8,39.3,98.0,4.5,96.6,81.5,3.9,0
-ATL-SPR-0372,Chorani Ka Naula I,Nainital,1752.1,61.7,Medium,Low,61.7,,,,,,,56.9,94.0,87.8,39.3,98.3,4.0,96.3,82.9,3.9,0
-ATL-SPR-0373,Bakhli Ka Naula,Nainital,1789.1,61.7,Medium,Low,61.7,,,,,,,56.9,94.0,87.8,39.3,99.0,3.4,97.7,80.3,3.9,0
-ATL-SPR-0374,Khet Ka Dhara,Nainital,1736.7,61.2,Medium,Low,61.2,,,,,,,56.9,94.0,87.8,39.3,97.0,5.9,95.1,76.5,3.9,0
-ATL-SPR-0375,Kanala Naula,Nainital,1741.2,61.2,Medium,Low,61.2,,,,,,,56.9,94.0,87.8,39.3,97.4,5.5,95.5,75.2,3.9,0
-ATL-SPR-0376,Raste Ka Naula,Nainital,1748.0,61.5,Medium,Low,61.5,,,,,,,56.9,94.0,87.8,39.3,95.3,8.8,95.2,81.1,3.9,0
-ATL-SPR-0377,Shenhanga Naula I,Nainital,1783.5,62.3,Medium,Low,62.3,,,,,,,56.9,94.0,87.8,39.3,98.4,3.4,97.6,91.9,3.9,0
-ATL-SPR-0378,Shenhanga Dhara,Nainital,1772.6,62.1,Medium,Low,62.1,,,,,,,56.9,94.0,87.8,39.3,98.2,3.4,97.2,89.4,3.9,0
-ATL-SPR-0379,Shenhanga Naula II,Nainital,1772.2,62.3,Medium,Low,62.3,,,,,,,56.9,94.0,87.8,39.3,97.3,4.0,97.1,92.7,3.9,0
-ATL-SPR-0380,Shenhanga Naula III,Nainital,1772.2,62.3,Medium,Low,62.3,,,,,,,56.9,94.0,87.8,39.3,97.2,4.2,97.0,92.7,3.9,0
-ATL-SPR-0381,Belkiya Naula,Nainital,1778.9,62.5,Medium,Low,62.5,,,,,,,56.9,94.0,87.8,39.3,97.4,4.9,98.1,94.0,3.9,0
-ATL-SPR-0382,Khet Ka Naula,Nainital,1739.2,61.4,Medium,Low,61.4,,,,,,,56.9,94.0,87.8,39.3,96.8,6.6,94.7,79.5,3.9,0
-ATL-SPR-0383,Pani Nauli,Nainital,1988.4,62.1,Medium,Low,62.1,,,,,,,73.1,87.8,87.8,39.3,79.9,29.5,62.9,73.4,14.8,0
-ATL-SPR-0384,Akhrani Spring,Nainital,1978.2,61.6,Medium,Low,61.6,,,,,,,73.1,87.8,87.8,39.3,73.7,32.0,78.4,62.8,12.4,0
+ATL-SPR-0370,Bachi Singh Ka Naula,Nainital,1752.1,61.7,High,Low,61.7,,,,,,,56.9,94.0,87.8,39.3,98.2,4.5,96.8,81.5,3.9,0
+ATL-SPR-0371,Chorani Ka Naula II,Nainital,1752.1,61.6,High,Low,61.6,,,,,,,56.9,94.0,87.8,39.3,98.0,4.5,96.6,81.5,3.9,0
+ATL-SPR-0372,Chorani Ka Naula I,Nainital,1752.1,61.7,High,Low,61.7,,,,,,,56.9,94.0,87.8,39.3,98.3,4.0,96.3,82.9,3.9,0
+ATL-SPR-0373,Bakhli Ka Naula,Nainital,1789.1,61.7,High,Low,61.7,,,,,,,56.9,94.0,87.8,39.3,99.0,3.4,97.7,80.3,3.9,0
+ATL-SPR-0374,Khet Ka Dhara,Nainital,1736.7,61.2,High,Low,61.2,,,,,,,56.9,94.0,87.8,39.3,97.0,5.9,95.1,76.5,3.9,0
+ATL-SPR-0375,Kanala Naula,Nainital,1741.2,61.2,High,Low,61.2,,,,,,,56.9,94.0,87.8,39.3,97.4,5.5,95.5,75.2,3.9,0
+ATL-SPR-0376,Raste Ka Naula,Nainital,1748.0,61.5,High,Low,61.5,,,,,,,56.9,94.0,87.8,39.3,95.3,8.8,95.2,81.1,3.9,0
+ATL-SPR-0377,Shenhanga Naula I,Nainital,1783.5,62.3,High,Low,62.3,,,,,,,56.9,94.0,87.8,39.3,98.4,3.4,97.6,91.9,3.9,0
+ATL-SPR-0378,Shenhanga Dhara,Nainital,1772.6,62.1,High,Low,62.1,,,,,,,56.9,94.0,87.8,39.3,98.2,3.4,97.2,89.4,3.9,0
+ATL-SPR-0379,Shenhanga Naula II,Nainital,1772.2,62.3,High,Low,62.3,,,,,,,56.9,94.0,87.8,39.3,97.3,4.0,97.1,92.7,3.9,0
+ATL-SPR-0380,Shenhanga Naula III,Nainital,1772.2,62.3,High,Low,62.3,,,,,,,56.9,94.0,87.8,39.3,97.2,4.2,97.0,92.7,3.9,0
+ATL-SPR-0381,Belkiya Naula,Nainital,1778.9,62.5,High,Low,62.5,,,,,,,56.9,94.0,87.8,39.3,97.4,4.9,98.1,94.0,3.9,0
+ATL-SPR-0382,Khet Ka Naula,Nainital,1739.2,61.4,High,Low,61.4,,,,,,,56.9,94.0,87.8,39.3,96.8,6.6,94.7,79.5,3.9,0
+ATL-SPR-0383,Pani Nauli,Nainital,1988.4,62.1,High,Low,62.1,,,,,,,73.1,87.8,87.8,39.3,79.9,29.5,62.9,73.4,14.8,0
+ATL-SPR-0384,Akhrani Spring,Nainital,1978.2,61.6,High,Low,61.6,,,,,,,73.1,87.8,87.8,39.3,73.7,32.0,78.4,62.8,12.4,0
 ATL-SPR-0385,Gadhera Dhara II,Nainital,1922.4,57.1,Medium,Low,57.1,,,,,,,56.9,94.0,87.8,39.3,71.4,30.2,66.4,66.7,3.9,0
 ATL-SPR-0386,Gadhera Dhara I,Nainital,1922.4,57.1,Medium,Low,57.1,,,,,,,56.9,94.0,87.8,39.3,72.5,29.5,65.7,65.2,3.9,0
 ATL-SPR-0387,SavanyaGadhera,Nainital,1799.3,59.1,Medium,Low,59.1,,,,,,,56.9,94.0,87.8,39.3,78.3,19.7,93.6,67.9,3.9,0
 ATL-SPR-0388,Gadhera Naula,Nainital,1934.1,57.6,Medium,Low,57.6,,,,,,,56.9,94.0,87.8,39.3,79.3,28.0,62.0,65.0,3.9,0
 ATL-SPR-0389,Dubkher ka Naula,Nainital,1898.7,55.9,Medium,Low,55.9,,,,,,,56.9,94.0,87.8,39.3,61.3,33.3,67.0,63.8,3.9,0
 ATL-SPR-0390,Sarna Naula,Nainital,1887.0,59.0,Medium,Low,59.0,,,,,,,68.9,97.1,87.8,39.3,39.0,40.7,87.5,82.5,3.9,0
-ATL-SPR-0391,Gahana Talla Naula,Nainital,1829.1,62.1,Medium,Low,62.1,,,,,,,68.9,97.1,87.8,39.3,70.9,35.0,76.2,74.1,10.7,0
-ATL-SPR-0392,Gajar ka Naula,Nainital,1919.4,63.9,Medium,Low,63.9,,,,,,,68.9,97.1,87.8,39.3,51.0,46.9,87.7,79.7,3.9,50
+ATL-SPR-0391,Gahana Talla Naula,Nainital,1829.1,62.1,High,Low,62.1,,,,,,,68.9,97.1,87.8,39.3,70.9,35.0,76.2,74.1,10.7,0
+ATL-SPR-0392,Gajar ka Naula,Nainital,1919.4,63.9,High,Low,63.9,,,,,,,68.9,97.1,87.8,39.3,51.0,46.9,87.7,79.7,3.9,50
 ATL-SPR-0393,Panera Dhara,Nainital,1825.9,41.4,Medium,Low,41.4,,,,,,,67.7,49.5,39.7,5.3,3.4,82.7,59.8,51.2,27.6,0
 ATL-SPR-0394,Gangori Talla Naula,Nainital,1106.2,47.6,Medium,Low,47.6,,,,,,,33.2,47.4,39.7,5.3,96.3,59.7,33.5,88.7,60.5,0
 ATL-SPR-0395,Gangori Malla Naula,Nainital,1106.2,47.5,Medium,Low,47.5,,,,,,,33.2,47.4,39.7,5.3,96.4,57.7,33.5,89.8,60.5,0
@@ -619,9 +619,9 @@ ATL-SPR-0416,Sakradi Dhari,Nainital,1039.7,43.5,Medium,Low,43.5,,,,,,,33.2,47.4,
 ATL-SPR-0417,Sana Dhara,Nainital,1038.4,48.6,Medium,Low,48.6,,,,,,,33.2,47.4,39.7,5.3,94.9,60.6,84.5,55.7,27.6,50
 ATL-SPR-0418,Kulu Dhara,Nainital,1037.5,51.6,Medium,Low,51.6,,,,,,,33.2,47.4,39.7,5.3,93.6,63.7,83.4,55.2,27.6,100
 ATL-SPR-0429,Kheemda ka Naula,Nainital,1800.8,56.1,Medium,Low,56.1,,,,,,,73.1,99.9,87.8,39.3,13.8,58.3,27.4,57.4,3.9,50
-ATL-SPR-0430,Dhara Ka Naula I,Nainital,1492.4,60.8,Medium,Low,60.8,,,,,,,65.4,83.5,87.8,39.3,62.0,16.8,95.8,42.1,22.3,50
+ATL-SPR-0430,Dhara Ka Naula I,Nainital,1492.4,60.8,High,Low,60.8,,,,,,,65.4,83.5,87.8,39.3,62.0,16.8,95.8,42.1,22.3,50
 ATL-SPR-0431,Raja Ka Naula,Nainital,1491.5,54.0,Medium,Low,54.0,,,,,,,65.4,83.5,39.7,5.3,65.0,14.0,94.3,50.9,29.7,50
-ATL-SPR-0432,Dhara Ka Naula II,Nainital,1492.4,60.8,Medium,Low,60.8,,,,,,,65.4,83.5,87.8,39.3,62.0,16.8,95.8,42.1,22.3,50
+ATL-SPR-0432,Dhara Ka Naula II,Nainital,1492.4,60.8,High,Low,60.8,,,,,,,65.4,83.5,87.8,39.3,62.0,16.8,95.8,42.1,22.3,50
 ATL-SPR-0433,Ghar Ka Naula,Nainital,1502.0,54.1,Medium,Low,54.1,,,,,,,65.4,83.5,39.7,5.3,64.5,13.6,94.5,54.0,29.7,50
 ATL-SPR-0434,Nigrad Dhara,Nainital,1558.5,45.6,Medium,Low,45.6,,,,,,,65.4,83.5,39.7,5.3,45.0,14.6,31.8,58.8,36.4,0
 ATL-SPR-0435,Dhare ka naula,Nainital,1558.5,45.6,Medium,Low,45.6,,,,,,,65.4,83.5,39.7,5.3,45.0,15.0,30.7,58.8,36.4,0
@@ -653,102 +653,102 @@ ATL-SPR-0460,Peepal,Almora,1452.1,56.2,Medium,Low,56.2,,,,,,,68.1,60.9,79.2,57.4
 ATL-SPR-0461,Simarpakha,Almora,1648.8,52.5,Medium,Low,52.5,,,,,,,67.1,61.8,79.2,57.4,10.7,28.0,47.2,75.9,62.4,0
 ATL-SPR-0462,Rupeen Gadhera,Almora,1697.4,48.3,Medium,Low,48.3,,,,,,,68.1,60.9,79.2,57.4,3.4,78.3,5.6,57.0,32.5,0
 ATL-SPR-0463,Saimegair Gadhera,Almora,1657.0,56.1,Medium,Low,56.1,,,,,,,67.1,61.8,79.2,57.4,15.2,70.9,58.1,34.7,85.7,0
-ATL-SPR-0464,Pokharthal Dhara,Almora,1558.7,60.4,Medium,Low,60.4,,,,,,,48.6,65.5,79.2,57.4,60.5,53.6,71.1,64.4,92.2,0
+ATL-SPR-0464,Pokharthal Dhara,Almora,1558.7,60.4,High,Low,60.4,,,,,,,48.6,65.5,79.2,57.4,60.5,53.6,71.1,64.4,92.2,0
 ATL-SPR-0465,Kaukanala Dhara,Almora,1507.0,59.9,Medium,Low,59.9,,,,,,,48.6,65.5,79.2,57.4,58.1,51.1,76.5,50.0,98.6,0
 ATL-SPR-0466,Dhanna,Almora,1393.2,57.2,Medium,Low,57.2,,,,,,,48.6,65.5,79.2,57.4,62.9,32.7,92.9,27.0,80.3,0
 ATL-SPR-0467,Pilkha Dhara,Almora,1614.3,56.1,Medium,Low,56.1,,,,,,,48.6,65.5,79.2,57.4,18.5,46.9,83.1,70.8,94.6,0
 ATL-SPR-0468,Beru Gadhara,Almora,1520.6,48.3,Medium,Low,48.3,,,,,,,67.1,61.8,79.2,57.4,3.4,68.6,35.6,41.1,31.1,0
-ATL-SPR-0469,Kolura Gadhara,Almora,1746.5,61.5,Medium,Low,61.5,,,,,,,48.6,65.5,79.2,57.4,75.4,22.9,93.2,93.8,71.3,0
+ATL-SPR-0469,Kolura Gadhara,Almora,1746.5,61.5,High,Low,61.5,,,,,,,48.6,65.5,79.2,57.4,75.4,22.9,93.2,93.8,71.3,0
 ATL-SPR-0470,Patiya Gadhara,Almora,1352.9,47.0,Medium,Low,47.0,,,,,,,48.6,65.5,79.2,57.4,10.7,28.0,81.9,44.6,39.1,0
 ATL-SPR-0471,School,Almora,1363.6,50.9,Medium,Low,50.9,,,,,,,48.6,65.5,79.2,57.4,22.0,31.0,92.3,93.3,24.7,0
 ATL-SPR-0472,Ghatgar Gadhera,Almora,1336.5,57.2,Medium,Low,57.2,,,,,,,70.0,86.3,87.8,39.3,33.7,69.7,19.6,25.3,67.7,0
-ATL-SPR-0473,Khetigar Gadhera,Almora,1271.0,61.4,Medium,Low,61.4,,,,,,,70.0,86.3,87.8,39.3,42.5,64.6,30.7,36.8,88.3,0
+ATL-SPR-0473,Khetigar Gadhera,Almora,1271.0,61.4,High,Low,61.4,,,,,,,70.0,86.3,87.8,39.3,42.5,64.6,30.7,36.8,88.3,0
 ATL-SPR-0474,Kalapatal,Almora,2159.1,45.9,Medium,Low,45.9,,,,,,,61.1,88.3,87.8,39.3,3.4,2.2,1.7,98.5,12.7,0
 ATL-SPR-0475,Dhara Gadhera,Almora,1654.2,56.2,Medium,Low,56.2,,,,,,,70.0,86.3,87.8,39.3,39.0,73.4,23.5,45.2,31.1,0
 ATL-SPR-0476,Khetigad,Almora,1484.6,58.7,Medium,Low,58.7,,,,,,,70.0,86.3,87.8,39.3,45.0,68.6,35.6,53.4,39.1,0
 ATL-SPR-0477,Bangi Gadhera,Almora,1498.8,52.1,Medium,Low,52.1,,,,,,,70.0,86.3,87.8,39.3,8.2,82.0,7.7,18.0,51.5,0
-ATL-SPR-0478,Khetigad Gadhera,Almora,1435.0,61.3,Medium,Low,61.3,,,,,,,70.0,86.3,87.8,39.3,56.8,66.1,50.8,46.1,48.3,0
+ATL-SPR-0478,Khetigad Gadhera,Almora,1435.0,61.3,High,Low,61.3,,,,,,,70.0,86.3,87.8,39.3,56.8,66.1,50.8,46.1,48.3,0
 ATL-SPR-0479,Burigad(Naigad),Almora,1175.5,66.6,High,Low,66.6,,,,,,,67.1,79.6,87.8,39.3,82.6,66.9,10.8,39.9,49.5,100
 ATL-SPR-0480,Paijana Gadhera,Almora,1705.9,48.9,Medium,Low,48.9,,,,,,,70.0,86.3,87.8,39.3,15.2,45.9,10.2,58.4,3.9,0
 ATL-SPR-0481,khankar Gadhera,Almora,1721.2,59.6,Medium,Low,59.6,,,,,,,53.2,90.9,87.8,39.3,43.5,68.6,48.3,50.8,11.2,100
 ATL-SPR-0482,Patna Dhara,Almora,1149.6,66.9,High,Low,66.9,,,,,,,72.5,80.3,87.8,39.3,86.6,53.6,63.3,72.4,53.0,0
-ATL-SPR-0483,Sir Naula Dhara,Almora,1301.4,61.4,Medium,Low,61.4,,,,,,,70.0,86.7,87.8,39.3,60.9,51.1,16.6,54.5,70.1,0
+ATL-SPR-0483,Sir Naula Dhara,Almora,1301.4,61.4,High,Low,61.4,,,,,,,70.0,86.7,87.8,39.3,60.9,51.1,16.6,54.5,70.1,0
 ATL-SPR-0484,Bangi Gadhera,Almora,1474.3,53.2,Medium,Low,53.2,,,,,,,70.0,86.3,87.8,39.3,13.8,82.7,9.1,21.8,51.5,0
 ATL-SPR-0485,Nimani Gadhera,Almora,1305.2,58.7,Medium,Low,58.7,,,,,,,67.1,79.6,87.8,39.3,72.5,61.2,6.3,55.1,41.5,0
 ATL-SPR-0486,GariKafal Naula,Almora,1628.7,47.8,Medium,Low,47.8,,,,,,,68.1,60.9,79.2,57.4,10.7,56.0,15.8,51.5,29.7,0
 ATL-SPR-0487,Navada Dhara,Almora,1587.2,47.7,Medium,Low,47.7,,,,,,,68.1,60.9,79.2,57.4,10.7,51.1,22.5,47.7,29.7,0
 ATL-SPR-0488,Simadi Seem,Almora,1534.2,58.7,Medium,Low,58.7,,,,,,,82.9,77.9,67.2,23.0,85.7,18.7,55.8,36.4,35.3,0
-ATL-SPR-0489,Buntarani,Almora,1555.2,64.7,Medium,Low,64.7,,,,,,,82.9,77.9,67.2,23.0,90.0,10.6,70.4,44.4,84.6,0
+ATL-SPR-0489,Buntarani,Almora,1555.2,64.7,High,Low,64.7,,,,,,,82.9,77.9,67.2,23.0,90.0,10.6,70.4,44.4,84.6,0
 ATL-SPR-0490,Naudhara,Almora,1607.0,65.1,High,Low,65.1,,,,,,,82.9,77.9,67.2,23.0,82.3,18.7,69.4,58.2,84.6,0
 ATL-SPR-0491,Shankar Joshi,Almora,1714.1,59.4,Medium,Low,59.4,,,,,,,82.9,77.9,67.2,23.0,57.4,27.1,71.1,85.8,32.5,0
 ATL-SPR-0492,Bheda Pandit,Almora,1745.2,59.8,Medium,Low,59.8,,,,,,,82.9,77.9,67.2,23.0,28.6,34.1,64.6,91.4,71.3,0
 ATL-SPR-0493,Bheda SC,Almora,1752.8,59.7,Medium,Low,59.7,,,,,,,82.9,77.9,67.2,23.0,26.3,34.1,65.2,92.8,71.3,0
-ATL-SPR-0494,Bheda tok,Almora,1655.9,60.7,Medium,Low,60.7,,,,,,,82.9,77.9,67.2,23.0,88.1,9.2,71.1,70.3,27.6,0
-ATL-SPR-0495,Hema Ka Naula,Almora,1486.4,60.8,Medium,Low,60.8,,,,,,,86.5,71.3,67.2,23.0,96.8,1.0,71.1,57.9,31.1,0
-ATL-SPR-0496,Simkholi,Almora,1521.8,60.3,Medium,Low,60.3,,,,,,,86.5,71.3,67.2,23.0,91.5,2.6,73.7,49.4,35.3,0
-ATL-SPR-0497,Chanoli SC,Almora,1563.8,62.3,Medium,Low,62.3,,,,,,,86.5,71.3,67.2,23.0,87.3,11.0,88.0,56.7,42.7,0
-ATL-SPR-0498,Shishu Mandir Naula,Almora,1505.3,60.6,Medium,Low,60.6,,,,,,,86.5,71.3,67.2,23.0,94.1,1.9,75.7,53.8,31.1,0
-ATL-SPR-0499,Chanoli Pradhan,Almora,1579.8,60.8,Medium,Low,60.8,,,,,,,86.5,71.3,67.2,23.0,88.3,9.5,87.7,62.2,22.3,0
-ATL-SPR-0500,Falta Chanoli,Almora,1544.4,60.8,Medium,Low,60.8,,,,,,,86.5,71.3,67.2,23.0,87.5,7.0,88.4,62.6,24.2,0
-ATL-SPR-0501,Uttroda Pandit,Almora,1581.6,62.0,Medium,Low,62.0,,,,,,,82.9,74.9,67.2,23.0,98.8,1.3,69.4,69.9,37.7,0
-ATL-SPR-0502,Uttroda SC,Almora,1590.1,62.1,Medium,Low,62.1,,,,,,,82.9,74.9,67.2,23.0,98.6,1.5,68.5,72.7,37.7,0
-ATL-SPR-0503,Haldor Naula,Almora,1611.6,60.9,Medium,Low,60.9,,,,,,,82.9,74.9,67.2,23.0,95.9,5.5,58.7,35.0,57.0,0
-ATL-SPR-0504,Ojha Naula,Almora,1633.8,60.4,Medium,Low,60.4,,,,,,,82.9,74.9,67.2,23.0,91.0,11.9,60.6,29.9,57.0,0
-ATL-SPR-0505,Shivji Ka Dhara,Almora,1544.1,61.1,Medium,Low,61.1,,,,,,,82.9,74.9,67.2,23.0,99.7,0.7,78.9,60.7,26.5,0
-ATL-SPR-0506,Shiv Mandi Naula,Almora,1676.6,62.4,Medium,Low,62.4,,,,,,,82.9,74.9,67.2,23.0,81.9,17.3,84.0,71.0,43.8,0
-ATL-SPR-0507,Tulsi Devi Naula,Almora,1548.5,61.9,Medium,Low,61.9,,,,,,,82.9,74.9,67.2,23.0,99.2,2.0,88.0,59.4,29.7,0
-ATL-SPR-0508,Talbakhai Naula,Almora,1546.5,61.6,Medium,Low,61.6,,,,,,,82.9,74.9,67.2,23.0,99.8,0.8,84.2,59.6,29.7,0
-ATL-SPR-0509,Sheriban Naula,Almora,1529.2,61.3,Medium,Low,61.3,,,,,,,82.9,74.9,67.2,23.0,99.9,0.4,81.7,57.7,29.7,0
-ATL-SPR-0510,Naukuda Naula,Almora,1527.2,61.3,Medium,Low,61.3,,,,,,,82.9,74.9,67.2,23.0,98.5,1.9,75.4,55.1,36.4,0
-ATL-SPR-0511,Balota Naula,Almora,1548.3,61.6,Medium,Low,61.6,,,,,,,82.9,74.9,67.2,23.0,99.6,1.7,83.1,60.1,29.7,0
-ATL-SPR-0512,Malbakhai Naula,Almora,1551.5,61.9,Medium,Low,61.9,,,,,,,82.9,74.9,67.2,23.0,94.7,3.4,78.1,59.2,41.5,0
-ATL-SPR-0513,Shera Naula,Almora,1518.1,60.6,Medium,Low,60.6,,,,,,,82.9,74.9,67.2,23.0,99.4,0.5,69.9,62.4,27.6,0
+ATL-SPR-0494,Bheda tok,Almora,1655.9,60.7,High,Low,60.7,,,,,,,82.9,77.9,67.2,23.0,88.1,9.2,71.1,70.3,27.6,0
+ATL-SPR-0495,Hema Ka Naula,Almora,1486.4,60.8,High,Low,60.8,,,,,,,86.5,71.3,67.2,23.0,96.8,1.0,71.1,57.9,31.1,0
+ATL-SPR-0496,Simkholi,Almora,1521.8,60.3,High,Low,60.3,,,,,,,86.5,71.3,67.2,23.0,91.5,2.6,73.7,49.4,35.3,0
+ATL-SPR-0497,Chanoli SC,Almora,1563.8,62.3,High,Low,62.3,,,,,,,86.5,71.3,67.2,23.0,87.3,11.0,88.0,56.7,42.7,0
+ATL-SPR-0498,Shishu Mandir Naula,Almora,1505.3,60.6,High,Low,60.6,,,,,,,86.5,71.3,67.2,23.0,94.1,1.9,75.7,53.8,31.1,0
+ATL-SPR-0499,Chanoli Pradhan,Almora,1579.8,60.8,High,Low,60.8,,,,,,,86.5,71.3,67.2,23.0,88.3,9.5,87.7,62.2,22.3,0
+ATL-SPR-0500,Falta Chanoli,Almora,1544.4,60.8,High,Low,60.8,,,,,,,86.5,71.3,67.2,23.0,87.5,7.0,88.4,62.6,24.2,0
+ATL-SPR-0501,Uttroda Pandit,Almora,1581.6,62.0,High,Low,62.0,,,,,,,82.9,74.9,67.2,23.0,98.8,1.3,69.4,69.9,37.7,0
+ATL-SPR-0502,Uttroda SC,Almora,1590.1,62.1,High,Low,62.1,,,,,,,82.9,74.9,67.2,23.0,98.6,1.5,68.5,72.7,37.7,0
+ATL-SPR-0503,Haldor Naula,Almora,1611.6,60.9,High,Low,60.9,,,,,,,82.9,74.9,67.2,23.0,95.9,5.5,58.7,35.0,57.0,0
+ATL-SPR-0504,Ojha Naula,Almora,1633.8,60.4,High,Low,60.4,,,,,,,82.9,74.9,67.2,23.0,91.0,11.9,60.6,29.9,57.0,0
+ATL-SPR-0505,Shivji Ka Dhara,Almora,1544.1,61.1,High,Low,61.1,,,,,,,82.9,74.9,67.2,23.0,99.7,0.7,78.9,60.7,26.5,0
+ATL-SPR-0506,Shiv Mandi Naula,Almora,1676.6,62.4,High,Low,62.4,,,,,,,82.9,74.9,67.2,23.0,81.9,17.3,84.0,71.0,43.8,0
+ATL-SPR-0507,Tulsi Devi Naula,Almora,1548.5,61.9,High,Low,61.9,,,,,,,82.9,74.9,67.2,23.0,99.2,2.0,88.0,59.4,29.7,0
+ATL-SPR-0508,Talbakhai Naula,Almora,1546.5,61.6,High,Low,61.6,,,,,,,82.9,74.9,67.2,23.0,99.8,0.8,84.2,59.6,29.7,0
+ATL-SPR-0509,Sheriban Naula,Almora,1529.2,61.3,High,Low,61.3,,,,,,,82.9,74.9,67.2,23.0,99.9,0.4,81.7,57.7,29.7,0
+ATL-SPR-0510,Naukuda Naula,Almora,1527.2,61.3,High,Low,61.3,,,,,,,82.9,74.9,67.2,23.0,98.5,1.9,75.4,55.1,36.4,0
+ATL-SPR-0511,Balota Naula,Almora,1548.3,61.6,High,Low,61.6,,,,,,,82.9,74.9,67.2,23.0,99.6,1.7,83.1,60.1,29.7,0
+ATL-SPR-0512,Malbakhai Naula,Almora,1551.5,61.9,High,Low,61.9,,,,,,,82.9,74.9,67.2,23.0,94.7,3.4,78.1,59.2,41.5,0
+ATL-SPR-0513,Shera Naula,Almora,1518.1,60.6,High,Low,60.6,,,,,,,82.9,74.9,67.2,23.0,99.4,0.5,69.9,62.4,27.6,0
 ATL-SPR-0514,Chota Chin,Almora,1565.5,56.9,Medium,Low,56.9,,,,,,,86.5,71.3,67.2,23.0,55.9,26.3,81.0,22.4,43.8,0
-ATL-SPR-0515,Nageshwar Naula,Almora,1558.1,60.1,Medium,Low,60.1,,,,,,,86.5,71.3,67.2,23.0,83.3,9.2,90.5,35.5,37.7,0
-ATL-SPR-0516,Pant Naula,Almora,1545.1,62.0,Medium,Low,62.0,,,,,,,86.5,71.3,67.2,23.0,93.6,2.8,83.6,64.3,34.2,0
+ATL-SPR-0515,Nageshwar Naula,Almora,1558.1,60.1,High,Low,60.1,,,,,,,86.5,71.3,67.2,23.0,83.3,9.2,90.5,35.5,37.7,0
+ATL-SPR-0516,Pant Naula,Almora,1545.1,62.0,High,Low,62.0,,,,,,,86.5,71.3,67.2,23.0,93.6,2.8,83.6,64.3,34.2,0
 ATL-SPR-0517,Sukrad,Almora,1549.2,59.6,Medium,Low,59.6,,,,,,,82.9,74.9,67.2,23.0,100.0,0.1,71.1,63.3,14.1,0
 ATL-SPR-0518,Baudh Ka Chanola,Almora,1588.5,57.5,Medium,Low,57.5,,,,,,,82.9,74.9,67.2,23.0,85.6,10.0,65.7,44.0,20.9,0
 ATL-SPR-0519,Naukuda Naula,Almora,1591.4,59.4,Medium,Low,59.4,,,,,,,82.9,74.9,67.2,23.0,97.8,3.8,62.9,35.5,36.4,0
 ATL-SPR-0520,Balai SC,Almora,1575.1,57.3,Medium,Low,57.3,,,,,,,82.9,74.9,67.2,23.0,99.1,2.1,61.0,32.4,17.4,0
 ATL-SPR-0521,Balai Dhara,Almora,1468.0,43.7,Medium,Low,43.7,,,,,,,61.1,80.3,67.2,23.0,10.7,35.7,43.4,31.9,23.2,0
 ATL-SPR-0522,Joshi Khola Naula,Almora,1586.0,57.8,Medium,Low,57.8,,,,,,,86.5,71.3,67.2,23.0,85.2,13.3,66.4,33.9,25.6,0
-ATL-SPR-0523,Nagjoshi Naula,Almora,1553.4,62.2,Medium,Low,62.2,,,,,,,86.5,71.3,67.2,23.0,97.9,0.8,75.0,65.8,36.4,0
-ATL-SPR-0524,Nag Dhara (twin),Almora,1569.4,61.8,Medium,Low,61.8,,,,,,,86.5,71.3,67.2,23.0,96.1,2.4,73.0,63.5,36.4,0
+ATL-SPR-0523,Nagjoshi Naula,Almora,1553.4,62.2,High,Low,62.2,,,,,,,86.5,71.3,67.2,23.0,97.9,0.8,75.0,65.8,36.4,0
+ATL-SPR-0524,Nag Dhara (twin),Almora,1569.4,61.8,High,Low,61.8,,,,,,,86.5,71.3,67.2,23.0,96.1,2.4,73.0,63.5,36.4,0
 ATL-SPR-0525,Malli Naula,Almora,1762.8,53.2,Medium,Low,53.2,,,,,,,86.5,71.3,67.2,23.0,3.4,82.0,19.9,48.7,60.5,0
 ATL-SPR-0526,Shiv Dhara,Almora,1556.2,59.1,Medium,Low,59.1,,,,,,,86.5,71.3,67.2,23.0,88.6,6.6,64.6,55.5,25.6,0
 ATL-SPR-0527,Talli Naula,Almora,1571.8,58.9,Medium,Low,58.9,,,,,,,86.5,71.3,67.2,23.0,84.3,9.2,63.3,60.5,25.6,0
-ATL-SPR-0528,Tamta Naula,Almora,1529.6,61.0,Medium,Low,61.0,,,,,,,86.5,71.3,67.2,23.0,97.6,1.2,75.8,62.1,25.6,0
-ATL-SPR-0529,Bhairon Mandir Naula,Almora,1499.9,61.5,Medium,Low,61.5,,,,,,,86.5,71.3,67.2,23.0,99.6,0.3,80.6,71.3,20.1,0
-ATL-SPR-0530,Shiv Mandir Dhara,Almora,1551.5,60.0,Medium,Low,60.0,,,,,,,86.5,71.3,67.2,23.0,83.9,8.8,90.7,33.6,37.7,0
-ATL-SPR-0531,Shera Naikana,Almora,1504.9,61.0,Medium,Low,61.0,,,,,,,86.5,71.3,67.2,23.0,98.1,1.1,78.4,69.4,18.9,0
-ATL-SPR-0532,Hatoudu Naula,Almora,1536.9,62.9,Medium,Low,62.9,,,,,,,86.5,71.3,67.2,23.0,92.1,6.3,88.3,56.2,45.3,0
-ATL-SPR-0533,Kanya Naula,Almora,1545.6,61.1,Medium,Low,61.1,,,,,,,86.5,71.3,67.2,23.0,85.6,11.9,88.9,61.1,27.6,0
-ATL-SPR-0534,Sita Ka Naula,Almora,1537.2,61.2,Medium,Low,61.2,,,,,,,86.5,71.3,67.2,23.0,82.8,12.9,89.3,46.7,41.5,0
+ATL-SPR-0528,Tamta Naula,Almora,1529.6,61.0,High,Low,61.0,,,,,,,86.5,71.3,67.2,23.0,97.6,1.2,75.8,62.1,25.6,0
+ATL-SPR-0529,Bhairon Mandir Naula,Almora,1499.9,61.5,High,Low,61.5,,,,,,,86.5,71.3,67.2,23.0,99.6,0.3,80.6,71.3,20.1,0
+ATL-SPR-0530,Shiv Mandir Dhara,Almora,1551.5,60.0,High,Low,60.0,,,,,,,86.5,71.3,67.2,23.0,83.9,8.8,90.7,33.6,37.7,0
+ATL-SPR-0531,Shera Naikana,Almora,1504.9,61.0,High,Low,61.0,,,,,,,86.5,71.3,67.2,23.0,98.1,1.1,78.4,69.4,18.9,0
+ATL-SPR-0532,Hatoudu Naula,Almora,1536.9,62.9,High,Low,62.9,,,,,,,86.5,71.3,67.2,23.0,92.1,6.3,88.3,56.2,45.3,0
+ATL-SPR-0533,Kanya Naula,Almora,1545.6,61.1,High,Low,61.1,,,,,,,86.5,71.3,67.2,23.0,85.6,11.9,88.9,61.1,27.6,0
+ATL-SPR-0534,Sita Ka Naula,Almora,1537.2,61.2,High,Low,61.2,,,,,,,86.5,71.3,67.2,23.0,82.8,12.9,89.3,46.7,41.5,0
 ATL-SPR-0535,Naugad Naula,Almora,1599.8,59.9,Medium,Low,59.9,,,,,,,86.5,71.3,67.2,23.0,61.8,25.0,85.1,65.8,37.7,0
-ATL-SPR-0536,Malbakhai Naula,Almora,1558.2,62.6,Medium,Low,62.6,,,,,,,86.5,71.3,67.2,23.0,87.1,11.5,89.3,56.4,45.3,0
-ATL-SPR-0537,Malli Naikana Pradhan,Almora,1557.2,63.1,Medium,Low,63.1,,,,,,,86.5,71.3,67.2,23.0,90.2,8.5,89.6,60.6,45.3,0
-ATL-SPR-0538,Devaldhar Dhara,Bageshwar,1556.8,63.8,Medium,Low,63.8,,,,,,,84.9,62.8,79.2,57.4,85.0,13.6,43.4,69.5,57.0,0
+ATL-SPR-0536,Malbakhai Naula,Almora,1558.2,62.6,High,Low,62.6,,,,,,,86.5,71.3,67.2,23.0,87.1,11.5,89.3,56.4,45.3,0
+ATL-SPR-0537,Malli Naikana Pradhan,Almora,1557.2,63.1,High,Low,63.1,,,,,,,86.5,71.3,67.2,23.0,90.2,8.5,89.6,60.6,45.3,0
+ATL-SPR-0538,Devaldhar Dhara,Bageshwar,1556.8,63.8,High,Low,63.8,,,,,,,84.9,62.8,79.2,57.4,85.0,13.6,43.4,69.5,57.0,0
 ATL-SPR-0547,Damua Dhunga Noula,Bageshwar,1388.7,56.7,Medium,Low,56.7,,,,,,,78.4,57.3,79.2,57.4,59.8,45.3,53.4,23.5,40.4,0
 ATL-SPR-0548,Kotigar Dhara,Bageshwar,1316.0,58.3,Medium,Low,58.3,,,,,,,78.4,57.3,79.2,57.4,45.0,38.2,15.2,29.3,70.1,50
 ATL-SPR-0549,Behargoun Dhara,Bageshwar,1140.8,56.3,Medium,Low,56.3,,,,,,,71.0,55.7,79.2,57.4,22.0,74.4,46.2,44.8,76.9,0
 ATL-SPR-0550,Sutargoun Dhara,Bageshwar,1235.1,57.0,Medium,Low,57.0,,,,,,,71.0,55.7,79.2,57.4,16.9,70.9,62.9,80.1,58.5,0
 ATL-SPR-0551,Thanda Pani Dhara,Bageshwar,1388.4,56.9,Medium,Low,56.9,,,,,,,78.4,57.3,79.2,57.4,59.8,50.3,49.2,26.6,40.4,0
 ATL-SPR-0552,Bholana Dhara,Bageshwar,1363.8,51.7,Medium,Low,51.7,,,,,,,78.4,57.3,79.2,57.4,45.0,41.7,14.8,26.7,32.5,0
-ATL-SPR-0553,Malla tej Dhara,Bageshwar,1033.5,62.3,Medium,Low,62.3,,,,,,,71.0,55.7,79.2,57.4,69.3,48.1,46.8,58.9,85.7,0
+ATL-SPR-0553,Malla tej Dhara,Bageshwar,1033.5,62.3,High,Low,62.3,,,,,,,71.0,55.7,79.2,57.4,69.3,48.1,46.8,58.9,85.7,0
 ATL-SPR-0554,Gadhera Dhara,Bageshwar,1075.3,52.9,Medium,Low,52.9,,,,,,,71.0,55.7,79.2,57.4,12.6,80.7,45.3,31.7,58.5,0
 ATL-SPR-0555,Bakarmuna,Bageshwar,951.9,59.1,Medium,Low,59.1,,,,,,,71.0,55.7,79.2,57.4,60.9,67.3,40.4,10.4,86.5,0
-ATL-SPR-0562,Loorigaon,Bageshwar,1444.4,60.4,Medium,Low,60.4,,,,,,,84.9,62.8,79.2,57.4,51.4,60.6,33.3,46.9,55.8,0
-ATL-SPR-0563,Talla,Bageshwar,1300.8,64.8,Medium,Low,64.8,,,,,,,77.3,63.1,79.2,57.4,88.1,51.1,42.9,36.7,78.6,0
-ATL-SPR-0564,Dhara,Bageshwar,1192.1,62.3,Medium,Low,62.3,,,,,,,77.3,63.1,79.2,57.4,92.3,59.7,32.5,20.3,58.5,0
-ATL-SPR-0565,Palla,Bageshwar,1071.3,64.6,Medium,Low,64.6,,,,,,,71.0,55.7,79.2,57.4,66.9,73.9,56.6,56.6,91.0,0
-ATL-SPR-0570,Banigar,Bageshwar,1376.2,60.6,Medium,Low,60.6,,,,,,,84.9,62.8,79.2,57.4,62.4,69.2,23.8,16.7,31.1,50
-ATL-SPR-0571,Billori,Bageshwar,1389.9,60.5,Medium,Low,60.5,,,,,,,84.9,62.8,79.2,57.4,74.0,72.5,34.9,48.7,16.7,0
-ATL-SPR-0578,Billori spring,Bageshwar,1401.7,63.4,Medium,Low,63.4,,,,,,,84.9,62.8,79.2,57.4,77.8,87.6,35.6,13.2,55.8,0
+ATL-SPR-0562,Loorigaon,Bageshwar,1444.4,60.4,High,Low,60.4,,,,,,,84.9,62.8,79.2,57.4,51.4,60.6,33.3,46.9,55.8,0
+ATL-SPR-0563,Talla,Bageshwar,1300.8,64.8,High,Low,64.8,,,,,,,77.3,63.1,79.2,57.4,88.1,51.1,42.9,36.7,78.6,0
+ATL-SPR-0564,Dhara,Bageshwar,1192.1,62.3,High,Low,62.3,,,,,,,77.3,63.1,79.2,57.4,92.3,59.7,32.5,20.3,58.5,0
+ATL-SPR-0565,Palla,Bageshwar,1071.3,64.6,High,Low,64.6,,,,,,,71.0,55.7,79.2,57.4,66.9,73.9,56.6,56.6,91.0,0
+ATL-SPR-0570,Banigar,Bageshwar,1376.2,60.6,High,Low,60.6,,,,,,,84.9,62.8,79.2,57.4,62.4,69.2,23.8,16.7,31.1,50
+ATL-SPR-0571,Billori,Bageshwar,1389.9,60.5,High,Low,60.5,,,,,,,84.9,62.8,79.2,57.4,74.0,72.5,34.9,48.7,16.7,0
+ATL-SPR-0578,Billori spring,Bageshwar,1401.7,63.4,High,Low,63.4,,,,,,,84.9,62.8,79.2,57.4,77.8,87.6,35.6,13.2,55.8,0
 ATL-SPR-0579,Chourshoo spring,Bageshwar,1262.1,49.3,Medium,Low,49.3,,,,,,,80.6,50.7,7.5,100.0,3.4,30.2,64.1,71.5,78.6,0
 ATL-SPR-0580,Jouna Gadher,Bageshwar,1392.9,38.4,Medium,Low,38.4,,,,,,,32.5,48.0,46.6,25.7,16.9,38.7,35.6,53.4,82.3,0
 ATL-SPR-0581,Nari Gadhera,Bageshwar,1184.6,36.5,Medium,Low,36.5,,,,,,,21.9,8.4,45.6,76.3,3.4,59.0,91.2,36.9,53.0,50
-ATL-SPR-0582,Borgaon Naula,Bageshwar,1281.3,61.0,Medium,Low,61.0,,,,,,,78.4,57.3,79.2,57.4,68.7,23.6,42.9,79.1,58.5,0
-ATL-SPR-0583,Gopiyagaad Dhara,Bageshwar,1281.8,60.3,Medium,Low,60.3,,,,,,,78.4,57.3,79.2,57.4,76.1,12.9,53.4,70.9,46.8,0
+ATL-SPR-0582,Borgaon Naula,Bageshwar,1281.3,61.0,High,Low,61.0,,,,,,,78.4,57.3,79.2,57.4,68.7,23.6,42.9,79.1,58.5,0
+ATL-SPR-0583,Gopiyagaad Dhara,Bageshwar,1281.8,60.3,High,Low,60.3,,,,,,,78.4,57.3,79.2,57.4,76.1,12.9,53.4,70.9,46.8,0
 ATL-SPR-0590,Naayalmafi Dhara II,Bageshwar,1404.9,56.7,Medium,Low,56.7,,,,,,,78.4,57.3,79.2,57.4,59.8,44.5,49.8,28.3,40.4,0
 ATL-SPR-0591,Khola Naula,Bageshwar,958.5,59.2,Medium,Low,59.2,,,,,,,71.0,55.7,79.2,57.4,60.5,67.3,42.5,11.2,86.5,0
 ATL-SPR-0593,Bangabhora,Bageshwar,2560.1,22.5,Low,Low,22.5,,,,,,,8.3,6.6,45.6,76.3,3.4,80.1,10.9,4.7,32.5,0
@@ -879,7 +879,7 @@ ATL-SPR-0719,Padhera Tok,Pauri Garhwal,1392.4,47.6,Medium,Low,47.6,,,,,,,18.0,90
 ATL-SPR-0720,Padhera Tok,Pauri Garhwal,1693.6,46.4,Medium,Low,46.4,,,,,,,18.2,85.9,46.3,53.6,80.5,46.9,11.2,57.6,22.3,50
 ATL-SPR-0721,Pani Chabutara,Pauri Garhwal,1019.1,48.8,Medium,Low,48.8,,,,,,,18.0,86.8,28.0,15.5,84.8,78.8,8.9,19.9,97.1,50
 ATL-SPR-0722,Kulurgarh Gadhera,Pithoragarh,1503.3,45.7,Medium,Low,45.7,,,,,,,13.7,27.4,55.9,90.8,68.7,64.1,64.6,17.0,95.1,0
-ATL-SPR-0759,Tunda Naula,Pithoragarh,1065.5,61.3,Medium,Low,61.3,,,,,,,45.6,49.9,97.5,79.3,37.4,87.6,22.7,67.1,96.5,50
+ATL-SPR-0759,Tunda Naula,Pithoragarh,1065.5,61.3,High,Low,61.3,,,,,,,45.6,49.9,97.5,79.3,37.4,87.6,22.7,67.1,96.5,50
 ATL-SPR-0762,Betal,Pithoragarh,967.0,45.3,Medium,Low,45.3,,,,,,,62.1,5.3,20.2,71.3,65.0,70.9,96.2,0.3,58.5,0
 ATL-SPR-0763,Jaguda Naula,Pithoragarh,1003.7,44.5,Medium,Low,44.5,,,,,,,59.0,23.2,55.9,90.8,3.4,88.0,1.0,12.0,98.9,0
 ATL-SPR-0764,Dumdhara,Pithoragarh,798.0,37.4,Medium,Low,37.4,,,,,,,25.1,13.2,16.1,74.2,76.7,31.0,44.6,23.3,83.4,0
@@ -984,7 +984,7 @@ HIM-SPR-0029,Bhankona Gad,Rudraprayag,1400.4,27.3,Low,Low,27.3,,,,,,,4.4,14.2,0.
 HIM-SPR-0030,Bhatargaon Dhara,Pithoragarh,1258.7,38.2,Medium,Low,38.2,,,,,,,13.7,27.4,55.9,90.8,45.0,38.7,57.5,40.8,53.0,0
 HIM-SPR-0031,Bhatgada,Pithoragarh,1521.0,51.5,Medium,Low,51.5,,,,,,,45.6,50.4,55.9,90.8,46.9,96.6,22.2,4.4,95.5,0
 HIM-SPR-0032,Bhatgada dhara,Pithoragarh,1004.5,46.0,Medium,Low,46.0,,,,,,,26.6,39.7,55.9,90.8,81.0,62.3,38.8,34.4,42.7,0
-HIM-SPR-0033,Bhatgari Naula,Pithoragarh,1009.5,63.0,Medium,Low,63.0,,,,,,,71.0,55.7,79.2,57.4,78.9,49.6,52.6,37.9,89.2,0
+HIM-SPR-0033,Bhatgari Naula,Pithoragarh,1009.5,63.0,High,Low,63.0,,,,,,,71.0,55.7,79.2,57.4,78.9,49.6,52.6,37.9,89.2,0
 HIM-SPR-0034,Bhatpaani,Pithoragarh,1146.1,50.7,Medium,Low,50.7,,,,,,,13.7,27.4,55.9,90.8,78.9,77.3,81.4,6.8,88.3,50
 HIM-SPR-0035,Bhetkudi,Pithoragarh,1122.9,44.2,Medium,Low,44.2,,,,,,,26.6,39.7,55.9,90.8,66.2,60.6,49.2,4.5,57.0,0
 HIM-SPR-0036,Bhida paani,Pithoragarh,1276.5,41.6,Medium,Low,41.6,,,,,,,13.7,27.4,55.9,90.8,66.6,64.6,34.3,10.5,78.6,0
@@ -1021,7 +1021,7 @@ HIM-SPR-0069,Churgaon Dhara,Pithoragarh,539.5,0,No score,Low,,,,,,,,,,,,,,,,,
 HIM-SPR-0070,Churmal Naula,Pithoragarh,1327.7,53.1,Medium,Low,53.1,,,,,,,50.9,34.5,55.9,90.8,41.8,89.6,71.7,33.8,80.3,0
 HIM-SPR-0071,Chuwa Naula,Pithoragarh,1331.6,50.3,Medium,Low,50.3,,,,,,,45.6,24.9,55.9,90.8,86.1,19.2,55.8,30.7,76.9,0
 HIM-SPR-0072,Dalsingh Gad,Rudraprayag,1166.3,31.3,Low,Low,31.3,,,,,,,4.4,14.2,0.6,75.2,62.7,42.3,30.0,14.8,78.6,50
-HIM-SPR-0073,Damde Panyar,Pithoragarh,934.2,61.2,Medium,Low,61.2,,,,,,,35.6,58.7,97.5,79.3,94.6,33.3,71.1,16.4,68.7,50
+HIM-SPR-0073,Damde Panyar,Pithoragarh,934.2,61.2,High,Low,61.2,,,,,,,35.6,58.7,97.5,79.3,94.6,33.3,71.1,16.4,68.7,50
 HIM-SPR-0074,Dana naula,Pithoragarh,875.8,50.5,Medium,Low,50.5,,,,,,,45.6,50.4,55.9,90.8,36.5,77.3,74.4,11.3,39.1,50
 HIM-SPR-0076,Dasani Paani,Pithoragarh,1707.9,49.9,Medium,Low,49.9,,,,,,,45.6,24.9,55.9,90.8,45.0,57.7,56.6,61.4,80.3,0
 HIM-SPR-0077,Devi dhara,Pithoragarh,1408.3,45.2,Medium,Low,45.2,,,,,,,26.6,39.7,55.9,90.8,68.3,22.0,46.8,44.0,65.8,0
@@ -1050,7 +1050,7 @@ HIM-SPR-0099,Duni Spring,Pithoragarh,1089.4,65.2,High,Low,65.2,,,,,,,35.6,58.7,9
 HIM-SPR-0100,Duo Dhara,Pithoragarh,1362.9,46.2,Medium,Low,46.2,,,,,,,13.7,27.4,55.9,90.8,90.9,31.0,71.7,12.7,91.0,0
 HIM-SPR-0101,Dupkudi naula,Pithoragarh,1249.2,53.4,Medium,Low,53.4,,,,,,,50.9,51.8,55.9,90.8,58.1,42.8,18.5,95.7,64.1,0
 HIM-SPR-0102,Ferani Naula,Pithoragarh,1001.2,56.2,Medium,Low,56.2,,,,,,,35.6,58.7,97.5,79.3,55.1,83.5,44.1,14.1,87.3,0
-HIM-SPR-0103,Gad Naula,Pithoragarh,1352.8,60.6,Medium,Low,60.6,,,,,,,31.4,59.9,97.5,79.3,90.0,32.0,54.9,74.3,83.4,0
+HIM-SPR-0103,Gad Naula,Pithoragarh,1352.8,60.6,High,Low,60.6,,,,,,,31.4,59.9,97.5,79.3,90.0,32.0,54.9,74.3,83.4,0
 HIM-SPR-0104,Gada Dhara,Pithoragarh,1377.1,53.4,Medium,Low,53.4,,,,,,,50.9,34.5,55.9,90.8,69.9,46.9,46.5,34.6,91.0,0
 HIM-SPR-0105,Gada Dhara,Pithoragarh,1209.5,56.3,Medium,Low,56.3,,,,,,,42.7,36.6,97.5,79.3,55.9,98.7,78.2,2.1,75.1,0
 HIM-SPR-0106,GadaGad,Pauri Garhwal,1296.2,58.9,Medium,Low,58.9,,,,,,,90.3,76.2,46.9,99.8,56.8,50.3,27.3,41.2,32.5,0
@@ -1080,7 +1080,7 @@ HIM-SPR-0130,Haat Dhara,Rudraprayag,912.8,33.8,Low,Low,33.8,,,,,,,5.2,18.8,0.6,7
 HIM-SPR-0131,Hardiya Spring,Pithoragarh,1133.7,38.4,Medium,Low,38.4,,,,,,,45.6,24.9,55.9,90.8,28.6,66.1,20.4,19.5,26.5,0
 HIM-SPR-0132,Itna Naula,Pithoragarh,1423.5,56.0,Medium,Low,56.0,,,,,,,50.9,34.5,55.9,90.8,88.1,52.4,27.1,79.9,73.4,0
 HIM-SPR-0133,Jabrani Dhara,Pithoragarh,1510.8,45.7,Medium,Low,45.7,,,,,,,45.6,24.9,55.9,90.8,60.9,37.5,47.6,29.6,55.8,0
-HIM-SPR-0134,Jadtola Naula,Pithoragarh,768.5,60.3,Medium,Low,60.3,,,,,,,28.3,63.5,97.5,79.3,68.0,59.7,67.5,56.8,95.7,0
+HIM-SPR-0134,Jadtola Naula,Pithoragarh,768.5,60.3,High,Low,60.3,,,,,,,28.3,63.5,97.5,79.3,68.0,59.7,67.5,56.8,95.7,0
 HIM-SPR-0135,Jaguda Naula,Pithoragarh,1713.3,55.4,Medium,Low,55.4,,,,,,,50.9,34.5,55.9,90.8,69.3,37.5,68.3,89.5,68.7,0
 HIM-SPR-0136,Jahajarwa Naula,Pithoragarh,1377.4,59.2,Medium,Low,59.2,,,,,,,31.4,59.9,97.5,79.3,72.0,66.9,43.8,67.3,80.3,0
 HIM-SPR-0137,Jajoli Naula,Pithoragarh,1671.5,54.8,Medium,Low,54.8,,,,,,,50.9,34.5,55.9,90.8,93.2,14.6,62.0,44.4,80.3,0
@@ -1130,7 +1130,7 @@ HIM-SPR-0182,Koti Dhara,Pithoragarh,1436.1,49.5,Medium,Low,49.5,,,,,,,42.7,36.6,
 HIM-SPR-0183,Koti Gad,Pithoragarh,1905.7,40.2,Medium,Low,40.2,,,,,,,19.4,20.8,55.9,90.8,49.4,17.3,21.8,92.9,67.0,0
 HIM-SPR-0184,Kulund,Pithoragarh,1725.1,46.4,Medium,Low,46.4,,,,,,,45.6,24.9,55.9,90.8,63.9,35.7,24.4,55.3,58.5,0
 HIM-SPR-0185,Kund Naula,Pithoragarh,1075.2,52.1,Medium,Low,52.1,,,,,,,31.4,59.9,97.5,79.3,45.0,91.8,36.5,15.7,64.1,0
-HIM-SPR-0186,Kunda Naula,Pithoragarh,970.8,61.5,Medium,Low,61.5,,,,,,,28.3,63.5,97.5,79.3,79.9,36.5,77.5,83.9,83.4,0
+HIM-SPR-0186,Kunda Naula,Pithoragarh,970.8,61.5,High,Low,61.5,,,,,,,28.3,63.5,97.5,79.3,79.9,36.5,77.5,83.9,83.4,0
 HIM-SPR-0187,Kuntola Naula,Pithoragarh,985.0,57.8,Medium,Low,57.8,,,,,,,58.7,52.6,55.9,90.8,70.2,84.8,44.9,2.9,92.7,0
 HIM-SPR-0188,kuwanger,Pithoragarh,1534.0,47.9,Medium,Low,47.9,,,,,,,29.7,48.8,55.9,90.8,29.8,80.1,12.0,97.8,75.1,0
 HIM-SPR-0189,Kwinad Panyar,Pithoragarh,916.6,49.8,Medium,Low,49.8,,,,,,,42.7,37.7,55.9,90.8,23.7,93.4,83.1,5.7,92.7,0
@@ -1147,14 +1147,14 @@ HIM-SPR-0200,Malla Dhara,Pithoragarh,1440.4,51.0,Medium,Low,51.0,,,,,,,29.7,48.8
 HIM-SPR-0201,Malla Dhara,Pithoragarh,1423.1,42.8,Medium,Low,42.8,,,,,,,26.6,39.7,55.9,90.8,53.3,36.5,20.3,35.6,73.4,0
 HIM-SPR-0203,Malla Naula,Pithoragarh,1452.4,48.2,Medium,Low,48.2,,,,,,,42.7,37.7,55.9,90.8,42.5,64.1,54.9,36.5,68.7,0
 HIM-SPR-0204,Malla Naula,Pithoragarh,1279.6,53.5,Medium,Low,53.5,,,,,,,31.4,59.9,97.5,79.3,68.7,68.6,46.5,23.9,50.4,0
-HIM-SPR-0205,Malla Naula,Pithoragarh,1475.6,60.4,Medium,Low,60.4,,,,,,,31.4,59.9,97.5,79.3,87.3,61.7,45.7,96.9,55.8,0
+HIM-SPR-0205,Malla Naula,Pithoragarh,1475.6,60.4,High,Low,60.4,,,,,,,31.4,59.9,97.5,79.3,87.3,61.7,45.7,96.9,55.8,0
 HIM-SPR-0206,Malla Naula,Pithoragarh,1092.8,54.6,Medium,Low,54.6,,,,,,,31.4,59.9,97.5,79.3,16.9,87.0,85.7,18.8,95.7,0
 HIM-SPR-0208,Malla Panyar,Pithoragarh,766.4,57.2,Medium,Low,57.2,,,,,,,42.7,36.6,97.5,79.3,77.8,87.6,33.3,0.7,94.2,0
 HIM-SPR-0209,Malla Panyar,Pithoragarh,1364.3,47.3,Medium,Low,47.3,,,,,,,40.5,29.8,55.9,90.8,56.8,78.3,39.9,5.3,76.9,0
 HIM-SPR-0210,Mallagrkha Dhara,Pithoragarh,1502.3,48.4,Medium,Low,48.4,,,,,,,40.5,29.8,55.9,90.8,75.2,29.5,37.2,27.1,50.4,50
 HIM-SPR-0211,Mallakhola Naula,Pithoragarh,1422.7,53.5,Medium,Low,53.5,,,,,,,29.7,48.8,55.9,90.8,95.1,32.0,28.4,79.8,81.4,0
 HIM-SPR-0212,Malli naula,Pithoragarh,1876.1,49.6,Medium,Low,49.6,,,,,,,42.7,36.6,97.5,79.3,16.9,92.8,4.9,59.1,70.1,0
-HIM-SPR-0213,Malli naula,Pithoragarh,1128.9,61.2,Medium,Low,61.2,,,,,,,31.4,59.9,97.5,79.3,78.1,70.9,82.2,28.8,91.7,0
+HIM-SPR-0213,Malli naula,Pithoragarh,1128.9,61.2,High,Low,61.2,,,,,,,31.4,59.9,97.5,79.3,78.1,70.9,82.2,28.8,91.7,0
 HIM-SPR-0214,Malli Panyar,Pithoragarh,1140.2,48.7,Medium,Low,48.7,,,,,,,26.6,39.7,55.9,90.8,91.6,30.2,53.7,19.7,78.6,0
 HIM-SPR-0215,Mallikhet Dhara,Pithoragarh,1744.1,52.2,Medium,Low,52.2,,,,,,,50.9,34.5,55.9,90.8,73.5,3.7,63.9,70.1,67.7,0
 HIM-SPR-0216,Mallisaina Dhara,Rudraprayag,1898.3,29.3,Low,Low,29.3,,,,,,,3.6,37.2,1.3,68.6,12.6,73.4,21.4,77.2,75.1,0
@@ -1171,9 +1171,9 @@ HIM-SPR-0226,Mungron Naula,Pithoragarh,1526.0,56.2,Medium,Low,56.2,,,,,,,42.7,36
 HIM-SPR-0227,Murkhulla Pani,Pithoragarh,1294.2,39.6,Medium,Low,39.6,,,,,,,39.8,0.4,20.2,71.3,45.0,77.8,55.4,0.8,71.3,50
 HIM-SPR-0228,Naani Naula,Pithoragarh,1076.0,58.8,Medium,Low,58.8,,,,,,,45.6,49.9,97.5,79.3,77.3,75.7,31.8,9.8,90.3,0
 HIM-SPR-0229,Nag Naula,Pithoragarh,1949.0,43.5,Medium,Low,43.5,,,,,,,50.9,34.5,55.9,90.8,32.7,27.1,50.2,74.0,20.1,0
-HIM-SPR-0230,Nagdhura Naula,Pithoragarh,882.1,61.0,Medium,Low,61.0,,,,,,,58.7,51.8,97.5,79.3,33.7,90.6,21.1,67.3,97.1,0
+HIM-SPR-0230,Nagdhura Naula,Pithoragarh,882.1,61.0,High,Low,61.0,,,,,,,58.7,51.8,97.5,79.3,33.7,90.6,21.1,67.3,97.1,0
 HIM-SPR-0231,Naghar Dhara,Pithoragarh,1270.1,42.0,Medium,Low,42.0,,,,,,,26.6,39.7,55.9,90.8,45.0,35.0,28.4,45.4,65.8,0
-HIM-SPR-0232,Naghar naula,Pithoragarh,929.0,64.0,Medium,Low,64.0,,,,,,,71.0,55.7,79.2,57.4,78.3,48.1,75.0,32.8,57.0,50
+HIM-SPR-0232,Naghar naula,Pithoragarh,929.0,64.0,High,Low,64.0,,,,,,,71.0,55.7,79.2,57.4,78.3,48.1,75.0,32.8,57.0,50
 HIM-SPR-0233,Nagkholi,Pauri Garhwal,1552.7,65.1,High,Low,65.1,,,,,,,90.3,76.2,46.9,99.8,81.6,18.7,31.8,86.8,53.0,0
 HIM-SPR-0234,Nagugad naula,Pithoragarh,1442.2,52.6,Medium,Low,52.6,,,,,,,42.7,36.6,97.5,79.3,69.3,57.7,58.1,18.1,48.3,0
 HIM-SPR-0235,Naikana Naula,Pithoragarh,1543.5,50.2,Medium,Low,50.2,,,,,,,34.2,42.1,55.9,90.8,75.8,22.0,41.5,88.2,62.4,0
@@ -1182,7 +1182,7 @@ HIM-SPR-0237,Nanidhara,Pithoragarh,1584.5,50.8,Medium,Low,50.8,,,,,,,42.7,36.6,9
 HIM-SPR-0238,Nanoli Naula,Pithoragarh,1487.2,54.1,Medium,Low,54.1,,,,,,,29.7,48.8,55.9,90.8,98.5,16.8,18.0,96.2,89.2,0
 HIM-SPR-0239,Narayan dev Dhara,Pithoragarh,1318.8,54.1,Medium,Low,54.1,,,,,,,34.2,42.1,79.2,57.4,93.8,7.8,24.7,89.8,91.0,0
 HIM-SPR-0240,Nargwadi Dhara,Pithoragarh,878.0,37.2,Medium,Low,37.2,,,,,,,40.5,29.8,16.1,74.2,20.8,76.3,73.4,21.1,50.4,0
-HIM-SPR-0241,Naulagad,Pithoragarh,817.2,63.3,Medium,Low,63.3,,,,,,,28.3,63.5,97.5,79.3,83.6,39.2,61.0,48.9,97.7,50
+HIM-SPR-0241,Naulagad,Pithoragarh,817.2,63.3,High,Low,63.3,,,,,,,28.3,63.5,97.5,79.3,83.6,39.2,61.0,48.9,97.7,50
 HIM-SPR-0242,Naultha Dhara,Pithoragarh,1022.8,52.6,Medium,Low,52.6,,,,,,,43.8,52.3,55.9,90.8,55.9,53.6,85.4,27.3,68.7,0
 HIM-SPR-0243,Nemanyagad,Pithoragarh,1489.7,47.1,Medium,Low,47.1,,,,,,,42.7,37.7,55.9,90.8,97.7,8.2,29.0,36.7,37.7,0
 HIM-SPR-0244,Nha Naula,Pithoragarh,1225.3,58.6,Medium,Low,58.6,,,,,,,31.4,59.9,97.5,79.3,71.6,64.1,36.5,69.3,80.3,0
@@ -1243,12 +1243,12 @@ HIM-SPR-0303,Talla panyar,Pithoragarh,1029.7,51.0,Medium,Low,51.0,,,,,,,26.6,39.
 HIM-SPR-0304,Talla Panyar,Pithoragarh,1057.2,49.8,Medium,Low,49.8,,,,,,,26.6,39.7,55.9,90.8,88.8,44.5,46.2,18.4,89.7,0
 HIM-SPR-0305,Talli Basai Naula,Pithoragarh,1629.1,51.6,Medium,Low,51.6,,,,,,,50.9,34.5,55.9,90.8,83.9,12.2,70.7,46.2,53.0,0
 HIM-SPR-0306,Talli Dhara,Pithoragarh,1659.2,49.2,Medium,Low,49.2,,,,,,,15.0,22.0,55.9,90.8,89.5,36.5,51.5,43.5,84.6,50
-HIM-SPR-0307,Talli naula,Pithoragarh,860.0,61.4,Medium,Low,61.4,,,,,,,58.7,51.8,97.5,79.3,40.7,87.0,22.9,62.0,97.1,0
+HIM-SPR-0307,Talli naula,Pithoragarh,860.0,61.4,High,Low,61.4,,,,,,,58.7,51.8,97.5,79.3,40.7,87.0,22.9,62.0,97.1,0
 HIM-SPR-0308,Talli Sela Naula,Pithoragarh,909.4,57.0,Medium,Low,57.0,,,,,,,29.7,48.8,55.9,90.8,64.5,80.5,85.7,66.3,97.7,0
 HIM-SPR-0309,Tan Naula,Pithoragarh,1700.3,54.6,Medium,Low,54.6,,,,,,,50.9,34.5,55.9,90.8,87.1,7.0,45.3,92.5,70.1,0
 HIM-SPR-0310,Tham Spring,Pithoragarh,861.7,41.2,Medium,Low,41.2,,,,,,,41.1,7.5,16.1,74.2,51.7,89.3,37.9,18.6,96.5,0
 HIM-SPR-0313,Timlani Naula,Pithoragarh,1134.7,36.5,Medium,Low,36.5,,,,,,,10.3,16.9,55.9,90.8,86.3,29.0,32.1,19.2,39.1,0
-HIM-SPR-0314,Timta Naula,Pithoragarh,1028.4,61.5,Medium,Low,61.5,,,,,,,28.3,63.5,97.5,79.3,76.5,38.7,74.7,94.3,82.3,0
+HIM-SPR-0314,Timta Naula,Pithoragarh,1028.4,61.5,High,Low,61.5,,,,,,,28.3,63.5,97.5,79.3,76.5,38.7,74.7,94.3,82.3,0
 HIM-SPR-0315,Timul Dhara,Pithoragarh,1825.1,47.4,Medium,Low,47.4,,,,,,,42.7,36.6,97.5,79.3,51.7,55.2,9.8,45.9,31.1,0
 HIM-SPR-0316,Toiyan Dhara,Pithoragarh,870.9,53.6,Medium,Low,53.6,,,,,,,45.6,49.9,97.5,79.3,52.1,78.3,40.1,33.2,45.3,0
 HIM-SPR-0317,Tora Naula,Pithoragarh,1049.0,51.3,Medium,Low,51.3,,,,,,,26.6,39.7,55.9,90.8,92.0,24.3,48.3,71.8,78.6,0
@@ -1272,56 +1272,56 @@ HIM-SPR-0348,Panyargadra,Uttarkashi,1524.7,36.4,Medium,Low,36.4,,,,,,,3.4,32.4,7
 HIM-SPR-0349,Klavist,Nainital,1649.4,55.6,Medium,Low,55.6,,,,,,,65.4,83.5,87.8,39.3,8.2,35.0,89.9,69.4,45.3,0
 HIM-SPR-0350,Kalaghair,Almora,1249.2,49.5,Medium,Low,49.5,,,,,,,77.8,77.4,67.2,23.0,21.1,6.1,51.1,76.8,20.9,0
 HIM-SPR-0351,Nawaghair,Almora,1299.7,58.1,Medium,Low,58.1,,,,,,,66.4,80.6,87.8,39.3,49.4,25.0,54.6,98.2,29.7,0
-HIM-SPR-0352,Jaintala Naula,Almora,1889.8,61.1,Medium,Low,61.1,,,,,,,74.3,91.7,87.8,39.3,52.1,22.9,32.1,99.2,40.4,0
-HIM-SPR-0353,Chapani,Almora,1883.5,60.9,Medium,Low,60.9,,,,,,,74.3,91.7,87.8,39.3,51.4,28.7,33.0,98.9,35.3,0
-HIM-SPR-0354,Chuna dhara,Almora,1892.5,63.1,Medium,Low,63.1,,,,,,,74.3,91.7,87.8,39.3,53.3,48.9,74.7,84.7,23.7,0
+HIM-SPR-0352,Jaintala Naula,Almora,1889.8,61.1,High,Low,61.1,,,,,,,74.3,91.7,87.8,39.3,52.1,22.9,32.1,99.2,40.4,0
+HIM-SPR-0353,Chapani,Almora,1883.5,60.9,High,Low,60.9,,,,,,,74.3,91.7,87.8,39.3,51.4,28.7,33.0,98.9,35.3,0
+HIM-SPR-0354,Chuna dhara,Almora,1892.5,63.1,High,Low,63.1,,,,,,,74.3,91.7,87.8,39.3,53.3,48.9,74.7,84.7,23.7,0
 HIM-SPR-0355,Khadkuna,Almora,1479.3,51.4,Medium,Low,51.4,,,,,,,61.1,80.3,67.2,23.0,15.2,44.5,61.0,83.6,46.8,0
 HIM-SPR-0356,Nolikan,Nainital,1722.3,55.9,Medium,Low,55.9,,,,,,,65.4,83.5,87.8,39.3,13.8,22.0,80.6,87.7,43.8,0
 HIM-SPR-0357,Nagari naula,Nainital,1850.4,50.6,Medium,Low,50.6,,,,,,,65.4,83.5,39.7,5.3,30.8,18.2,88.4,90.6,46.8,0
-HIM-SPR-0358,Akodaghair,Nainital,1889.9,62.2,Medium,Low,62.2,,,,,,,56.9,94.0,87.8,39.3,53.8,24.3,99.0,90.3,48.3,0
+HIM-SPR-0358,Akodaghair,Nainital,1889.9,62.2,High,Low,62.2,,,,,,,56.9,94.0,87.8,39.3,53.8,24.3,99.0,90.3,48.3,0
 HIM-SPR-0359,Badi naula,Almora,1324.8,71.6,High,Low,71.6,,,,,,,89.0,95.8,87.8,39.3,86.6,12.9,83.6,66.4,27.6,50
 HIM-SPR-0360,Talkhola Naula,Almora,1393.2,67.9,High,Low,67.9,,,,,,,89.0,97.8,79.2,57.4,76.5,10.0,81.9,87.6,20.9,0
 HIM-SPR-0361,Dharaghair,Almora,1400.5,67.0,High,Low,67.0,,,,,,,89.0,95.8,87.8,39.3,68.7,15.2,84.0,78.3,26.5,0
 HIM-SPR-0362,Bakhai naula,Almora,1402.4,72.4,High,Low,72.4,,,,,,,89.0,97.8,79.2,57.4,81.6,19.2,82.2,89.1,20.9,50
-HIM-SPR-0363,Paniyar dhara,Almora,1408.1,63.2,Medium,Low,63.2,,,,,,,75.0,81.7,67.2,23.0,46.5,52.4,97.9,90.9,62.4,0
+HIM-SPR-0363,Paniyar dhara,Almora,1408.1,63.2,High,Low,63.2,,,,,,,75.0,81.7,67.2,23.0,46.5,52.4,97.9,90.9,62.4,0
 HIM-SPR-0365,Simgad naula,Nainital,1393.9,47.3,Medium,Low,47.3,,,,,,,65.4,83.5,39.7,5.3,33.7,12.4,68.5,88.8,25.6,0
 HIM-SPR-0366,Pandit bakhali  naula,Nainital,1443.6,48.3,Medium,Low,48.3,,,,,,,65.4,83.5,39.7,5.3,16.9,20.9,61.0,97.7,53.0,0
 HIM-SPR-0367,Jalibagad,Almora,1904.1,57.1,Medium,Low,57.1,,,,,,,74.3,91.7,87.8,39.3,33.7,15.5,65.2,94.1,9.0,0
-HIM-SPR-0368,Ramna Naula,Almora,1890.9,61.8,Medium,Low,61.8,,,,,,,74.3,91.7,87.8,39.3,65.4,10.6,88.8,93.6,3.9,0
-HIM-SPR-0369,Patiya Gadera,Almora,1591.4,61.7,Medium,Low,61.7,,,,,,,73.7,90.4,87.8,39.3,53.8,75.7,24.4,52.6,48.3,0
+HIM-SPR-0368,Ramna Naula,Almora,1890.9,61.8,High,Low,61.8,,,,,,,74.3,91.7,87.8,39.3,65.4,10.6,88.8,93.6,3.9,0
+HIM-SPR-0369,Patiya Gadera,Almora,1591.4,61.7,High,Low,61.7,,,,,,,73.7,90.4,87.8,39.3,53.8,75.7,24.4,52.6,48.3,0
 HIM-SPR-0370,Patala naula,Almora,1244.0,50.1,Medium,Low,50.1,,,,,,,75.0,81.7,67.2,23.0,25.1,8.2,45.7,93.9,14.1,0
 HIM-SPR-0371,Mehal Gajar,Almora,1825.7,55.7,Medium,Low,55.7,,,,,,,74.3,91.7,87.8,39.3,10.7,13.6,48.1,95.0,36.4,0
-HIM-SPR-0372,Pokhri Khan,Almora,1863.5,60.3,Medium,Low,60.3,,,,,,,74.3,91.7,87.8,39.3,36.5,16.8,59.4,98.3,39.1,0
+HIM-SPR-0372,Pokhri Khan,Almora,1863.5,60.3,High,Low,60.3,,,,,,,74.3,91.7,87.8,39.3,36.5,16.8,59.4,98.3,39.1,0
 HIM-SPR-0373,Chipiya Naula,Almora,1935.9,58.9,Medium,Low,58.9,,,,,,,75.5,98.2,87.8,39.3,10.7,51.1,52.6,92.9,32.5,0
 HIM-SPR-0374,Nauli Tok Naula,Almora,1891.7,59.3,Medium,Low,59.3,,,,,,,74.3,91.7,87.8,39.3,57.4,20.9,41.8,97.1,10.1,0
 HIM-SPR-0376,Paniyali gad,Almora,1685.3,65.4,High,Low,65.4,,,,,,,73.7,90.4,87.8,39.3,57.4,33.3,48.5,78.2,78.6,0
 HIM-SPR-0377,Gadera Naula,Almora,1880.1,57.9,Medium,Low,57.9,,,,,,,75.5,98.2,87.8,39.3,12.6,41.7,34.9,87.8,40.4,0
 HIM-SPR-0378,Moru Dhara,Almora,1396.7,48.2,Medium,Low,48.2,,,,,,,61.1,80.3,67.2,23.0,16.9,27.1,52.3,76.3,33.4,0
-HIM-SPR-0379,Mohra paani,Almora,1366.9,61.6,Medium,Low,61.6,,,,,,,30.4,64.9,97.5,79.3,64.5,92.1,68.0,88.1,65.8,0
+HIM-SPR-0379,Mohra paani,Almora,1366.9,61.6,High,Low,61.6,,,,,,,30.4,64.9,97.5,79.3,64.5,92.1,68.0,88.1,65.8,0
 HIM-SPR-0380,Bisra Naula,Almora,1484.9,56.7,Medium,Low,56.7,,,,,,,75.0,81.7,67.2,23.0,22.0,39.8,86.7,98.7,36.4,0
 HIM-SPR-0381,Kimnaula,Almora,1473.2,47.3,Medium,Low,47.3,,,,,,,66.6,77.2,67.2,23.0,16.9,15.0,43.4,97.8,14.1,0
 HIM-SPR-0382,Hedakhan,Nainital,1850.4,50.6,Medium,Low,50.6,,,,,,,65.4,83.5,39.7,5.3,30.8,18.2,88.4,90.6,46.8,0
 HIM-SPR-0383,Gaja Pasrao,Almora,1348.6,52.9,Medium,Low,52.9,,,,,,,66.6,77.2,67.2,23.0,91.9,1.0,29.5,70.0,11.8,0
-HIM-SPR-0384,Nauda Dhar Naula,Almora,1558.9,60.5,Medium,Low,60.5,,,,,,,79.7,99.2,87.8,39.3,22.0,35.7,16.3,57.3,81.4,0
+HIM-SPR-0384,Nauda Dhar Naula,Almora,1558.9,60.5,High,Low,60.5,,,,,,,79.7,99.2,87.8,39.3,22.0,35.7,16.3,57.3,81.4,0
 HIM-SPR-0385,Naisar Dhara,Almora,1577.1,58.4,Medium,Low,58.4,,,,,,,79.7,99.2,87.8,39.3,23.7,28.0,15.3,52.4,65.8,0
 HIM-SPR-0387,Ekalwa naula,Almora,1402.4,66.4,High,Low,66.4,,,,,,,77.5,91.1,87.8,39.3,32.7,68.2,25.3,17.5,78.6,100
 HIM-SPR-0388,Mangra Naula,Almora,1107.0,54.4,Medium,Low,54.4,,,,,,,64.2,75.9,67.2,23.0,70.7,46.9,26.3,63.0,39.1,0
 HIM-SPR-0389,Pipalighair,Almora,1136.0,58.5,Medium,Low,58.5,,,,,,,64.2,75.9,67.2,23.0,89.0,5.5,85.9,80.4,35.3,0
 HIM-SPR-0390,Bans boota naula,Almora,1133.9,59.6,Medium,Low,59.6,,,,,,,64.2,75.9,67.2,23.0,93.9,4.5,79.9,66.0,54.5,0
 HIM-SPR-0391,Shivalay Naula,Almora,1103.4,57.0,Medium,Low,57.0,,,,,,,64.2,75.9,67.2,23.0,88.3,3.0,79.9,75.1,28.6,0
-HIM-SPR-0392,Kaizzer naula,Almora,1448.1,61.6,Medium,Low,61.6,,,,,,,79.7,99.2,87.8,39.3,28.6,49.6,43.8,80.1,41.5,0
-HIM-SPR-0393,Ritakhani Naula,Almora,1407.0,62.2,Medium,Low,62.2,,,,,,,79.7,99.2,87.8,39.3,31.8,55.2,58.7,71.1,36.4,0
+HIM-SPR-0392,Kaizzer naula,Almora,1448.1,61.6,High,Low,61.6,,,,,,,79.7,99.2,87.8,39.3,28.6,49.6,43.8,80.1,41.5,0
+HIM-SPR-0393,Ritakhani Naula,Almora,1407.0,62.2,High,Low,62.2,,,,,,,79.7,99.2,87.8,39.3,31.8,55.2,58.7,71.1,36.4,0
 HIM-SPR-0394,Ghatagadera,Almora,1465.9,39.7,Medium,Low,39.7,,,,,,,20.7,46.0,39.7,5.3,34.9,93.2,86.3,3.8,88.3,0
 HIM-SPR-0395,Dobh Gadera,Almora,1619.8,32.0,Low,Low,32.0,,,,,,,20.7,46.0,39.7,5.3,23.7,66.9,50.8,24.2,49.5,0
 HIM-SPR-0398,Banjjadi naula,Almora,1792.4,58.5,Medium,Low,58.5,,,,,,,74.3,91.7,87.8,39.3,49.4,19.2,29.0,90.0,27.6,0
-HIM-SPR-0399,Rammandir Naula,Almora,1174.4,62.5,Medium,Low,62.5,,,,,,,77.8,77.4,79.2,57.4,74.6,1.3,99.9,88.3,12.4,0
+HIM-SPR-0399,Rammandir Naula,Almora,1174.4,62.5,High,Low,62.5,,,,,,,77.8,77.4,79.2,57.4,74.6,1.3,99.9,88.3,12.4,0
 HIM-SPR-0400,Seem Paani,Almora,1335.7,52.9,Medium,Low,52.9,,,,,,,75.0,79.5,39.7,5.3,8.2,49.6,84.8,75.3,42.7,50
 HIM-SPR-0401,Dansikhan,Almora,1865.2,55.9,Medium,Low,55.9,,,,,,,75.5,98.2,87.8,39.3,15.2,28.0,46.2,86.8,18.2,0
 HIM-SPR-0403,Chorgad Naula,Nainital,1825.7,54.7,Medium,Low,54.7,,,,,,,65.4,83.5,87.8,39.3,10.7,7.3,95.1,98.9,27.6,0
 HIM-SPR-0405,Dobatya,Almora,1890.0,57.7,Medium,Low,57.7,,,,,,,74.3,91.7,87.8,39.3,40.7,12.9,73.4,92.0,3.9,0
 HIM-SPR-0406,Bizarkhya Naula,Almora,1891.4,55.8,Medium,Low,55.8,,,,,,,74.3,91.7,87.8,39.3,30.8,22.9,51.5,92.2,3.9,0
 HIM-SPR-0407,Bizarkhya Gad,Almora,1883.2,54.7,Medium,Low,54.7,,,,,,,74.3,91.7,87.8,39.3,23.7,22.0,39.9,90.3,11.2,0
-HIM-SPR-0408,Bhaw Naula,Almora,1407.2,63.9,Medium,Low,63.9,,,,,,,79.7,99.2,87.8,39.3,51.0,48.1,71.7,49.6,39.1,0
+HIM-SPR-0408,Bhaw Naula,Almora,1407.2,63.9,High,Low,63.9,,,,,,,79.7,99.2,87.8,39.3,51.0,48.1,71.7,49.6,39.1,0
 HIM-SPR-0430,Gwali,Almora,1284.3,36.4,Medium,Low,36.4,,,,,,,37.9,75.7,67.2,23.0,3.4,79.2,2.6,29.1,16.0,0
 HIM-SPR-0431,Dhall,Almora,1159.7,44.2,Medium,Low,44.2,,,,,,,54.3,77.4,23.0,53.9,31.8,45.3,22.2,47.7,55.8,0
 HIM-SPR-0432,Moharidhar,Almora,1714.8,51.0,Medium,Low,51.0,,,,,,,84.3,70.2,67.2,23.0,3.4,76.8,44.9,24.5,46.8,0
@@ -1342,27 +1342,27 @@ HIM-SPR-0446,Siaru Khad,Dehradun,625.9,0,No score,Low,,,,,,,,,,,,,,,,,
 HIM-SPR-0447,Dobe,Nainital,1503.1,35.2,Medium,Low,35.2,,,,,,,28.6,18.6,3.4,47.9,90.4,7.8,76.2,50.5,3.9,50
 HIM-SPR-0448,Bamori,Nainital,1815.6,40.5,Medium,Low,40.5,,,,,,,45.6,70.1,39.7,5.3,40.7,66.1,55.8,29.0,20.9,0
 HIM-SPR-0449,Guniya,Nainital,1879.2,67.1,High,Low,67.1,,,,,,,95.3,69.8,73.4,64.1,34.9,82.3,44.3,73.3,46.8,50
-HIM-SPR-0451,Sinad,Nainital,1677.2,62.9,Medium,Low,62.9,,,,,,,95.3,69.8,73.4,64.1,15.2,80.1,74.7,25.1,75.1,0
+HIM-SPR-0451,Sinad,Nainital,1677.2,62.9,High,Low,62.9,,,,,,,95.3,69.8,73.4,64.1,15.2,80.1,74.7,25.1,75.1,0
 HIM-SPR-0452,Kuleti,Nainital,1860.1,38.4,Medium,Low,38.4,,,,,,,67.7,49.5,39.7,5.3,3.4,70.1,4.7,11.5,34.2,50
 HIM-SPR-0453,Bhunkagad,Rudraprayag,1531.5,36.6,Medium,Low,36.6,,,,,,,7.0,64.1,1.3,68.6,25.1,96.9,24.0,15.1,83.4,50
 HIM-SPR-0454,Dadoli,Rudraprayag,1472.8,28.8,Low,Low,28.8,,,,,,,5.2,18.8,0.6,75.2,67.7,37.5,19.3,45.1,60.5,0
 HIM-SPR-0455,Deval Dhara,Rudraprayag,1666.1,24.7,Low,Low,24.7,,,,,,,6.7,7.6,0.6,75.2,85.4,12.9,38.8,39.3,11.8,0
 HIM-SPR-0456,Hatanaami tok,Rudraprayag,1708.9,28.1,Low,Low,28.1,,,,,,,5.2,18.8,0.6,75.2,61.8,19.7,30.7,53.0,60.5,0
 HIM-SPR-0457,Saud Gadera,Rudraprayag,1472.8,28.8,Low,Low,28.8,,,,,,,5.2,18.8,0.6,75.2,67.7,37.5,19.3,45.1,60.5,0
-HIM-SPR-0458,Mungruwa Dhara,Almora,1397.6,60.4,Medium,Low,60.4,,,,,,,75.5,98.2,87.8,39.3,41.8,55.2,48.7,35.2,45.3,0
+HIM-SPR-0458,Mungruwa Dhara,Almora,1397.6,60.4,High,Low,60.4,,,,,,,75.5,98.2,87.8,39.3,41.8,55.2,48.7,35.2,45.3,0
 HIM-SPR-0459,Mungruwa Dhara,Almora,1480.2,59.9,Medium,Low,59.9,,,,,,,75.5,98.2,87.8,39.3,37.4,42.3,31.4,60.9,49.5,0
 HIM-SPR-0460,Khatkholi Naula,Almora,1451.0,57.6,Medium,Low,57.6,,,,,,,75.5,98.2,87.8,39.3,49.4,22.0,30.3,50.7,29.7,0
-HIM-SPR-0461,Simyal naula,Almora,1678.2,61.0,Medium,Low,61.0,,,,,,,79.7,99.2,87.8,39.3,23.7,50.3,31.0,73.5,54.5,0
-HIM-SPR-0462,Simyal,Almora,1632.4,63.5,Medium,Low,63.5,,,,,,,79.7,99.2,87.8,39.3,47.2,48.1,36.9,63.1,54.5,0
-HIM-SPR-0463,Matela,Almora,1652.5,61.3,Medium,Low,61.3,,,,,,,79.7,99.2,87.8,39.3,28.6,48.9,32.9,68.1,54.5,0
+HIM-SPR-0461,Simyal naula,Almora,1678.2,61.0,High,Low,61.0,,,,,,,79.7,99.2,87.8,39.3,23.7,50.3,31.0,73.5,54.5,0
+HIM-SPR-0462,Simyal,Almora,1632.4,63.5,High,Low,63.5,,,,,,,79.7,99.2,87.8,39.3,47.2,48.1,36.9,63.1,54.5,0
+HIM-SPR-0463,Matela,Almora,1652.5,61.3,High,Low,61.3,,,,,,,79.7,99.2,87.8,39.3,28.6,48.9,32.9,68.1,54.5,0
 HIM-SPR-0464,Sirkaniya,Almora,1809.1,57.8,Medium,Low,57.8,,,,,,,79.7,99.2,87.8,39.3,18.5,43.3,13.5,72.9,43.8,0
-HIM-SPR-0465,Mungarua Dhara,Almora,1746.6,63.0,Medium,Low,63.0,,,,,,,79.7,99.2,87.8,39.3,21.1,55.2,30.0,85.7,68.7,0
+HIM-SPR-0465,Mungarua Dhara,Almora,1746.6,63.0,High,Low,63.0,,,,,,,79.7,99.2,87.8,39.3,21.1,55.2,30.0,85.7,68.7,0
 HIM-SPR-0466,Ikalwakhal,Almora,1765.0,57.7,Medium,Low,57.7,,,,,,,79.7,99.2,87.8,39.3,18.5,37.5,18.9,61.7,50.4,0
 HIM-SPR-0467,Latekhal,Almora,1689.3,56.9,Medium,Low,56.9,,,,,,,79.7,99.2,87.8,39.3,16.9,41.7,24.9,39.8,51.5,0
 HIM-SPR-0468,Devinaula,Almora,1844.2,57.4,Medium,Low,57.4,,,,,,,79.7,99.2,87.8,39.3,20.1,52.4,10.1,82.8,27.6,0
 HIM-SPR-0469,Suwalpaani,Almora,1884.5,59.4,Medium,Low,59.4,,,,,,,79.7,99.2,87.8,39.3,3.4,69.2,16.1,88.5,51.5,0
-HIM-SPR-0470,Bausim,Almora,1635.9,62.7,Medium,Low,62.7,,,,,,,79.7,99.2,87.8,39.3,60.3,36.5,41.8,64.8,31.1,0
-HIM-SPR-0471,Mungru Dhara,Almora,1626.5,62.6,Medium,Low,62.6,,,,,,,79.7,99.2,87.8,39.3,53.8,36.5,36.1,74.9,36.4,0
+HIM-SPR-0470,Bausim,Almora,1635.9,62.7,High,Low,62.7,,,,,,,79.7,99.2,87.8,39.3,60.3,36.5,41.8,64.8,31.1,0
+HIM-SPR-0471,Mungru Dhara,Almora,1626.5,62.6,High,Low,62.6,,,,,,,79.7,99.2,87.8,39.3,53.8,36.5,36.1,74.9,36.4,0
 HIM-SPR-0472,Talli Naula,Almora,1496.7,47.6,Medium,Low,47.6,,,,,,,53.2,90.9,87.8,39.3,13.8,72.9,2.9,54.9,14.1,0
 HIM-SPR-0473,Thulgad,Almora,1612.3,57.1,Medium,Low,57.1,,,,,,,75.5,98.2,87.8,39.3,33.7,48.1,27.8,58.3,24.7,0
 HIM-SPR-0474,Simargad,Almora,1802.1,55.3,Medium,Low,55.3,,,,,,,75.5,98.2,87.8,39.3,8.2,48.1,36.1,68.5,26.5,0
@@ -1370,9 +1370,9 @@ HIM-SPR-0475,Albudi Naula,Almora,1700.2,54.6,Medium,Low,54.6,,,,,,,76.5,90.6,87.
 HIM-SPR-0476,Talli Naula,Almora,1667.2,55.9,Medium,Low,55.9,,,,,,,76.5,90.6,87.8,39.3,18.5,46.9,10.6,86.1,33.4,0
 HIM-SPR-0477,Gajatok naula,Almora,1283.2,67.4,High,Low,67.4,,,,,,,89.0,95.8,87.8,39.3,66.6,14.3,94.5,70.4,32.5,0
 HIM-SPR-0478,Talli Naula,Almora,1297.9,65.1,High,Low,65.1,,,,,,,89.0,95.8,87.8,39.3,73.3,6.6,78.1,79.4,9.0,0
-HIM-SPR-0479,Dyarkhet,Almora,1339.9,63.7,Medium,Low,63.7,,,,,,,89.0,95.8,87.8,39.3,29.8,34.1,92.1,69.6,31.1,0
+HIM-SPR-0479,Dyarkhet,Almora,1339.9,63.7,High,Low,63.7,,,,,,,89.0,95.8,87.8,39.3,29.8,34.1,92.1,69.6,31.1,0
 HIM-SPR-0480,Sunarkhola Dhara,Nainital,1340.2,53.3,Medium,Low,53.3,,,,,,,77.5,91.1,87.8,39.3,20.1,16.0,28.4,61.9,24.7,0
-HIM-SPR-0481,Bhalugad,Nainital,1973.6,61.5,Medium,Low,61.5,,,,,,,73.1,87.8,87.8,39.3,73.7,31.0,79.6,61.8,12.4,0
+HIM-SPR-0481,Bhalugad,Nainital,1973.6,61.5,High,Low,61.5,,,,,,,73.1,87.8,87.8,39.3,73.7,31.0,79.6,61.8,12.4,0
 HIM-SPR-0482,Balitok naula,Nainital,1746.0,52.4,Medium,Low,52.4,,,,,,,56.9,94.0,39.7,5.3,84.6,15.2,96.9,78.9,3.9,0
 HIM-SPR-0484,Kauna,Chamoli,1688.7,28.8,Low,Low,28.8,,,,,,,9.4,16.0,39.7,5.3,3.4,89.3,7.7,62.4,97.1,0
 HIM-SPR-0485,Karnnag,Chamoli,2656.4,27.0,Low,Low,27.0,,,,,,,0.9,45.1,10.9,27.6,3.4,99.1,99.2,21.1,41.5,0
