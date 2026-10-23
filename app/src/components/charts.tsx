@@ -1,4 +1,5 @@
 // Small hand-drawn SVG/HTML charts (no chart library).
+import type { FlowPath } from '../api';
 import { MONTHS, classColor, num } from '../format';
 
 export function Gauge({ score, label }: { score: number; label: string }) {
@@ -120,4 +121,70 @@ export function RangeStrip({ low, mid, high, max }: { low: number; mid: number; 
       <span className="range-mid" style={{ left: s(mid) }} />
     </div>
   );
+}
+
+/** Cross-section from a DI handpump to the spring, like the "groundwater flow path" figure of the SRHU reports:
+ *  the ground along the straight line, the borehole down to the injection point, the spring outlet level and the
+ *  assumed path of the injected water. Not to scale sideways vs up (heights are stretched to be readable). */
+export function CrossSection({ path, name }: { path: FlowPath; name: string }) {
+  const W = 600, H = 250, L = 56, R = 18, T = 26, B = 34;
+  const pts = path.profile;
+  const len = Math.max(path.length_m, 1);
+  const head = path.head_at_handpump_m;
+  const zs = [...pts.map((p) => p[1]), path.injection_elevation_m, path.spring_elevation_m, ...(head != null ? [head] : [])];
+  const lo = Math.min(...zs), hi = Math.max(...zs);
+  const pad = Math.max(8, (hi - lo) * 0.08);
+  const z0 = lo - pad, z1 = hi + pad;
+  const x = (d: number) => L + ((W - L - R) * d) / len;
+  const y = (z: number) => T + ((H - T - B) * (z1 - z)) / (z1 - z0);
+  const ground = pts.map(([d, z]) => `${x(d).toFixed(1)},${y(z).toFixed(1)}`).join(' ');
+  const fill = `${x(0)},${y(z0)} ${ground} ${x(len)},${y(z0)}`;
+  const hx = x(0), injY = y(path.injection_elevation_m), gY = y(path.ground_at_handpump_m);
+  const sx = x(len), sY = y(path.spring_elevation_m);
+  const above = path.injection_elevation_m >= path.spring_elevation_m;
+  // the water's assumed route: from the injection point, curving towards the outlet
+  const midX = (hx + sx) / 2, midY = Math.max(injY, sY) + (above ? 0 : 6);
+  const route = `M ${hx + 4} ${injY} Q ${midX} ${midY} ${sx - 9} ${sY + 2}`;
+  const step = niceStep((z1 - z0) / 4);
+  const ticks: number[] = [];
+  for (let v = Math.ceil(z0 / step) * step; v <= z1; v += step) ticks.push(v);
+  const id = `arrow-${name.replace(/\W+/g, '')}`;
+  return (
+    <svg className="xsec" viewBox={`0 0 ${W} ${H}`} role="img"
+      aria-label={`Cross-section from ${name} to the spring: ${num(path.length_m)} m apart, injection at ${num(path.injection_elevation_m)} m, spring at ${num(path.spring_elevation_m)} m above sea level`}>
+      <defs>
+        <marker id={id} viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#0b5fa5" />
+        </marker>
+      </defs>
+      {ticks.map((v) => (
+        <g key={v}>
+          <line x1={L} x2={W - R} y1={y(v)} y2={y(v)} stroke="var(--line)" strokeWidth="1" />
+          <text x={L - 6} y={y(v) + 4} textAnchor="end" className="xsec-tick">{num(v)}</text>
+        </g>
+      ))}
+      <polygon points={fill} fill="#d9c7a3" opacity="0.55" />
+      <polyline points={ground} fill="none" stroke="#8a6d3b" strokeWidth="2" />
+      <line x1={L} x2={W - R} y1={sY} y2={sY} stroke="#0b6e8a" strokeWidth="1.2" strokeDasharray="5 4" />
+      <text x={W - R - 2} y={sY - 5} textAnchor="end" className="xsec-note">spring outlet level</text>
+      {head != null && <line x1={hx} y1={y(head)} x2={sx} y2={sY} stroke="#2b7bbd" strokeWidth="1.5" strokeDasharray="2 3" />}
+      <line x1={hx} x2={hx} y1={gY} y2={injY} stroke="#44535a" strokeWidth="3" />
+      <path d={route} fill="none" stroke="#0b5fa5" strokeWidth="2.5" strokeDasharray="7 4" markerEnd={`url(#${id})`} />
+      <circle cx={hx} cy={injY} r="5.5" fill="#0b5fa5" stroke="#fff" strokeWidth="1.5" />
+      <rect x={hx - 6} y={gY - 12} width="12" height="12" rx="2" fill="#44535a" />
+      <text x={hx + 10} y={gY - 4} className="xsec-label">{name}</text>
+      <text x={hx + 10} y={injY + 16} className="xsec-note">injected at {num(path.depth_m)} m depth ({num(path.injection_elevation_m)} m)</text>
+      <circle cx={sx} cy={sY} r="6" fill="#0b6e8a" stroke="#fff" strokeWidth="1.5" />
+      <text x={sx - 10} y={sY + 18} textAnchor="end" className="xsec-label">Spring ({num(path.spring_elevation_m)} m)</text>
+      <text x={L} y={H - 10} className="xsec-tick">0 m</text>
+      <text x={W - R} y={H - 10} textAnchor="end" className="xsec-tick">{num(path.length_m)} m along the line</text>
+      <text x={8} y={T - 10} className="xsec-tick">m above sea level</text>
+    </svg>
+  );
+}
+
+function niceStep(raw: number) {
+  const p = 10 ** Math.floor(Math.log10(Math.max(raw, 1e-6)));
+  const n = raw / p;
+  return (n < 1.5 ? 1 : n < 3.5 ? 2 : n < 7.5 ? 5 : 10) * p;
 }

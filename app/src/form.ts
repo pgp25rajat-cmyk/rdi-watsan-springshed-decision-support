@@ -55,6 +55,9 @@ export function toRequest(form: FormState): AssessRequest | null {
     if (q.kind === 'number') {
       const n = parseNumber(raw);
       if (n != null && n >= 0) f[q.id] = q.integer ? Math.round(n) : n;
+    } else if (q.kind === 'multi') {
+      const picked = raw.split(',').filter((v) => q.options.some(([o]) => o === v));
+      if (picked.length) (f as Record<string, unknown>)[q.id] = picked;
     } else if (q.options.some(([v]) => v === raw)) f[q.id] = raw;
   }
   for (const q of dipQuestions) {

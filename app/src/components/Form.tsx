@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import type { DatasetSpring, DiAssumptions, DiSite } from '../api';
 import { DEFAULT_ASSUMPTIONS } from '../api';
 import type { FormState } from '../form';
-import { locationWarning, parseNumber, springPoint } from '../form';
+import { locationWarning, newSiteId, parseNumber, springPoint } from '../form';
 import { num } from '../format';
 import { vulnerabilityQuestions, type Question } from '../questions';
 import { dipQuestions, questionGroups, textQuestions } from '../questionExtras';
@@ -199,6 +199,29 @@ function FieldStep({ form, setForm }: { form: FormState; setForm: SetForm }) {
 }
 
 function QuestionInput({ q, value, onChange }: { q: Question; value: string; onChange: (v: string) => void }) {
+  if (q.kind === 'multi') {
+    const picked = value ? value.split(',') : [];
+    const toggle = (v: string) => {
+      let next = picked.includes(v) ? picked.filter((x) => x !== v) : [...picked, v];
+      if (v === 'none' && next.includes('none')) next = ['none'];
+      else next = next.filter((x) => x !== 'none' || v === 'none');
+      onChange(q.options.map(([o]) => o).filter((o) => next.includes(o)).join(','));
+    };
+    return (
+      <fieldset className="field choice">
+        <legend>{q.label}</legend>
+        <div className="chips">
+          {q.options.map(([v, label]) => (
+            <label key={v} className={`chip${picked.includes(v) ? ' on' : ''}`}>
+              <input type="checkbox" value={v} checked={picked.includes(v)} onChange={() => toggle(v)} />
+              {label}
+            </label>
+          ))}
+          {value !== '' && <button type="button" className="chip-clear" onClick={() => onChange('')}>Clear</button>}
+        </div>
+      </fieldset>
+    );
+  }
   if (q.kind === 'choice') {
     return (
       <fieldset className="field choice">
@@ -224,6 +247,7 @@ function QuestionInput({ q, value, onChange }: { q: Question; value: string; onC
         <input id={`q-${q.id}`} inputMode={q.integer ? 'numeric' : 'decimal'} value={value} onChange={(e) => onChange(e.target.value)} />
         <span>{q.unit}</span>
       </div>
+      {q.help && <p className="hint">{q.help}</p>}
       {bad && <p className="msg msg-warn">Use a number of 0 or more.</p>}
     </div>
   );
@@ -237,6 +261,15 @@ function DiStep({ form, setForm, placing, setPlacing }: Props) {
   const removeSite = (id: string) => setForm((f) => ({ ...f, sites: f.sites.filter((s) => s.id !== id) }));
   const setA = (patch: Partial<DiAssumptions>) => setForm((f) => ({ ...f, assumptions: { ...f.assumptions, ...patch } }));
   const a = form.assumptions;
+  const [typed, setTyped] = useState({ lat: '', lon: '' });
+  const typedLat = parseNumber(typed.lat), typedLon = parseNumber(typed.lon);
+  const typedOk = typedLat != null && typedLon != null && Math.abs(typedLat) <= 90 && Math.abs(typedLon) <= 180;
+  const addTyped = () => {
+    if (!typedOk) return;
+    setForm((f) => ({ ...f, sites: [...f.sites, { id: newSiteId(), name: '', latitude: +typedLat!.toFixed(6), longitude: +typedLon!.toFixed(6),
+      roof_area_m2: 100, first_flush: true, filter: true }] }));
+    setTyped({ lat: '', lon: '' });
+  };
   return (
     <section className="step" aria-labelledby="step3">
       <StepHead n={3} title="DI plan (optional)" done={form.sites.length > 0}
@@ -246,6 +279,23 @@ function DiStep({ form, setForm, placing, setPlacing }: Props) {
         {placing === 'site' ? 'Click on the map to place it…' : '+ Add DI site on the map'}
       </button>
       {!point && <p className="hint">Choose the spring first.</p>}
+      {point && (
+        <div className="typed-site">
+          <p className="hint">Or type the handpump's position:</p>
+          <div className="grid2">
+            <div className="field">
+              <label htmlFor="site-lat">Latitude</label>
+              <input id="site-lat" inputMode="decimal" placeholder="e.g. 30.17339" value={typed.lat} onChange={(e) => setTyped({ ...typed, lat: e.target.value })} />
+            </div>
+            <div className="field">
+              <label htmlFor="site-lon">Longitude</label>
+              <input id="site-lon" inputMode="decimal" placeholder="e.g. 78.31285" value={typed.lon} onChange={(e) => setTyped({ ...typed, lon: e.target.value })} />
+            </div>
+          </div>
+          {(typed.lat || typed.lon) && !typedOk && <p className="msg msg-warn">Enter both numbers in decimal degrees.</p>}
+          <button type="button" className="btn btn-small" disabled={!typedOk} onClick={addTyped}>+ Add DI site at this position</button>
+        </div>
+      )}
       {form.sites.length > 0 && (
         <ol className="sites">
           {form.sites.map((s, i) => (
@@ -265,10 +315,27 @@ function DiStep({ form, setForm, placing, setPlacing }: Props) {
                     <span>m²</span>
                   </span>
                 </label>
+                <label className="inline-field">
+                  <span>Handpump depth</span>
+                  <span className="with-unit small">
+                    <input inputMode="numeric" placeholder="70" value={s.depth_m != null ? String(s.depth_m) : ''}
+                      onChange={(e) => { const n = parseNumber(e.target.value); updateSite(s.id, { depth_m: n != null && n > 0 ? n : null }); }} />
+                    <span>m</span>
+                  </span>
+                </label>
+                <label className="inline-field">
+                  <span>Water level below ground</span>
+                  <span className="with-unit small">
+                    <input inputMode="decimal" placeholder="optional" value={s.water_level_m != null ? String(s.water_level_m) : ''}
+                      onChange={(e) => { const n = parseNumber(e.target.value); updateSite(s.id, { water_level_m: n != null && n >= 0 ? n : null }); }} />
+                    <span>m</span>
+                  </span>
+                </label>
                 <label className="check"><input type="checkbox" checked={s.first_flush} onChange={(e) => updateSite(s.id, { first_flush: e.target.checked })} /> First-flush diverter</label>
                 <label className="check"><input type="checkbox" checked={s.filter} onChange={(e) => updateSite(s.id, { filter: e.target.checked })} /> Filter</label>
               </div>
-              <p className="hint">{s.latitude.toFixed(5)}, {s.longitude.toFixed(5)} · drag the marker to move it</p>
+              <SitePosition site={s} onMove={(lat, lon) => updateSite(s.id, { latitude: lat, longitude: lon })} />
+              <p className="hint">Depth: most handpumps are 50-80 m; 70 m is used if left blank. Water level: how far down the water stands in the handpump, if known. Type a new position or drag the marker to move it.</p>
             </li>
           ))}
         </ol>
@@ -304,6 +371,32 @@ function DiStep({ form, setForm, placing, setPlacing }: Props) {
         </div>
       </details>
     </section>
+  );
+}
+
+/** Editable latitude and longitude of a DI site; a change is kept once both numbers are valid. */
+function SitePosition({ site, onMove }: { site: DiSite; onMove: (lat: number, lon: number) => void }) {
+  const [lat, setLat] = useState(site.latitude.toFixed(6));
+  const [lon, setLon] = useState(site.longitude.toFixed(6));
+  const [seen, setSeen] = useState(`${site.latitude},${site.longitude}`);
+  if (seen !== `${site.latitude},${site.longitude}`) {  // moved on the map
+    setSeen(`${site.latitude},${site.longitude}`);
+    setLat(site.latitude.toFixed(6));
+    setLon(site.longitude.toFixed(6));
+  }
+  const commit = (la: string, lo: string) => {
+    const a = parseNumber(la), b = parseNumber(lo);
+    if (a != null && b != null && Math.abs(a) <= 90 && Math.abs(b) <= 180 && (a !== site.latitude || b !== site.longitude)) onMove(a, b);
+  };
+  return (
+    <div className="site-pos">
+      <label className="inline-field"><span>Lat</span>
+        <input inputMode="decimal" value={lat} onChange={(e) => setLat(e.target.value)} onBlur={() => commit(lat, lon)} aria-label="DI site latitude" />
+      </label>
+      <label className="inline-field"><span>Long</span>
+        <input inputMode="decimal" value={lon} onChange={(e) => setLon(e.target.value)} onBlur={() => commit(lat, lon)} aria-label="DI site longitude" />
+      </label>
+    </div>
   );
 }
 

@@ -4,10 +4,10 @@ import type { FieldAnswers } from './api';
 
 // Grouping of the scored questions into the collapsible boxes on the form.
 export const questionGroups: { title: string; hint: string; ids: (keyof FieldAnswers)[] }[] = [
-  { title: 'Flow and seasons', hint: 'How much water, and how it changes', ids: ['flow_vs_past', 'lean_flow_lpm', 'monsoon_flow_lpm', 'low_flow_months', 'seasonality', 'water_quality'] },
+  { title: 'Flow and seasons', hint: 'How much water, and how it changes', ids: ['flow_vs_past', 'lean_flow_lpm', 'monsoon_flow_lpm', 'low_flow_months', 'dry_months', 'seasonality', 'water_quality'] },
   { title: 'People', hint: 'Who depends on the spring', ids: ['households', 'users_vs_past'] },
-  { title: 'Surroundings', hint: 'What is around the outlet and uphill', ids: ['pollution_30m', 'disturbance_uphill'] },
-  { title: 'Care', hint: 'Protection and recharge work done so far', ids: ['protection', 'recharge_works'] },
+  { title: 'Surroundings', hint: 'What is around the outlet and uphill', ids: ['pollution_30m', 'disturbance_uphill', 'disaster_prone'] },
+  { title: 'Care', hint: 'Protection and recharge work done so far', ids: ['protection', 'existing_interventions', 'recharge_works'] },
 ];
 
 // Not scored: written down for the report and used by the springshed map.

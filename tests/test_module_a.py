@@ -84,3 +84,36 @@ def test_validation_scores_without_the_outcome_and_logs_repeat_looks(tmp_path, m
     checks.validate(path, None, None)
     assert len(module_a.read_csv(tmp_path / "validation_log.csv")) == 2
     assert any("checked before" in p.read_text() for p in tmp_path.glob("validation_*.txt"))
+
+
+def test_any_dry_month_scores_and_new_questions():
+    """Rajat 2026-10-23: even one month with no flow scores (never 0); disaster and existing works are asked."""
+    answers, problems = module_a.clean_answers({"low_flow_months": 0, "dry_months": 1, "disaster_prone": "major",
+                                                "existing_interventions": "trenches, pits", "recharge_works": "neglected"})
+    assert not problems and answers["existing_interventions"] == ["trenches", "pits"]
+    scores = module_a.field_scores(answers)
+    assert scores["low_flow_months"][0] == 75
+    assert scores["disaster_prone"][0] == 100
+    assert scores["recharge_works"][0] == 50 and "contour trenches" in scores["recharge_works"][1]
+    assert module_a.field_scores({"low_flow_months": 1})["low_flow_months"][0] == 25
+    assert module_a.field_scores({"low_flow_months": 2, "dry_months": 3})["low_flow_months"][0] == 100
+    assert module_a.field_scores({"existing_interventions": ["none"]})["recharge_works"][0] == 100
+
+
+def test_weights_follow_rajat_2026_10_23():
+    w = {k: v["weight"] for k, v in module_a.load_indicators().items()}
+    assert (w["flow_vs_past"], w["lean_flow"], w["low_flow_months"], w["disaster_prone"]) == (10, 10, 13, 2)
+    assert sum(w.values()) == 100
+
+
+def test_landslide_band_and_plain_summary():
+    assert module_a.landslide_band({"landslide_count_500m": "0", "landslide_distance_m": "900"})[0] == 0
+    assert module_a.landslide_band({"landslide_count_500m": "2", "landslide_distance_m": "300"})[0] == 50
+    assert module_a.landslide_band({"landslide_count_500m": "1", "landslide_distance_m": "0"})[0] == 100
+    assert module_a.landslide_band({}) is None
+    session = DatasetSession()
+    row = session.row
+    out = module_a.assess({"spring": {"latitude": float(row["latitude_dd"]), "longitude": float(row["longitude_dd"]),
+                                      "elevation_m": 1197}, "field": {"flow_vs_past": "same", "lean_flow_lpm": 8}}, session)
+    assert out["summary"][0].startswith("This spring has a ") and "because" in out["summary"][0]
+    assert out["rationale"][: len(out["summary"])] == out["summary"]

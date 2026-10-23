@@ -109,6 +109,8 @@ forest_dense_500m_pct,%,Sentinel-2 Oct-Nov 2025 NDVI,Share within 500 m with NDV
 forest_open_500m_pct,%,Sentinel-2 Oct-Nov 2025 NDVI,Share within 500 m with NDVI 0.50-0.70 (provisional open-forest cut-off).
 soil_ksat_0_30cm_mm_h,mm/h,"SoilGrids 2.0, Saxton & Rawls 2006",Topsoil infiltration capacity (texture estimate; ignores cracks and roots).
 soil_depth_to_bedrock_cm,cm,SoilGrids 2017 BDRICM,Depth to bedrock (R horizon). Capped at 200: read 200 as 200 cm or deeper.
+era5_snowfall_winter_mm,mm,"ERA5 (NSF NCAR copy), winters 2019-20 to 2024-25","Mean snowfall per winter (Nov-Apr) as water equivalent, in the 27 km ERA5 cell. Says how snowy the area is, not the spring's own slope."
+snow_at_elevation_mm,mm,"ERA5 snowfall vs ERA5 ground height, winters 2019-20 to 2024-25","Mean snowfall per winter (water equivalent) read off the ERA5 snow-height curve at the spring's elevation. ERA5 cells average lower ground than most springs, so this is the value the model uses."
 report_catchment_ha,ha,"SRHU geohydrology reports, traced","Catchment drawn by the report geologists, measured from the traced outline (Badeda, Makhdet only; test springs)."
 spring_type_source_text,,Common file / colocated record,
 spring_type_class,,Derived,"Fracture, Contact, Depression, Karst, Seepage, Gravity / seepage, or Stream (not a spring)."

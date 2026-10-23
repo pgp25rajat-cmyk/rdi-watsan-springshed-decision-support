@@ -1,10 +1,13 @@
 factor,factor_name,weight_pct,class,score,why
-slope,Slope,25,0-10 degrees,1.0,Gentle ground holds rain long enough to soak in; steep ground sheds it as runoff (Nijesh 2024; Joshi 2024).
-slope,Slope,25,10-20 degrees,0.75,
-slope,Slope,25,20-30 degrees,0.5,
-slope,Slope,25,30-40 degrees,0.3,
-slope,Slope,25,over 40 degrees,0.15,
-land_cover,Land cover,20,Tree cover,1.0,Forest litter and roots let water in; built-up and bare ground seal or crust the surface (ESA WorldCover 2021).
+slope,Slope,20,0-10 degrees,1.0,Gentle ground holds rain long enough to soak in; steep ground sheds it as runoff (Nijesh 2024; Joshi 2024). Weight 25 -> 20 (23 Oct 2026) to make room for soil depth.
+slope,Slope,20,10-20 degrees,0.75,
+slope,Slope,20,20-30 degrees,0.5,
+slope,Slope,20,30-40 degrees,0.3,
+slope,Slope,20,over 40 degrees,0.15,
+land_cover,Land cover,20,Tree cover: dense (NDVI 0.70 or more),1.0,"Forest litter and roots let water in; built-up and bare ground seal or crust the surface (ESA WorldCover 2021). In Tehri district, Sentinel-2 NDVI (Oct-Nov 2025, 20 m) splits tree cover into dense, open and sparse; elsewhere tree cover scores 0.9 (density not known). NDVI cut-offs are provisional."
+land_cover,Land cover,20,Tree cover: open (NDVI 0.50-0.70),0.8,
+land_cover,Land cover,20,Tree cover: sparse (NDVI under 0.50),0.65,
+land_cover,Land cover,20,Tree cover,0.9,
 land_cover,Land cover,20,Shrubland,0.85,
 land_cover,Land cover,20,Grassland,0.75,
 land_cover,Land cover,20,Herbaceous wetland,0.7,
@@ -26,13 +29,17 @@ rock,Rock type,20,Other,0.5,
 rock,Rock type,20,Phyllite,0.35,
 rock,Rock type,20,Slate,0.35,
 rock,Rock type,20,Shale,0.3,
-structure,Faults and lineaments,20,within 100 m,1.0,Fractures along faults and lineaments carry water down into the rock (Rathi 2021; ICIMOD 2018). Distance to the nearest GSI fault or DEM lineament.
+structure,Faults and lineaments,20,within 100 m,1.0,"Fractures along faults and lineaments carry water down into the rock (Rathi 2021; ICIMOD 2018). Distance to the nearest GSI fault, GSI Bhukosh mapped lineament (1:250k: joints, fractures, shear zones) or DEM lineament."
 structure,Faults and lineaments,20,100-250 m,0.7,
 structure,Faults and lineaments,20,250-500 m,0.45,
 structure,Faults and lineaments,20,over 500 m,0.25,
-soil,Soil,15,Sandy (sand 70% or more),1.0,"How fast rain soaks into the top 30 cm of soil: sandy and stony soils take water in fast, clayey soils slowly (ISRIC SoilGrids 2.0, 250 m; texture classes after USDA hydrologic soil groups)."
-soil,Soil,15,"Sandy loam (sand 50-70%, clay under 20%)",0.85,
-soil,Soil,15,Loam or silt loam (clay under 27%),0.65,
-soil,Soil,15,Clay loam (clay 27-40%),0.45,
-soil,Soil,15,Clay (clay 40% or more),0.25,
-soil,Soil,15,Stony soil (coarse fragments 35% or more): added,0.1,
+soil,Soil texture,10,Sandy (sand 70% or more),1.0,"How fast rain soaks into the top 30 cm of soil: sandy and stony soils take water in fast, clayey soils slowly (ISRIC SoilGrids 2.0, 250 m; texture classes after USDA hydrologic soil groups). Weight 15 -> 10 (23 Oct 2026): soil depth is now its own factor."
+soil,Soil texture,10,"Sandy loam (sand 50-70%, clay under 20%)",0.85,
+soil,Soil texture,10,Loam or silt loam (clay under 27%),0.65,
+soil,Soil texture,10,Clay loam (clay 27-40%),0.45,
+soil,Soil texture,10,Clay (clay 40% or more),0.25,
+soil,Soil texture,10,Stony soil (coarse fragments 35% or more): added,0.1,
+soil_depth,Soil depth,10,under 50 cm,0.3,"Deeper soil over the rock stores more rain and lets it seep down slowly; thin soil sheds it as runoff (SoilGrids 2017 depth to bedrock, 250 m, capped at 200 cm; model estimate)."
+soil_depth,Soil depth,10,50-100 cm,0.6,
+soil_depth,Soil depth,10,100-150 cm,0.8,
+soil_depth,Soil depth,10,150 cm or more,1.0,

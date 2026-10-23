@@ -64,4 +64,5 @@ export const linkLabel: Record<string, string> = {
   'GSI fault': 'Linked by a fault',
   'Rock layers (up-dip)': 'Linked by rock tilt',
   'DEM lineament': 'Linked by a crack',
+  'Mapped lineament': 'Linked by a mapped fracture',
 };

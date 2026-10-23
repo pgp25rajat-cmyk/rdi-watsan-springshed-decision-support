@@ -51,8 +51,14 @@ REPO_FILES = [  # Module A: the comparison table, the weights and the input/test
     ("derived", "config/module_b_recharge_factors_v1.csv"),
     ("SRC-011", "data/01_staged/literature/csv/literature_spring_records_common_v1.csv"),
     ("derived", "data/02_processed/spring_master/spring_master_v1_clean.csv"),
+    # secondary layers: per-spring comparison values and the ERA5 winter snowfall grid
+    ("derived", "data/02_processed/spring_features/spring_secondary_features_v1.csv"),
+    ("SRC-035", "data/02_processed/climate/era5_snowfall_winter_mean_v1.tif"),
+    ("SRC-035", "data/02_processed/climate/era5_snowfall_winter_mean_v1_curve.csv"),
 ]
-LOCAL_FILES = [("SRC-023", "IMD", "*.nc"), ("SRC-024", "SoilGrids", "*.tif"), ("SRC-022", "Bhoonidhi", "*.zip")]
+LOCAL_FILES = [("SRC-023", "IMD", "*.nc"), ("SRC-024", "SoilGrids", "*.tif"), ("SRC-022", "Bhoonidhi", "*.zip"),
+               # secondary layers (scripts/secondary_layers.py): Bhukosh lineaments, landslides and dips; forest density; infiltration
+               ("SRC-029", "NGDR(Bhukosh)", "*.zip"), ("SRC-033", "Sentinel2", "*.tif"), ("TRN-018", "Infiltration", "*.tif")]
 NOT_INCLUDED = [{"source_id": "SRC-025", "indicator": "building_growth",
                  "reason": "Google Open Buildings is read over the internet for each spring; left out when this set is used"}]
 
@@ -150,7 +156,7 @@ def prepare(bbox=None, rebuild_reference=False, by=None) -> dict:
     places = roots()
     cache, local = places["layer_cache"], places["local_layers"]
     if rebuild_reference:
-        missing = [folder for _, folder, pattern in LOCAL_FILES if not list((local / folder).glob(pattern))]
+        missing = [folder for _, folder, pattern in LOCAL_FILES[:3] if not list((local / folder).glob(pattern))]
         if missing:
             raise SystemExit(f"Not rebuilt: {', '.join(missing)} not found under SPRING_LOCAL_LAYERS ({local}). Without them "
                              "the comparison table would lose its IMD, SoilGrids and CartoDEM values.")

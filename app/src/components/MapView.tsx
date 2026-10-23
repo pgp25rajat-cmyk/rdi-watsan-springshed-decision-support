@@ -40,6 +40,7 @@ const BASES: { id: Base; label: string }[] = [
 ];
 const ZONE_LINE = '#14532d';
 const LINK = '#8e5bb5';
+const FLOW = '#0b5fa5';
 const EMPTY: FeatureCollection = { type: 'FeatureCollection', features: [] };
 const PITCH_3D = 58;
 
@@ -70,6 +71,27 @@ function bboxOf(features: (Feature | null | undefined)[], points: [number, numbe
   for (const f of features) if (f?.geometry?.coordinates) add(f.geometry.coordinates);
   for (const p of points) add(p);
   return Number.isFinite(w) ? ([[w, s], [e, n]] as [[number, number], [number, number]]) : null;
+}
+
+/** Assumed groundwater path from each assessed handpump to the spring: a line and an arrow head near the spring. */
+function flowPaths(sites: DiSiteResult[], spring: { latitude: number; longitude: number }): FeatureCollection {
+  const out: Feature[] = [];
+  const kx = Math.cos((spring.latitude * Math.PI) / 180);
+  for (const s of sites) {
+    const a: [number, number] = [s.longitude, s.latitude], b: [number, number] = [spring.longitude, spring.latitude];
+    const dx = (b[0] - a[0]) * kx, dy = b[1] - a[1];
+    const len = Math.hypot(dx, dy);
+    if (len === 0) continue;
+    const reach = s.share_reaching_spring.mid;
+    out.push({ type: 'Feature', geometry: { type: 'LineString', coordinates: [a, b] }, properties: { kind: 'path', name: s.name, reach } });
+    // arrow head 85% of the way along, sized to the path but at least ~12 m and at most ~40 m
+    const size = Math.min(Math.max(len * 0.12, 0.00011), 0.00036);
+    const ux = dx / len, uy = dy / len;
+    const tip: [number, number] = [a[0] + (b[0] - a[0]) * 0.85, a[1] + (b[1] - a[1]) * 0.85];
+    const back = (f: number, side: number): [number, number] => [tip[0] + (-ux * size * f - uy * size * 0.55 * side) / kx, tip[1] + (-uy * size * f + ux * size * 0.55 * side)];
+    out.push({ type: 'Feature', geometry: { type: 'Polygon', coordinates: [[tip, back(1, 1), back(1, -1), tip]] }, properties: { kind: 'head', name: s.name, reach } });
+  }
+  return { type: 'FeatureCollection', features: out };
 }
 
 function corners(o: Overlay): [[number, number], [number, number], [number, number], [number, number]] {
@@ -181,7 +203,7 @@ export default function MapView(props: Props) {
     // 'style.load', not 'load': 'load' waits for every background tile, and never comes when they cannot download
     map.once('style.load', () => {
       const geo = (id: string) => map.addSource(id, { type: 'geojson', data: EMPTY });
-      ['zones', 'catchment', 'exact', 'links', 'faults', 'lineaments', 'streams', 'rings', 'dataset'].forEach(geo);
+      ['zones', 'catchment', 'exact', 'links', 'faults', 'lineaments', 'mapped', 'streams', 'rings', 'dataset', 'flow'].forEach(geo);
       map.addLayer({ id: 'zones-fill', type: 'fill', source: 'zones', paint: {
         'fill-color': ['match', ['get', 'rank'], 1, ZONE_RANK_COLORS[0], 2, ZONE_RANK_COLORS[1], ZONE_RANK_COLORS[2]],
         'fill-opacity': 0.42 } });
@@ -192,11 +214,17 @@ export default function MapView(props: Props) {
       map.addLayer({ id: 'streams', type: 'line', source: 'streams', paint: { 'line-color': '#2b7bbd', 'line-opacity': 0.85,
         'line-width': ['+', 0.8, ['*', 0.9, ['coalesce', ['get', 'order'], 1]]] } });
       map.addLayer({ id: 'lineaments', type: 'line', source: 'lineaments', paint: { 'line-color': '#e08a1e', 'line-width': 1.6, 'line-dasharray': [2.5, 2.5] } });
+      map.addLayer({ id: 'mapped', type: 'line', source: 'mapped', paint: { 'line-color': '#b5651d', 'line-width': 2.2, 'line-dasharray': [4, 1.5] } });
       map.addLayer({ id: 'faults', type: 'line', source: 'faults', paint: { 'line-color': '#d1352b', 'line-width': 2.5 } });
       map.addLayer({ id: 'links-glow', type: 'line', source: 'links', paint: { 'line-color': '#ffffff', 'line-width': 7, 'line-opacity': 0.7 } });
       map.addLayer({ id: 'links', type: 'line', source: 'links', paint: { 'line-color': LINK, 'line-width': 3.5 } });
       map.addLayer({ id: 'rings', type: 'line', source: 'rings', paint: { 'line-color': '#0b6e8a', 'line-width': 2,
         'line-dasharray': [1, 2.5], 'line-opacity': ['match', ['get', 'radius_m'], 500, 1, 0.75] } });
+      map.addLayer({ id: 'flow-glow', type: 'line', source: 'flow', filter: ['==', ['get', 'kind'], 'path'],
+        paint: { 'line-color': '#ffffff', 'line-width': 6, 'line-opacity': 0.75 } });
+      map.addLayer({ id: 'flow-line', type: 'line', source: 'flow', filter: ['==', ['get', 'kind'], 'path'],
+        paint: { 'line-color': FLOW, 'line-width': 3, 'line-dasharray': [2, 1.2] } });
+      map.addLayer({ id: 'flow-head', type: 'fill', source: 'flow', filter: ['==', ['get', 'kind'], 'head'], paint: { 'fill-color': FLOW } });
       map.addLayer({ id: 'dataset', type: 'circle', source: 'dataset', paint: { 'circle-radius': 4.5, 'circle-color': '#0b6e8a',
         'circle-stroke-color': '#ffffff', 'circle-stroke-width': 1.2 } });
       setReady(true);
@@ -204,15 +232,17 @@ export default function MapView(props: Props) {
 
     // hover labels for lines and areas
     const tip = new maplibregl.Popup({ closeButton: false, closeOnClick: false, className: 'hover-tip', offset: 10 });
-    const hoverLayers = ['zones-fill', 'catchment-line', 'exact-line', 'faults', 'lineaments', 'links', 'rings'];
+    const hoverLayers = ['zones-fill', 'catchment-line', 'exact-line', 'faults', 'mapped', 'lineaments', 'links', 'rings', 'flow-line'];
     map.on('mousemove', (e) => {
       const layers = hoverLayers.filter((l) => map.getLayer(l) && map.getLayoutProperty(l, 'visibility') !== 'none');
       const f = layers.length ? map.queryRenderedFeatures(e.point, { layers })[0] : undefined;
       if (!f || live.current.placing !== 'none') { tip.remove(); return; }
       const p = f.properties as Record<string, any>;
       const text = f.layer.id === 'zones-fill' ? `Recharge zone ${p.id}: ${(linkLabel[p.link] ?? '').toLowerCase()}, ${num(p.area_ha, 1)} ha`
-        : f.layer.id === 'catchment-line' ? `Surface catchment: ${num(p.area_ha, 1)} ha, allowing 30 m GPS error (where rain runs off towards the spring)`
-        : f.layer.id === 'exact-line' ? `Surface catchment at the exact GPS point: ${num(p.area_ha, 1)} ha`
+        : f.layer.id === 'catchment-line' ? `Catchment to the ridge: ${num(p.area_ha, 1)} ha (the valley above the spring, as geologists draw it)`
+        : f.layer.id === 'exact-line' ? `Land running off straight to the outlet: ${num(p.area_ha, 1)} ha`
+        : f.layer.id === 'mapped' ? `${p.type}`
+        : f.layer.id === 'flow-line' ? `Assumed groundwater path from ${p.name} to the spring (about ${Math.round(Number(p.reach) * 100)}% of its water may arrive)`
         : f.layer.id === 'faults' ? `${p.name || 'Fault'}${p.type ? ` (${p.type})` : ''}`
         : f.layer.id === 'links' ? `Possible water path to the spring: ${p.name}`
         : f.layer.id === 'rings' ? p.label
@@ -305,10 +335,13 @@ export default function MapView(props: Props) {
 
     set('zones', fc([...zones].reverse().map((z) => z.geojson && { ...z.geojson, properties: { id: z.id, rank: z.rank, link: z.link.kind, area_ha: z.area_ha } })));
     set('catchment', B?.surface_catchment.geojson ? fc([{ ...B.surface_catchment.geojson, properties: { area_ha: B.surface_catchment.area_ha } }]) : EMPTY);
-    set('exact', B?.exact_cell_catchment?.geojson ? fc([{ ...B.exact_cell_catchment.geojson, properties: { area_ha: B.exact_cell_catchment.area_ha } }]) : EMPTY);
+    const outlet = B?.outlet_catchment ?? B?.exact_cell_catchment;
+    set('exact', outlet?.geojson && outlet.area_ha < (B?.surface_catchment.area_ha ?? 0) - 0.05 ? fc([{ ...outlet.geojson, properties: { area_ha: outlet.area_ha } }]) : EMPTY);
     set('links', fc(zones.map((z) => z.link.geojson && { ...z.link.geojson, properties: { name: `${z.link.name} (to ${z.id})` } })));
     set('faults', B ? B.faults : EMPTY);
     set('lineaments', B ? B.lineaments : EMPTY);
+    set('mapped', B?.mapped_lineaments ?? EMPTY);
+    set('flow', C && result ? flowPaths(C.sites, result.spring) : EMPTY);
     set('streams', B ? B.streams : EMPTY);
     const s = result?.spring;
     set('rings', s && A?.map ? fc(A.map.rings.map((r) => ring(s.latitude, s.longitude, r.radius_m, { radius_m: r.radius_m, label: r.label }))) : EMPTY);
@@ -316,7 +349,8 @@ export default function MapView(props: Props) {
     const onA = !!result && tab === 'A', onB = !!result && tab === 'B', onC = !!result && tab === 'C';
     show(['rings'], onA);
     show(['zones-fill', 'zones-line', 'catchment-line'], onB || onC);
-    show(['faults', 'lineaments', 'streams', 'links-glow', 'links', 'exact-line'], onB);
+    show(['faults', 'lineaments', 'mapped', 'streams', 'links-glow', 'links', 'exact-line'], onB);
+    show(['flow-glow', 'flow-line', 'flow-head'], onC);
     // on the DI tab the zones are context for where each handpump sits, so they are drawn lighter
     map.setPaintProperty('zones-fill', 'fill-opacity', onC ? 0.2 : 0.42);
     map.setPaintProperty('catchment-line', 'line-opacity', onC ? 0.6 : 1);
@@ -330,7 +364,7 @@ export default function MapView(props: Props) {
     };
     image('potential-img', B?.potential_overlay, onB && heatOn, heatOpacity, 'zones-fill');
     image('landcover-img', A?.map?.land_cover, onA, 0.85, 'zones-fill');
-  }, [ready, result, tab, springs, showDataset, heatOn, heatOpacity, A, B, zones]);
+  }, [ready, result, tab, springs, showDataset, heatOn, heatOpacity, A, B, C, zones]);
 
   // ------------------------------------------------------------------ markers
   useEffect(() => {
@@ -414,8 +448,9 @@ export default function MapView(props: Props) {
     }
   }
   if (B && (tab === 'B' || tab === 'C')) {
-    if (B.surface_catchment.geojson) legend.push({ key: 'c', label: tab === 'B' && B.exact_cell_catchment?.geojson ? 'Surface catchment, allowing 30 m GPS error' : 'Surface catchment', swatch: <i className="lg-dash" /> });
-    if (tab === 'B' && B.exact_cell_catchment?.geojson) legend.push({ key: 'ce', label: 'Surface catchment at the exact GPS point', swatch: <i className="lg-dotted" /> });
+    if (B.surface_catchment.geojson) legend.push({ key: 'c', label: 'Catchment to the ridge (the valley above the spring)', swatch: <i className="lg-dash" /> });
+    const outlet = B.outlet_catchment ?? B.exact_cell_catchment;
+    if (tab === 'B' && outlet?.geojson && outlet.area_ha < B.surface_catchment.area_ha - 0.05) legend.push({ key: 'ce', label: 'Land running off straight to the outlet', swatch: <i className="lg-dotted" /> });
     if (zones.length) legend.push({ key: 'z', label: `Top recharge zones ${zones.map((z) => z.id).join(', ')} (darkest is best)`, swatch: (
       <span className="lg-zones">{zones.map((z) => <i key={z.id} className="lg-fill" style={{ background: ZONE_RANK_COLORS[z.rank - 1] }} />)}</span>
     ) });
@@ -423,9 +458,11 @@ export default function MapView(props: Props) {
   if (B && tab === 'B') {
     if (zones.some((z) => z.link.geojson)) legend.push({ key: 'lk', label: 'Fault or crack linking a zone to the spring', swatch: <i className="lg-line" style={{ background: LINK }} /> });
     if (B.faults.features.length) legend.push({ key: 'f', label: 'Fault or thrust', swatch: <i className="lg-line" style={{ background: '#d1352b' }} /> });
-    if (B.lineaments.features.length) legend.push({ key: 'l', label: 'Lineament (possible crack line)', swatch: <i className="lg-line lg-dashed" /> });
+    if (B.mapped_lineaments?.features.length) legend.push({ key: 'ml', label: 'Lineament mapped by GSI (joint, fracture, shear zone)', swatch: <i className="lg-line" style={{ background: '#b5651d' }} /> });
+    if (B.lineaments.features.length) legend.push({ key: 'l', label: 'Lineament from the elevation map (possible crack line)', swatch: <i className="lg-line lg-dashed" /> });
     if (B.streams.features.length) legend.push({ key: 's', label: 'Stream', swatch: <i className="lg-line" style={{ background: '#2b7bbd' }} /> });
   }
+  if (C && tab === 'C' && C.sites.length) legend.push({ key: 'fp', label: 'Assumed groundwater path from a handpump to the spring', swatch: <i className="lg-line" style={{ background: FLOW }} /> });
   if (showSites && sites.length) {
     const classes = new Set<DiSiteResult['location_class'] | null>();
     for (const s of sites) {

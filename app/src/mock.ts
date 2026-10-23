@@ -2,7 +2,7 @@
 // The shapes follow api.ts exactly. Numbers are illustrative, not results.
 import type {
   AResult, AssessRequest, AssessResponse, BResult, CResult, DatasetSpring, DiSite, DiSiteResult, Feature,
-  FeatureCollection, Health, Indicator, Range, RechargeZone,
+  FeatureCollection, FlowPath, Health, Indicator, Range, RechargeZone,
 } from './api';
 import { DEFAULT_ASSUMPTIONS } from './api';
 
@@ -168,6 +168,8 @@ function moduleA(req: AssessRequest, elevation: number): AssessResponse['A'] {
   ].filter((m) => !(m.id in f) || (f as any)[m.id] === undefined || (f as any)[m.id] === '');
   return {
     module: 'A', title: 'Vulnerability assessment', version: '0.4-demo', status: 'complete', confidence: 'Medium',
+    summary: [`This spring has a medium vulnerability score (${score} out of 100) mainly because many households share a small flow and people say the flow is a bit less than 10-20 years ago.`,
+      'Keeping it from being higher: the land uphill is little disturbed.'],
     validation: 'Not yet validated: the score has not been checked against springs known to be declining or steady. Weights and cut-offs are a draft for WATSAN to review.',
     rationale: [
       `Score ${score} of 100, a Medium vulnerability: the spring is under some pressure but not in crisis.`,
@@ -264,6 +266,9 @@ function moduleB(lat: number, lon: number, elev: number): AssessResponse['B'] {
   };
   return {
     module: 'B', title: 'Springshed (recharge area)', version: '0.3-demo', status: 'provisional', confidence: 'Low',
+    summary: ['The catchment of this spring is the valley above it, up to the surrounding ridges. Rain falling here runs or seeps towards the spring.',
+      'R1 (just above the outlet, on the spring\'s own slope) was picked because it has gentle slopes and forest cover.',
+      'R2 lies beyond the ridge, connected through a fault; check that link in the field.'],
     validation: 'Not yet validated: no field-walked springshed boundary has been compared with these zones. They are candidate places to inspect, not delineated springsheds.',
     rationale: [
       'All ground within 4 km that can send water to the spring was scored on recharge potential, how strong its link to the spring is, and how close it is.',
@@ -329,6 +334,16 @@ function moduleC(req: AssessRequest, lat: number, lon: number, elev: number, b: 
     if (cls === 'below_spring') flags.push('Below the spring.');
     if (d > 600) flags.push('Far from the spring: slow and uncertain.');
     const mound = (sy: number) => (vol * share.mid) / (sy * Math.PI * a.radius_of_influence_m ** 2);
+    const depth = s.depth_m ?? 70;
+    const top = elev + height;
+    const flowPath: FlowPath = {
+      profile: Array.from({ length: 21 }, (_, k) => [Math.round((d * k) / 20), Math.round(top - (height * k) / 20 + 6 * Math.sin((k / 20) * Math.PI))] as [number, number]),
+      length_m: Math.round(d), ground_at_handpump_m: top, depth_m: depth, injection_elevation_m: top - depth, spring_elevation_m: elev,
+      water_level_m: s.water_level_m ?? null, head_at_handpump_m: s.water_level_m != null ? top - s.water_level_m : null,
+      hydraulic_gradient: d > 0 ? Math.round((height / d) * 100) / 100 : 0,
+      gradient_basis: 'water table assumed to follow the ground slope, as in the SRHU reports (no water level given)',
+      travel_time_days: null, valley_between_m: null,
+    };
     return {
       id: s.id,
       name: s.name || `DI site ${i + 1}`,
@@ -342,6 +357,10 @@ function moduleC(req: AssessRequest, lat: number, lon: number, elev: number, b: 
       location_note: notes[cls].replace('{zone}', zone?.id ?? ''),
       zone_id: zone?.id ?? null,
       share_reaching_spring: share,
+      reaching_m3_per_year: scale(share, vol),
+      depth_m: depth,
+      depth_given: s.depth_m != null,
+      flow_path: flowPath,
       added_flow_lpm_annual: scale(share, (vol * 1000) / minutesYear),
       added_flow_lpm_lean: scale(share, (vol * 1000) / minutesLean),
       water_level_rise_m: { low: Math.round(mound(0.05) * 100) / 100, high: Math.round(mound(0.02) * 100) / 100 },
@@ -404,6 +423,7 @@ function moduleC(req: AssessRequest, lat: number, lon: number, elev: number, b: 
   };
   return {
     module: 'C', title: 'Potential impact of DI recharging', version: '0.2-demo', status: sites.length ? 'provisional' : 'complete',
+    summary: sites.map((x) => `${x.name}: about ${Math.round(x.volume_m3_per_year)} m3 a year goes in at ${x.depth_m} m depth. Of that, about ${Math.round(x.reaching_m3_per_year?.mid ?? 0)} m3 a year may reach the spring, if the handpump is connected to it.`),
     confidence: 'Low',
     validation: 'Not yet validated: no monitored DI site has been compared with these estimates. They are planning scenarios that depend on the assumed shares; the real gain could be zero.',
     rationale: sites.length ? [

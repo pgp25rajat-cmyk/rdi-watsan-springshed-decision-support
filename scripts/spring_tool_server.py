@@ -48,7 +48,7 @@ import module_a_vulnerability as module_a  # noqa: E402
 import module_b_springshed as module_b  # noqa: E402
 import module_c_di_impact as module_c  # noqa: E402
 
-VERSION = "v1.1 draft (2026-10-16)"
+VERSION = "v1.2 draft (2026-10-23)"
 DIST = ROOT / "app" / "dist"
 RUNS = Path(os.environ.get("SPRING_RUNS_DIR", str(ROOT / "data" / "03_outputs" / "tool_runs")))
 SPRINGS_CSV = ROOT / "data" / "02_processed" / "spring_master" / "spring_master_v1_clean.csv"
