@@ -274,6 +274,25 @@ export async function getSprings(): Promise<DatasetSpring[]> {
   return r.json();
 }
 
+/** WATSAN's existing DI handpumps (field visit, October 2026). */
+export type ExistingDiSite = {
+  id: string;
+  name: string;
+  latitude: number;
+  longitude: number;
+  depth_m: number | null;
+  roof_area_m2: number | null;
+  status: string;
+  linked_spring: string | null;
+  link_status: string;
+};
+
+export async function getExistingDiSites(): Promise<ExistingDiSite[]> {
+  const r = await fetch('/api/di_sites');
+  if (!r.ok) return [];
+  return r.json();
+}
+
 export async function assess(request: AssessRequest): Promise<AssessResponse> {
   const r = await fetch('/api/assess', {
     method: 'POST',

@@ -63,9 +63,7 @@ function ModuleFrame<R>({ m, children }: { m: ModuleOutput<R>; children: (r: R) 
         <h3>{m.title}</h3>
         <span className={`badge badge-${m.status}`}>{statusLabel[m.status]}</span>
         {!broken && <span className="badge badge-conf" title="How complete the inputs were. It does not say the answer is right.">Evidence: {m.confidence}</span>}
-        {!broken && m.validation && <span className="badge badge-unvalidated" title={m.validation}>Not validated yet</span>}
       </div>
-      {!broken && m.validation && <p className="hint validation-note">{m.validation}</p>}
       {m.status === 'provisional' && !broken && (
         <p className="msg msg-amber small">Provisional: a first answer. Some inputs or checks are still missing.</p>
       )}
@@ -164,7 +162,6 @@ function VulnerabilityTab({ m, r }: { m: ModuleOutput<AResult>; r: AResult }) {
       </div>
       <Plain title="Why this score" items={m.summary} />
       <Bullets title="Biggest contributors" items={m.rationale.slice(m.summary?.length ?? 0)} />
-      <MissingList m={m} />
       <section className="block">
         <h4>What makes up the score</h4>
         <p className="hint">Each bar is how worrying that sign is (0–100). Points = its share of the final score.</p>
@@ -203,6 +200,7 @@ function VulnerabilityTab({ m, r }: { m: ModuleOutput<AResult>; r: AResult }) {
         </section>
       )}
       <Warnings items={m.warnings} />
+      <MissingList m={m} />
     </>
   );
 }
@@ -231,7 +229,6 @@ function SpringshedTab({ m, r, onFocus }: { m: ModuleOutput<BResult>; r: BResult
           sub={zones.length === 0 ? 'None found' : onSlope === zones.length ? 'All on the spring slope'
             : onSlope === 0 ? 'All beyond the spring slope' : `${onSlope} on the spring slope, ${zones.length - onSlope} beyond`} />
       </div>
-      <p className="small"><b>How much area is needed:</b> {r.target_area_ha.basis} Each zone is grown to about this size, so a match is by design, not a check.</p>
       {r.streams_block_zones === false && <p className="small"><b>Streams:</b> not treated as barriers (your choice), so zones may cross a stream.</p>}
 
       <section className="block">
@@ -334,6 +331,28 @@ function oneRoofM3(r: CResult): number | null {
   return (100 * r.rain.annual_mm) / 1000 * c * e;
 }
 
+/** The key answer: how much of the injected water is expected to reach the spring. */
+function Takeaway({ r }: { r: CResult }) {
+  const t = r.totals;
+  const into = t.volume_m3_per_year;
+  if (!t.reaching_m3_per_year || !into) return null;
+  const share = (v: number) => Math.round((100 * v) / into);
+  const exact = (100 * t.reaching_m3_per_year.mid) / into;
+  const mid = Math.round(exact);
+  const verdict = mid >= 30 ? 'Likely to recharge the spring, if the handpump is connected to it.'
+    : mid >= 10 ? 'Some of the water may recharge the spring; most of it is expected to go elsewhere.'
+      : 'Little of this water is expected to reach the spring. Consider a site inside a top recharge zone (R1-R3).';
+  return (
+    <section className={`takeaway ${mid >= 30 ? 'takeaway-good' : mid >= 10 ? 'takeaway-mid' : 'takeaway-low'}`}>
+      <div className="takeaway-num">{exact > 0 && exact < 1 ? '<1' : mid}<small>%</small></div>
+      <div>
+        <h4>of the water injected may reach the spring</h4>
+        <p>About {num(t.reaching_m3_per_year.mid)} of {num(into)} m³ a year (range {share(t.reaching_m3_per_year.low)}–{share(t.reaching_m3_per_year.high)}%; 0 if the handpump is not connected). {verdict}</p>
+      </div>
+    </section>
+  );
+}
+
 function DiTab({ m, r, onAddSite }: { m: ModuleOutput<CResult>; r: CResult; onAddSite: () => void }) {
   const t = r.totals;
   const roof = oneRoofM3(r);
@@ -363,10 +382,11 @@ function DiTab({ m, r, onAddSite }: { m: ModuleOutput<CResult>; r: CResult; onAd
   const maxLean = Math.max(t.added_flow_lpm_lean.high, 0.01);
   return (
     <>
+      <Takeaway r={r} />
       <Plain title="Where the water goes" items={m.summary} />
-      {r.safety && (
-        <section className={`safety ${r.safety.ready ? 'safety-ok' : 'safety-stop'}`}>
-          <h4>{r.safety.ready ? 'Before any injection' : 'Not ready for DI yet'}</h4>
+      {r.safety && !r.safety.ready && (
+        <section className="safety safety-stop">
+          <h4>Not ready for DI yet</h4>
           <ul className="safety-list">{r.safety.actions.map((a) => <li key={a}>{a}</li>)}</ul>
         </section>
       )}
@@ -461,18 +481,14 @@ function DiTab({ m, r, onAddSite }: { m: ModuleOutput<CResult>; r: CResult; onAd
       {r.assumptions.length > 0 && (
         <section className="block">
           <h4>Assumptions used</h4>
-          <div className="table-wrap">
-            <table className="table compact">
-              <tbody>
-                {r.assumptions.map((a) => (
-                  <tr key={a.id}>
-                    <td>{a.label}<div className="hint">{a.note}</div></td>
-                    <td className="num nowrap">{typeof a.value === 'number' ? num(a.value, 2) : a.value} {a.unit}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <ul className="bullets assumption-list">
+            {r.assumptions.map((a) => (
+              <li key={a.id}>
+                <b>{a.label}:</b> {typeof a.value === 'number' ? (a.unit === 'share' ? pct(a.value) : num(a.value, 2)) : a.value} {a.unit === 'share' ? '' : a.unit}
+                <div className="hint">{a.note}</div>
+              </li>
+            ))}
+          </ul>
         </section>
       )}
       <Warnings items={m.warnings} />

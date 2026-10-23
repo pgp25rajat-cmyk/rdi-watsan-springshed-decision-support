@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import * as maplibregl from 'maplibre-gl';
 import mapWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import type { AssessResponse, DatasetSpring, DiSite, DiSiteResult, Feature, FeatureCollection, Overlay } from '../api';
+import type { AssessResponse, DatasetSpring, DiSite, DiSiteResult, ExistingDiSite, Feature, FeatureCollection, Overlay } from '../api';
 import { ZONE_RANK_COLORS, linkLabel, locationClass, num } from '../format';
 
 // MapLibre 6 ships a separate module worker. Vite must bundle it and its imports;
@@ -16,6 +16,8 @@ type Base = 'sat' | 'topo' | 'osm';
 
 type Props = {
   springs: DatasetSpring[];
+  existingDi: ExistingDiSite[];
+  onUseExistingDi: (d: ExistingDiSite) => void;
   point: { lat: number; lon: number } | null;
   springName: string;
   result: AssessResponse | null;
@@ -41,6 +43,7 @@ const BASES: { id: Base; label: string }[] = [
 const ZONE_LINE = '#14532d';
 const LINK = '#8e5bb5';
 const FLOW = '#0b5fa5';
+const EXISTING_DI = '#e8a317'; // WATSAN's existing DI handpumps
 const EMPTY: FeatureCollection = { type: 'FeatureCollection', features: [] };
 const PITCH_3D = 58;
 
@@ -123,7 +126,7 @@ function writePref(key: string, value: string) {
 }
 
 export default function MapView(props: Props) {
-  const { springs, point, result, tab, sites, placing } = props;
+  const { springs, existingDi, point, result, tab, sites, placing } = props;
   const box = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const live = useRef(props);
@@ -225,6 +228,9 @@ export default function MapView(props: Props) {
       map.addLayer({ id: 'flow-line', type: 'line', source: 'flow', filter: ['==', ['get', 'kind'], 'path'],
         paint: { 'line-color': FLOW, 'line-width': 3, 'line-dasharray': [2, 1.2] } });
       map.addLayer({ id: 'flow-head', type: 'fill', source: 'flow', filter: ['==', ['get', 'kind'], 'head'], paint: { 'fill-color': FLOW } });
+      geo('existing-di');
+      map.addLayer({ id: 'existing-di', type: 'circle', source: 'existing-di', paint: { 'circle-radius': 6.5, 'circle-color': EXISTING_DI,
+        'circle-stroke-color': '#ffffff', 'circle-stroke-width': 2 } });
       map.addLayer({ id: 'dataset', type: 'circle', source: 'dataset', paint: { 'circle-radius': 4.5, 'circle-color': '#0b6e8a',
         'circle-stroke-color': '#ffffff', 'circle-stroke-width': 1.2 } });
       setReady(true);
@@ -254,6 +260,23 @@ export default function MapView(props: Props) {
     map.on('click', (e) => {
       const p = live.current;
       if (p.placing !== 'none') { p.onPlace(e.lngLat.lat, e.lngLat.lng); return; }
+      const box: [[number, number], [number, number]] = [[e.point.x - 6, e.point.y - 6], [e.point.x + 6, e.point.y + 6]];
+      const di = map.getLayer('existing-di') && map.getLayoutProperty('existing-di', 'visibility') !== 'none'
+        ? map.queryRenderedFeatures(box, { layers: ['existing-di'] })[0] : undefined;
+      const d = di && p.existingDi.find((x) => x.id === di.properties?.id);
+      if (d) {
+        const facts = [d.depth_m != null ? `Depth ${num(d.depth_m)} m` : '', d.roof_area_m2 != null ? `roof about ${num(d.roof_area_m2)} m²` : ''].filter(Boolean).join(', ');
+        const body = el('pop', `<strong>${escapeHtml(d.name)}</strong><div class="muted">Existing WATSAN DI site</div>
+          <div>${escapeHtml(d.status)}${facts ? ` · ${escapeHtml(facts)}` : ''}</div><div class="muted">Link to a spring: ${escapeHtml(d.link_status)}</div>`);
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn btn-small btn-primary';
+        btn.textContent = 'Add to my DI plan';
+        const popup = new maplibregl.Popup({ offset: 8 }).setLngLat([d.longitude, d.latitude]).setDOMContent(body).addTo(map);
+        btn.onclick = () => { popup.remove(); live.current.onUseExistingDi(d); };
+        body.appendChild(btn);
+        return;
+      }
       if (!map.getLayer('dataset') || map.getLayoutProperty('dataset', 'visibility') === 'none') return;
       const hit = map.queryRenderedFeatures([[e.point.x - 5, e.point.y - 5], [e.point.x + 5, e.point.y + 5]], { layers: ['dataset'] })[0];
       if (!hit) return;
@@ -269,6 +292,8 @@ export default function MapView(props: Props) {
       btn.onclick = () => { popup.remove(); live.current.onUseSpring(s); };
       body.appendChild(btn);
     });
+    map.on('mouseenter', 'existing-di', () => { if (live.current.placing === 'none') map.getCanvas().style.cursor = 'pointer'; });
+    map.on('mouseleave', 'existing-di', () => { if (live.current.placing === 'none') map.getCanvas().style.cursor = ''; });
     map.on('mouseenter', 'dataset', () => { if (live.current.placing === 'none') map.getCanvas().style.cursor = 'pointer'; });
     map.on('mouseleave', 'dataset', () => { if (live.current.placing === 'none') map.getCanvas().style.cursor = ''; });
 
@@ -332,6 +357,9 @@ export default function MapView(props: Props) {
 
     set('dataset', showDataset ? fc(springs.map((s) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [s.longitude, s.latitude] }, properties: { id: s.id } }))) : EMPTY);
     show(['dataset'], showDataset);
+    const showExisting = existingDi.length > 0 && showSites;
+    set('existing-di', showExisting ? fc(existingDi.map((d) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [d.longitude, d.latitude] }, properties: { id: d.id } }))) : EMPTY);
+    show(['existing-di'], showExisting);
 
     set('zones', fc([...zones].reverse().map((z) => z.geojson && { ...z.geojson, properties: { id: z.id, rank: z.rank, link: z.link.kind, area_ha: z.area_ha } })));
     set('catchment', B?.surface_catchment.geojson ? fc([{ ...B.surface_catchment.geojson, properties: { area_ha: B.surface_catchment.area_ha } }]) : EMPTY);
@@ -364,7 +392,7 @@ export default function MapView(props: Props) {
     };
     image('potential-img', B?.potential_overlay, onB && heatOn, heatOpacity, 'zones-fill');
     image('landcover-img', A?.map?.land_cover, onA, 0.85, 'zones-fill');
-  }, [ready, result, tab, springs, showDataset, heatOn, heatOpacity, A, B, C, zones]);
+  }, [ready, result, tab, springs, showDataset, existingDi, showSites, heatOn, heatOpacity, A, B, C, zones]);
 
   // ------------------------------------------------------------------ markers
   useEffect(() => {
@@ -462,6 +490,7 @@ export default function MapView(props: Props) {
     if (B.lineaments.features.length) legend.push({ key: 'l', label: 'Lineament from the elevation map (possible crack line)', swatch: <i className="lg-line lg-dashed" /> });
     if (B.streams.features.length) legend.push({ key: 's', label: 'Stream', swatch: <i className="lg-line" style={{ background: '#2b7bbd' }} /> });
   }
+  if (showSites && existingDi.length) legend.push({ key: 'edi', label: 'Existing WATSAN DI site (click to add it to your plan)', swatch: <i className="lg-dot" style={{ background: EXISTING_DI }} /> });
   if (C && tab === 'C' && C.sites.length) legend.push({ key: 'fp', label: 'Assumed groundwater path from a handpump to the spring', swatch: <i className="lg-line" style={{ background: FLOW }} /> });
   if (showSites && sites.length) {
     const classes = new Set<DiSiteResult['location_class'] | null>();

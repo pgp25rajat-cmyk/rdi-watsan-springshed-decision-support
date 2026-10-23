@@ -24,7 +24,6 @@ function Head<R>({ m, n }: { m: ModuleOutput<R>; n: number }) {
       <h2>
         {n}. {m.title} <span className="p-status">({statusLabel[m.status]}, {m.confidence.toLowerCase()} evidence)</span>
       </h2>
-      {m.validation && <p className="p-caution">{m.validation}</p>}
     </>
   );
 }
@@ -95,8 +94,6 @@ export default function PrintReport({ result, form, demo }: { result: AssessResp
         {B ? (
           <>
             <p className="p-key">
-              Recharge area this flow needs: about <b>{num(B.target_area_ha.mid, 1)} ha</b> (range {num(B.target_area_ha.low, 1)}–{num(B.target_area_ha.high, 1)} ha)
-              {B.target_area_ha.kind === 'default' ? ', a default size: no flow reading was given' : ''}.
               Catchment to the ridge {num(B.surface_catchment.area_ha, 1)} ha
               {B.outlet_catchment ? ` (${num(B.outlet_catchment.area_ha, 1)} ha runs off straight to the outlet)` : ''}.
             </p>
@@ -118,14 +115,14 @@ export default function PrintReport({ result, form, demo }: { result: AssessResp
           <>
             <p className="p-key">
               Water put into the ground: <b>{num(C.totals.volume_m3_per_year)} m³ a year</b> ({litres(C.totals.volume_m3_per_year)}).
-              {C.totals.reaching_m3_per_year ? <> Of that, about <b>{num(C.totals.reaching_m3_per_year.mid)} m³</b> may reach the spring (range {num(C.totals.reaching_m3_per_year.low)}–{num(C.totals.reaching_m3_per_year.high)}).</> : null}
+              {C.totals.reaching_m3_per_year && C.totals.volume_m3_per_year ? <> Of that, about <b>{num(C.totals.reaching_m3_per_year.mid)} m³ ({Math.round(100 * C.totals.reaching_m3_per_year.mid / C.totals.volume_m3_per_year)}%)</b> may reach the spring (range {num(C.totals.reaching_m3_per_year.low)}–{num(C.totals.reaching_m3_per_year.high)} m³; 0 if not connected).</> : null}
               Dry-season water equivalent <b>{flow(C.totals.added_flow_lpm_lean.mid)} L/min</b> (range {range(C.totals.added_flow_lpm_lean)}; 0 if not connected)
               {C.totals.pct_of_lean_flow ? <>, about <b>+{flow(C.totals.pct_of_lean_flow.mid)}%</b> of today's {flow(C.totals.lean_flow_lpm)} L/min</> : null}.
               {C.roofs_for_10pct != null && <> About {num(C.roofs_for_10pct)} roofs of 100 m² in a recharge zone on the spring slope could add 10%, if the assumptions hold.</>}
             </p>
-            {C.safety && (
+            {C.safety && !C.safety.ready && (
               <>
-                <p><b>{C.safety.ready ? 'Before any injection' : 'Not ready for DI yet'}</b></p>
+                <p><b>Not ready for DI yet</b></p>
                 <List items={C.safety.actions} />
               </>
             )}
