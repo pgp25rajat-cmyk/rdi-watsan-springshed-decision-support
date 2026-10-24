@@ -97,10 +97,14 @@ class ImpactTests(unittest.TestCase):
         self.assertEqual(balench["spring_before_after"]["change"]["mid"], 1)
         self.assertEqual(balench["handpumps_before_after"][0]["outcome"], "restored")
         self.assertGreater(balench["di_water"]["volume_m3"], 0)
-        self.assertEqual(by_id["wdi-06"]["impact"]["handpumps_before_after"], [])  # comparison spring, no DI
+        # Arakot 2 is linked to Balench and Paniyar Dhar; its water is counted once in the total.
+        self.assertEqual(by_id["wdi-06"]["impact"]["handpumps_before_after"][0]["name"], "Arakot 2")
         self.assertAlmostEqual(by_id["wdi-04"]["current_flow"], by_id["wdi-04"]["impact"]["last_two"]["after"]["low"], places=1)
         p = result["portfolio"]["impact"]
-        self.assertEqual((p["di_sites"], p["comparison_sites"]), (8, 1))
+        self.assertEqual((p["di_sites"], p["comparison_sites"]), (9, 0))
+        per_site = sum(a["impact"]["di_water"].get("volume_m3") or 0 for a in result["sites"])
+        arakot2 = by_id["wdi-06"]["impact"]["di_water"]["volume_m3"]
+        self.assertAlmostEqual(p["di_volume_m3"], per_site - arakot2, places=0)
 
     def test_portal_edit_survives_reimport(self):
         watsan_import.load(self.db)

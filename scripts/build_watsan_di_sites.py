@@ -12,7 +12,7 @@ Inputs (all already in the repository):
   data/02_processed/spring_master/spring_master_v1.csv          coordinates, DEM elevation, CHIRPS annual rain
 
 Outputs: data/02_processed/watsan_di/
-  watsan_di_sites_v1.csv         one row per spring site (8 DI sites + Paniyar Dhar as a no-DI comparison)
+  watsan_di_sites_v1.csv         one row per spring site (9 DI springs)
   watsan_di_handpumps_v1.csv     one row per DI handpump
   watsan_di_observations_v1.csv  one row per value: site, asset, before/after DI, record, value range, basis, source
   watsan_di_sites_v1.xlsx        the three tables plus a README sheet
@@ -22,7 +22,8 @@ Rules
 - Kokhliyal (Bhawani Khala) is a Himmotthan site with no DI, so it is left out.
 - "Before DI" values come only from what people recalled on the field visit; no WATSAN before-DI measurement exists.
   They are labelled basis = recall. Where the recall gives only a direction (more / same), no number is invented.
-- Paniyar Dhar has no DI. It is kept as a comparison spring next to Balench, the same way the field form named it.
+- Arakot 2 may feed both Balench and Paniyar Dhar (Rajat, 2026-10-24), so it is listed under both sites. Its water is
+  counted once in any total.
 - DI installation year is left blank unless a source states it (Uniyal Gaon: "installed last year" on 20 Oct 2026).
 
 Usage: python scripts/build_watsan_di_sites.py
@@ -50,7 +51,7 @@ SITES = [
     ("WDI-03", "RDI-SPR-0003", "FV26-GAN", "DI site", ["FV26-DI-UNI"]),
     ("WDI-04", "RDI-SPR-0004", "FV26-MAL", "DI site", ["FV26-DI-GUN"]),
     ("WDI-05", "RDI-SPR-0005", "FV26-NIM", "DI site", ["FV26-DI-CHP2"]),
-    ("WDI-06", "RDI-SPR-0006", "FV26-PAN", "Comparison spring (no DI)", []),
+    ("WDI-06", "RDI-SPR-0006", "FV26-PAN", "DI site", ["FV26-DI-ARK2"]),
     ("WDI-07", "RDI-SPR-0007", "FV26-RAS", "DI site", ["FV26-DI-KAN"]),
     ("WDI-08", "RDI-SPR-0008", None, "DI site", ["FV26-DI-KUN"]),
     ("WDI-09", "RDI-SPR-0009", None, "DI site", ["SRC028-DI-DUN"]),
@@ -120,7 +121,7 @@ SPRING_RECALL = {
             "lean_flow_lpm",
             (0, 0),
             (0, 0),
-            "No DI. People said the flow has stayed similar: it dries every summer.",
+            "People said the flow has stayed similar: it still dries every summer.",
         )
     ],
 }
@@ -150,11 +151,15 @@ CHANGES = {
                 "Handpump has water in the dry season", "DI line is now disconnected (house construction)."),
                ("spring", "access", "better", "Lower spring flow", "Discharge has improved", "")],
     "WDI-06": [("village", "access", "same", "Dries in lean months; people fetch water from Balench",
-                "Still dries every summer", "No DI here: comparison spring.")],
+                "Still dries every summer", "Arakot 2 DI may feed this spring; no change reported.")],
     "WDI-07": [("handpump", "access", "better", "Handpump had no water in the dry season",
                 "Has water in the dry season; very good quality, travellers drink and wash", ""),
                ("spring", "access", "better", "Lower spring flow", "Flow has increased", "")],
     "WDI-08": [("handpump", "access", "better", "Handpump defunct", "Handpump working; water tapped directly", "")],
+}
+
+LINK_OVERRIDE = {
+    "WDI-06": "Arakot 2 may feed Paniyar Dhar as well as Balench (Rajat, 2026-10-24); not verified",
 }
 
 INSTALL = {"FV26-DI-UNI": (2025, "Installed last year for the school (field visit, 20 Oct 2026)")}
@@ -164,6 +169,13 @@ VISIT_DATE_OVERRIDE = {"FV26-DI-KUN": "2026-10-21"}
 def read(path):
     with open(path, encoding="utf-8-sig", newline="") as f:
         return list(csv.DictReader(f))
+
+
+def metres(lat1, lon1, lat2, lon2):
+    from math import asin, cos, radians, sin, sqrt
+
+    a, b, c, d = map(radians, (lat1, lon1, lat2, lon2))
+    return 6371000 * 2 * asin(sqrt(sin((c - a) / 2) ** 2 + cos(a) * cos(c) * sin((d - b) / 2) ** 2))
 
 
 def num(text):
@@ -258,7 +270,7 @@ def main():
                 "households": f.get("households", ""),
                 "people": f.get("people", ""),
                 "handpump_ids": ";".join(handpump_ids),
-                "di_link_status": f.get("di_link_status")
+                "di_link_status": LINK_OVERRIDE.get(site_id) or f.get("di_link_status")
                 or (pumps.get(handpump_ids[0], {}).get("link_basis", "") if handpump_ids else "")
                 or "Reported by the SRHU report (SRC-028); not visited",
                 "report_catchment_ha": get("catchment_area_ha_source_value"),
@@ -323,6 +335,11 @@ def main():
                                   "link_status": rp["link_status"], "source": rp["source"]})
                 continue
             area, area_note = roof(p["roof_area_m2"], hp_id)
+            height, distance = p["height_above_spring_dem_m"], p["distance_to_spring_m"]
+            if p["linked_spring_field_id"] and p["linked_spring_field_id"] != field_id:
+                # Handpump shared with another spring (Arakot 2): measure from this spring instead.
+                height = round(float(p["elevation_m"]) - float(m["elevation_m"]))
+                distance = round(metres(float(p["latitude"]), float(p["longitude"]), float(m["latitude"]), float(m["longitude"])))
             year, year_note = INSTALL.get(hp_id, ("", ""))
             hp_date = VISIT_DATE_OVERRIDE.get(hp_id, visit_date)
             pump_rows.append(
@@ -334,8 +351,8 @@ def main():
                     "latitude": p["latitude"],
                     "longitude": p["longitude"],
                     "elevation_m": p["elevation_m"],
-                    "height_above_spring_m": p["height_above_spring_dem_m"],
-                    "distance_to_spring_m": p["distance_to_spring_m"],
+                    "height_above_spring_m": height,
+                    "distance_to_spring_m": distance,
                     "bore_depth_m": p["bore_depth_m"],
                     "roof_area_m2": "" if area is None else area,
                     "roof_note": area_note,
@@ -404,8 +421,8 @@ def main():
 README = [
     ("What this is", "Springs where RDI/WATSAN has done DI recharge, their handpumps, and every flow or condition value "
      "we hold for them. Used by the DI impact dashboard (DI Dashboard/). Built by scripts/build_watsan_di_sites.py."),
-    ("Sites", "8 DI springs from the WATSAN Spring Assessment Report and the SRHU reports, plus Paniyar Dhar (no DI) as a "
-     "comparison spring next to Balench. Kokhliyal is a Himmotthan site without DI, so it is not included."),
+    ("Sites", "9 DI springs from the WATSAN Spring Assessment Report and the SRHU reports. Arakot 2 may feed both "
+     "Balench and Paniyar Dhar, so it is listed under both; count its water once. Kokhliyal is a Himmotthan site without DI, so it is not included."),
     ("period", "before_di = how things were before DI (recall only; no measured before-DI flow exists). "
      "after_di = any record taken after DI was fitted."),
     ("record", "before_di_recall = what people said on the field visit about the time before DI; "

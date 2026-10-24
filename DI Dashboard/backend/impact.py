@@ -284,10 +284,10 @@ def di_water(site, spring_result):
     for h in pumps:
         roof = h.get("roof_area_m2")
         if not roof or not rain:
-            rows.append({"name": h.get("name"), "roof_area_m2": roof, "volume_m3": None})
+            rows.append({"id": h.get("id") or h.get("name"), "name": h.get("name"), "roof_area_m2": roof, "volume_m3": None})
             continue
         volume = roof * rain * COLLECTION * INJECTION / 1000
-        rows.append({"name": h.get("name"), "roof_area_m2": roof, "volume_m3": round(volume, 1)})
+        rows.append({"id": h.get("id") or h.get("name"), "name": h.get("name"), "roof_area_m2": roof, "volume_m3": round(volume, 1)})
     known = [r for r in rows if r["volume_m3"] is not None]
     if not known:
         return {"available": False, "rows": rows, "annual_rain_mm": rain,
@@ -343,6 +343,8 @@ def portfolio(impacts):
     reported = [i["spring_before_after"] for i in di_sites if (i["spring_before_after"] or {}).get("kind") == "reported"]
     pumps = [p for i in di_sites for p in i["handpumps_before_after"]]
     water = [i["di_water"] for i in di_sites if i["di_water"]["available"]]
+    # A handpump linked to two springs (Arakot 2) is counted once in the total.
+    volumes = {r["id"]: r["volume_m3"] for w in water for r in w["rows"] if r["volume_m3"] is not None}
     return {
         "di_sites": len(di_sites),
         "comparison_sites": len(impacts) - len(di_sites),
@@ -360,7 +362,7 @@ def portfolio(impacts):
         "pumps_improved": sum(p["outcome"] == "improved" for p in pumps),
         "pumps_not_working": sum(p["outcome"] == "not_working_now" for p in pumps),
         "last_two": sum(i["last_two"] is not None for i in impacts),
-        "di_volume_m3": round(sum(w["volume_m3"] for w in water), 1),
+        "di_volume_m3": round(sum(volumes.values()), 1),
         "di_sites_with_volume": len(water),
     }
 
