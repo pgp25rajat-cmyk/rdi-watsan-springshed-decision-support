@@ -701,6 +701,14 @@ export function ImpactSummary({ state }) {
   return (
     <div className="progress-grid">
       <div>
+        <span>Handpumps restored after DI</span>
+        <strong>
+          {p.pumps_restored + p.pumps_improved}
+          <small> / {p.pumps} DI handpumps</small>
+        </strong>
+        <p>{p.pumps_not_working} not working now</p>
+      </div>
+      <div>
         <span>Dry-season spring flow up after DI</span>
         <strong>
           {p.spring_numeric_up + p.spring_reported_up}
@@ -709,14 +717,6 @@ export function ImpactSummary({ state }) {
         <p>
           {p.spring_no_data} of {p.di_sites} DI springs have no flow data yet
         </p>
-      </div>
-      <div>
-        <span>Handpumps restored after DI</span>
-        <strong>
-          {p.pumps_restored + p.pumps_improved}
-          <small> / {p.pumps} DI handpumps</small>
-        </strong>
-        <p>{p.pumps_not_working} not working now</p>
       </div>
       <div>
         <span>DI water injected into the ground</span>

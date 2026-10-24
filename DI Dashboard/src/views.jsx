@@ -333,11 +333,11 @@ export function Overview({ state, onOpen }) {
         }
       />
       <ImpactSummary state={state} />
+      <PortfolioPumps state={state} />
       <div className="two-col">
         <PortfolioBeforeAfter state={state} />
-        <PortfolioPumps state={state} />
+        <PortfolioLastTwo state={state} />
       </div>
-      <PortfolioLastTwo state={state} />
       <PortfolioBeyondWater state={state} />
       <h2 className="section-title">Equipment and follow-up</h2>
       <Progress state={state} />
