@@ -49,24 +49,32 @@ export const changeText = (c) =>
       (c.percent != null ? " (" + (c.percent > 0 ? "+" : "") + fmt(c.percent) + "%)" : "");
 
 // One row per spring: earlier value (hollow) to later value (filled). Bars show the range given.
+const shortChange = (c) =>
+  c.direction === "dry_to_flowing"
+    ? "Flows"
+    : c.direction === "still_dry"
+      ? "Dry"
+      : (c.mid > 0 ? "+" : "") + fmt(c.mid, 1);
+
 // One row per spring: name on the left, then earlier value (hollow) to later value (filled), with the monsoon
 // flow (square) on the same row line. Bars show the range given; the change is on the right.
 export function Dumbbell({ rows, earlier = "Before DI", later = "After DI" }) {
   const [ref, W] = useChartWidth();
   if (!rows.length) return <div ref={ref} />;
   const narrow = W < 560,
+    tiny = W < 400,
     hasMonsoon = rows.some((r) => r.monsoon_after),
-    rowH = narrow ? 50 : 40,
+    rowH = 40,
     T = narrow ? (hasMonsoon ? 62 : 44) : 34,
-    LW = narrow ? 122 : Math.min(150, Math.max(96, 8 + 7.5 * Math.max(...rows.map((r) => r.name.length)))),
-    RW = narrow ? 14 : 150,
+    LW = Math.min(narrow ? 100 : 150, Math.max(70, 8 + 7.5 * Math.max(...rows.map((r) => r.name.length)))),
+    RW = tiny ? 50 : narrow ? 118 : 150,
     H = T + rows.length * rowH + 28;
   const top =
     Math.max(1, ...rows.flatMap((r) => [r.before.high, r.after.high, r.monsoon_after?.high || 0])) * 1.08;
   const x0 = LW + 12,
     x1 = W - RW,
     x = (n) => x0 + (n / top) * (x1 - x0);
-  const ticks = (narrow ? [0, 0.5, 1] : [0, 0.25, 0.5, 0.75, 1]).map((f) => top * f),
+  const ticks = (tiny ? [0, 1] : narrow ? [0, 0.5, 1] : [0, 0.25, 0.5, 0.75, 1]).map((f) => top * f),
     last = ticks.length - 1;
   const legend = [
     ["hollow", earlier],
@@ -137,28 +145,17 @@ export function Dumbbell({ rows, earlier = "Before DI", later = "After DI" }) {
           return (
             <g key={r.key || i}>
               <line x1={x0} x2={x1} y1={y} y2={y} className="chart-grid" />
-              <text x={LW} y={narrow ? y - 3 : y + 4} textAnchor="end" className="chart-label dumbbell-name">
+              <text x={LW} y={y + 4} textAnchor="end" className="chart-label dumbbell-name">
                 {r.name}
               </text>
-              {narrow ? (
-                <text
-                  x={LW}
-                  y={y + 13}
-                  textAnchor="end"
-                  className={"axis dumbbell-change " + tone(r.change.direction)}
-                >
-                  {changeText(r.change)}
-                </text>
-              ) : (
-                <text
-                  x={W - 2}
-                  y={y + 4}
-                  textAnchor="end"
-                  className={"chart-label dumbbell-change " + tone(r.change.direction)}
-                >
-                  {changeText(r.change)}
-                </text>
-              )}
+              <text
+                x={W - 2}
+                y={y + 4}
+                textAnchor="end"
+                className={(narrow ? "axis" : "chart-label") + " dumbbell-change " + tone(r.change.direction)}
+              >
+                {tiny ? shortChange(r.change) : changeText(r.change)}
+              </text>
               <rect
                 x={x(b.low) - 1}
                 width={Math.max(2, x(b.high) - x(b.low) + 2)}
