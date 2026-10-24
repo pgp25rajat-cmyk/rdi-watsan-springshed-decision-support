@@ -318,11 +318,13 @@ const statusTone = (v) =>
 export function PumpBeforeAfter({ rows }) {
   if (!rows.length)
     return <Empty title="No DI handpump linked yet">Add the handpump in the site details.</Empty>;
+  const withSprings = rows.some((p) => p.sites);
   return (
-    <table className="pump-table">
+    <table className={"pump-table" + (withSprings ? " with-springs" : "")}>
       <thead>
         <tr>
           <th>Handpump</th>
+          {withSprings && <th>Spring</th>}
           <th>Before DI</th>
           <th>After DI</th>
           <th>Remarks</th>
@@ -330,11 +332,11 @@ export function PumpBeforeAfter({ rows }) {
       </thead>
       <tbody>
         {rows.map((p, i) => (
-          <tr key={(p.site || "") + p.name + i}>
+          <tr key={p.name + i}>
             <td>
               <strong>{p.name}</strong>
-              {p.site && <span>{p.site}</span>}
             </td>
+            {withSprings && <td data-label="Spring">{(p.sites || []).join(", ")}</td>}
             <td data-label="Before DI">
               <Tag tone={statusTone(p.before)}>{p.before ? pumpText[p.before] || p.before : "Not known"}</Tag>
             </td>
@@ -350,12 +352,17 @@ export function PumpBeforeAfter({ rows }) {
 }
 
 export function PortfolioPumps({ state }) {
-  const rows = state.assessment.sites.flatMap((a) =>
-    a.impact.handpumps_before_after.map((p) => ({
-      ...p,
-      site: state.sites.find((s) => s.id === a.site_id)?.name,
-    })),
+  // One row per handpump; a handpump linked to two springs (Arakot 2) lists both.
+  const byName = new Map();
+  state.assessment.sites.forEach((a) =>
+    a.impact.handpumps_before_after.forEach((p) => {
+      const spring = state.sites.find((s) => s.id === a.site_id)?.name;
+      const row = byName.get(p.name) || { ...p, sites: [] };
+      if (spring && !row.sites.includes(spring)) row.sites.push(spring);
+      byName.set(p.name, row);
+    }),
   );
+  const rows = [...byName.values()];
   const p = state.assessment.portfolio.impact;
   return (
     <Panel

@@ -127,7 +127,7 @@ HANDPUMP_NAMES = {"FV26-DI-UNI": "Kaddukhal"}
 # From the field forms (DI section and community interaction) and Rajat's corrections (2026-10-24).
 REMARKS = {
     "FV26-DI-ARK1": "Has water in the dry season; water decent, slight iron. Rooftop pipe broken, so the DI line is disconnected.",
-    "FV26-DI-ARK2": "DI tested on the visit. Linked to both Balench and Paniyar Dhar (not verified).",
+    "FV26-DI-ARK2": "DI tested on the visit. Link to both springs not verified yet.",
     "FV26-DI-GUN": "Gives more water than before DI. Iron in the water is still a concern.",
     "FV26-DI-CHP1": "DI line, gutter and filter in good order.",
     "FV26-DI-CHP2": "Water quality improved: it was red/brown with high iron before DI (no lab test). "

@@ -703,8 +703,8 @@ export function Tracking({ state, onOpen }) {
       <div className="asset-tabs" role="tablist" aria-label="Impact area">
         {[
           ["water", "Water injected"],
-          ["spring", "Spring response"],
           ["pump", "Handpump performance"],
+          ["spring", "Spring performance"],
           ["di", "DI and maintenance"],
           ["village", "Impact beyond water"],
         ].map(([id, label]) => (
