@@ -187,7 +187,7 @@ def follow_up(results, state):
         for p in a["equipment"]:
             item = gear.setdefault(p["name"], {**p, "sites": []})
             item["sites"].append({"id": a["site_id"], "name": names.get(a["site_id"])})
-    gear = list(gear.values())
+    gear = sorted(gear.values(), key=lambda p: (p["name"] or "").strip().lower())
 
     def check(key, ok, words):
         checked = [p for p in gear if p[key] != "not_checked"]

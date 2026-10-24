@@ -365,7 +365,7 @@ export function PortfolioPumps({ state }) {
       byName.set(p.name, row);
     }),
   );
-  const rows = [...byName.values()];
+  const rows = [...byName.values()].sort((a, b) => a.name.localeCompare(b.name));
   const p = state.assessment.portfolio.impact;
   return (
     <Panel

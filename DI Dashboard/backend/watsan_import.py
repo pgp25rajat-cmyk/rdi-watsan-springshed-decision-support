@@ -41,6 +41,7 @@ METRIC_LABELS = {
     "pump_yield": "Handpump delivery",
 }
 VISITOR = "DOCC/WATSAN field team"
+IMPORT_VERSION = "2026-10-24b"  # bump when the import itself changes
 # Planner defaults (scripts/module_c_di_impact.py): RDI design collects 70-80% of roof rain.
 COLLECTION_FACTOR = 0.8
 
@@ -75,7 +76,11 @@ def build(folder=DEFAULT_DIR):
     folder = Path(folder)
     if not all((folder / name).is_file() for name in FILES):
         return None
-    digest = hashlib.sha256(b"".join((folder / name).read_bytes() for name in FILES)).hexdigest()
+    # The import version is part of the digest, so a change in how the file is imported also re-runs the import
+    # on databases that already hold the same file.
+    digest = hashlib.sha256(
+        IMPORT_VERSION.encode() + b"".join((folder / name).read_bytes() for name in FILES)
+    ).hexdigest()
     site_rows = read(folder / FILES[0])
     pump_rows = read(folder / FILES[1])
     obs_rows = read(folder / FILES[2])

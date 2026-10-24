@@ -78,6 +78,8 @@ class Store:
                 t: [json.loads(r["data"]) for r in db.execute(f"SELECT data FROM {t} ORDER BY rowid")]
                 for t in ("sites", "visits", "attachments", "weather_jobs", "evidence_records", "source_observations")
             }
+            # Every list on the dashboard follows site order, so keep it A to Z by name.
+            result["sites"].sort(key=lambda s: (s.get("name") or s.get("spring_name") or "").strip().lower())
             result["weather"] = {
                 r["coords_key"]: json.loads(r["data"])
                 for r in db.execute("SELECT coords_key,data FROM weather_cache")
@@ -190,8 +192,10 @@ class Store:
             for r in db.execute("SELECT id,data FROM sites").fetchall():
                 if (json.loads(r["data"]).get("imported") and r["id"] not in new_sites
                         and r["id"] not in portal_visit_sites):
-                    db.execute("DELETE FROM visits WHERE site_id=?", (r["id"],))
-                    db.execute("DELETE FROM sites WHERE id=?", (r["id"],))
+                    for table in ("attachments", "evidence_records", "source_observations",
+                                  "weather_jobs", "site_versions", "visits", "sites"):
+                        db.execute(f"DELETE FROM {table} WHERE {'id' if table == 'sites' else 'site_id'}=?",
+                                   (r["id"],))
             for site in sites:
                 old = db.execute("SELECT data FROM sites WHERE id=?", (site["id"],)).fetchone()
                 if old and not json.loads(old["data"]).get("imported"):

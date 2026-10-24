@@ -461,11 +461,13 @@ export function Sites({ state }) {
                 </div>
                 <div className="pump-springs">
                   <span>{g.sites.length === 1 ? "Spring" : "Springs"}</span>
-                  {g.sites.map((s) => (
-                    <a key={s.id} href={"#/sites/" + s.id}>
-                      {s.spring_name || s.name}
-                    </a>
-                  ))}
+                  {[...g.sites]
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .map((s) => (
+                      <a key={s.id} href={"#/sites/" + s.id}>
+                        {s.spring_name || s.name}
+                      </a>
+                    ))}
                 </div>
               </div>
             </article>

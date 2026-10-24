@@ -731,17 +731,19 @@ export function VisitForm({ state, onSaved, onDraftSaved, draft, correction, sit
                       Which springs did you visit? <span className="required">*</span>
                     </span>
                     <div className="spring-ticks">
-                      {group.sites.map((s) => (
-                        <label className="check-label" key={s.id}>
-                          <input
-                            type="checkbox"
-                            disabled={fixed}
-                            checked={chosen.includes(s.id)}
-                            onChange={(e) => toggleSpring(s.id, e.target.checked)}
-                          />
-                          {s.spring_name || s.name}
-                        </label>
-                      ))}
+                      {[...group.sites]
+                        .sort((a, b) => a.name.localeCompare(b.name))
+                        .map((s) => (
+                          <label className="check-label" key={s.id}>
+                            <input
+                              type="checkbox"
+                              disabled={fixed}
+                              checked={chosen.includes(s.id)}
+                              onChange={(e) => toggleSpring(s.id, e.target.checked)}
+                            />
+                            {s.spring_name || s.name}
+                          </label>
+                        ))}
                     </div>
                     <small>Springs this handpump feeds. Each one gets its own flow reading.</small>
                   </div>

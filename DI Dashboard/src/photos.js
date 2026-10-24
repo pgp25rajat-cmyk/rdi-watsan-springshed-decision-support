@@ -165,7 +165,7 @@ export function handpumpGroups(sites) {
       const g = groups.get(k);
       if (!g.sites.some((x) => x.id === s.id)) g.sites[p.primary ? "unshift" : "push"](s);
     }
-  return [...groups.values()];
+  return [...groups.values()].sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export const sitePhotos = (s) =>
