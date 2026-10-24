@@ -126,7 +126,6 @@ function App() {
           <Mark />
           <div>
             <strong>DI Dashboard</strong>
-            <span>WATSAN · Impact tracking</span>
           </div>
         </a>
         <div className="nav-label">Workspace</div>
@@ -138,18 +137,6 @@ function App() {
             </a>
           ))}
         </nav>
-        <div className="sidebar-bottom">
-          <Icon name="water" size={23} />
-          <p>
-            Field visits and
-            <br />
-            water records.
-          </p>
-          <span className="database-label">
-            <i />
-            Local database
-          </span>
-        </div>
       </aside>
       <div className="mobile-bar">
         <a href="#/overview">
@@ -165,13 +152,6 @@ function App() {
         </button>
       </div>
       <main className="sheet" id="main">
-        <div className="sheet-top">
-          <span>Springs & DI handpumps</span>
-          <span>
-            <Icon name="clock" size={13} />
-            Occasional visits. A lasting record.
-          </span>
-        </div>
         {error && (
           <div role="alert" className="error-box">
             {error}

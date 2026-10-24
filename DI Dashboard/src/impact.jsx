@@ -247,7 +247,7 @@ export function PortfolioBeforeAfter({ state }) {
   return (
     <Panel
       title="Dry-season spring flow: before vs after DI"
-      sub="The main impact result. Dry-season flow, as DI should matter most when rain stops. Squares show monsoon flow after DI."
+      sub="Dry-season flow, when DI should matter most. Squares show monsoon flow after DI."
     >
       {numeric.length ? (
         <Dumbbell rows={numeric} />

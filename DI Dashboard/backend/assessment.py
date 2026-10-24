@@ -196,6 +196,7 @@ def follow_up(results, state):
             "ok": sum(p[key] == ok for p in checked),
             "checked": len(checked),
             "not_checked": len(gear) - len(checked),
+            "not_checked_list": [{"handpump": p["name"], "sites": p["sites"]} for p in gear if p[key] == "not_checked"],
             "needs_work": need,
         }
 

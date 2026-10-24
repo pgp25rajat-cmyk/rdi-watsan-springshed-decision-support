@@ -162,14 +162,18 @@ function Progress({ state }) {
                   <small> / {c.checked} checked</small>
                 </strong>
               </button>
-              {c.needs_work.length ? (
+              {c.needs_work.length || c.not_checked ? (
                 <button className="follow-alert" onClick={() => setOpen(key)}>
-                  {c.needs_work.length} not {word}: {c.needs_work.map((n) => n.handpump).join(", ")}
+                  {c.needs_work.length > 0 && (
+                    <span>
+                      {c.needs_work.length} not {word}: {c.needs_work.map((n) => n.handpump).join(", ")}
+                    </span>
+                  )}
+                  {c.not_checked > 0 && <span>{c.not_checked} not checked yet</span>}
                 </button>
               ) : (
                 <p>All checked ones {word}</p>
               )}
-              {c.not_checked > 0 && <p>{c.not_checked} not checked yet</p>}
             </div>
           );
         })}
@@ -199,33 +203,56 @@ function Progress({ state }) {
         <div className="modal-backdrop popup-backdrop" onClick={() => setOpen(null)}>
           <div className="popup" role="dialog" aria-label={shown.title} onClick={(e) => e.stopPropagation()}>
             <div className="drawer-head">
-              <h2>{shown.title}: sites needing work</h2>
+              <h2>{shown.title}</h2>
               <button onClick={() => setOpen(null)} aria-label="Close">
                 <Icon name="close" size={16} />
               </button>
             </div>
-            {shown.needs_work.length ? (
-              shown.needs_work.map((n) => (
-                <div key={n.handpump} className="work-row">
-                  <Icon name="help" />
-                  <div>
-                    <strong>{n.handpump}</strong>
-                    <p>{n.issue}</p>
-                    <p>
-                      {n.sites.map((s, i) => (
-                        <React.Fragment key={s.id}>
-                          {i > 0 && " · "}
-                          <a href={"#/sites/" + s.id} onClick={() => setOpen(null)}>
-                            {s.name}
-                          </a>
-                        </React.Fragment>
-                      ))}
-                    </p>
+            {shown.needs_work.length
+              ? shown.needs_work.map((n) => (
+                  <div key={n.handpump} className="work-row">
+                    <Icon name="help" />
+                    <div>
+                      <strong>{n.handpump}</strong>
+                      <p>{n.issue}</p>
+                      <p>
+                        {n.sites.map((s, i) => (
+                          <React.Fragment key={s.id}>
+                            {i > 0 && " · "}
+                            <a href={"#/sites/" + s.id} onClick={() => setOpen(null)}>
+                              {s.name}
+                            </a>
+                          </React.Fragment>
+                        ))}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))
-            ) : (
-              <Empty title="Nothing to fix">No handpump needs work on this check.</Empty>
+                ))
+              : !shown.not_checked_list?.length && (
+                  <Empty title="Nothing to fix">No handpump needs work on this check.</Empty>
+                )}
+            {shown.not_checked_list?.length > 0 && (
+              <>
+                <h3 className="popup-sub">Not checked yet</h3>
+                {shown.not_checked_list.map((n) => (
+                  <div key={n.handpump} className="work-row">
+                    <Icon name="help" />
+                    <div>
+                      <strong>{n.handpump}</strong>
+                      <p>
+                        {n.sites.map((s, i) => (
+                          <React.Fragment key={s.id}>
+                            {i > 0 && " · "}
+                            <a href={"#/sites/" + s.id} onClick={() => setOpen(null)}>
+                              {s.name}
+                            </a>
+                          </React.Fragment>
+                        ))}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </>
             )}
           </div>
         </div>
@@ -323,8 +350,8 @@ export function Overview({ state, onOpen }) {
   return (
     <>
       <Header
-        title="DI impact dashboard"
-        sub="WATSAN's DI sites: spring flow and handpumps before and after DI, then the latest records."
+        title="Overview"
+        sub="Key metrics and field observations for all the DI sites."
         action={
           <Button primary href="#/sites/new">
             <Icon name="plus" size={16} />
