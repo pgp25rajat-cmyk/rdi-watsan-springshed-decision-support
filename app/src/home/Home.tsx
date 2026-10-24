@@ -65,9 +65,9 @@ export default function Home() {
       <section className="team" ref={team} aria-labelledby="team-h">
         <h2 id="team-h" className="sec-h">Team</h2>
         <div className="team-grid">
-          <Person initials="R" name="Rajat" org="SPJIMR" />
-          <Person initials="A" name="Abhishek" org="SPJIMR" />
-          <Person initials="W" name="WATSAN team" org="RDI" note="Names to be added" />
+          <Person initials="W" name="WATSAN team" org="RDI" />
+          <Person initials="R" name="Rajat Panda" org="SPJIMR" />
+          <Person initials="A" name="Abhishek R." org="SPJIMR" />
         </div>
       </section>
 

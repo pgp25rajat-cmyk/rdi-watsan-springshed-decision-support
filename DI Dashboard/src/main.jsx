@@ -2,9 +2,16 @@ import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { api } from "./api.js";
 import { Icon, Mark, Button } from "./shared.jsx";
-import { Overview, Sites, SiteDetail, Tracking, HowItWorks, VisitDrawer } from "./views.jsx";
+import { Overview, Sites, SiteDetail, Tracking, HowItWorks, VisitDrawer, PumpReport } from "./views.jsx";
+import { handpumpGroups } from "./photos.js";
 import { SiteForm, VisitForm } from "./forms.jsx";
 import { Sources } from "./evidence.jsx";
+import "@fontsource/source-sans-3/latin-400.css";
+import "@fontsource/source-sans-3/latin-500.css";
+import "@fontsource/source-sans-3/latin-600.css";
+import "@fontsource/source-sans-3/latin-700.css";
+import "@fontsource/source-serif-4/latin-600.css";
+import "../../app/src/theme.css"; // the shared look: one palette and font for the whole tool
 import "./style.css";
 
 function App() {
@@ -13,7 +20,8 @@ function App() {
     [route, setRoute] = useState(location.hash || "#/overview"),
     [menu, setMenu] = useState(false),
     [opened, setOpened] = useState(null),
-    [toast, setToast] = useState("");
+    [toast, setToast] = useState(""),
+    [picking, setPicking] = useState(false);
   async function reload() {
     try {
       setState(await api("state"));
@@ -107,6 +115,7 @@ function App() {
         />
       );
     } else if (parts[0] === "tracking") content = <Tracking state={state} onOpen={setOpened} />;
+    else if (parts[0] === "report") content = <PumpReport state={state} pump={params.get("pump")} />;
     else if (parts[0] === "sources") content = <Sources state={state} onOpen={setOpened} />;
     else if (parts[0] === "how") content = <HowItWorks state={state} />;
     else content = <Overview state={state} onOpen={setOpened} />;
@@ -120,17 +129,35 @@ function App() {
     ["how", "help", "How it works"],
   ];
   return (
-    <div className="app-frame">
-      <aside className={"sidebar " + (menu ? "is-open" : "")}>
-        <a href="/" className="home-link">
+    <>
+    <header className="dash-topbar">
+      <div className="dash-topbar-left">
+        <a href="/" className="dash-home" title="Back to the opening page">
           ← Home
         </a>
-        <a href="#/overview" className="brand">
-          <Mark />
-          <div>
-            <strong>DI Dashboard</strong>
-          </div>
+        <a href="#/overview" className="dash-brand">
+          <span className="dash-logo">
+            <Mark />
+          </span>
+          <strong>DI Dashboard</strong>
         </a>
+      </div>
+      <div className="dash-topbar-right">
+        <button type="button" className="dash-download" onClick={() => setPicking(true)} title="A detailed report for one DI handpump, saved as PDF">
+          Download report
+        </button>
+        <button
+          className="dash-menu"
+          aria-label={menu ? "Close navigation" : "Open navigation"}
+          aria-expanded={menu}
+          onClick={() => setMenu(!menu)}
+        >
+          <Icon name={menu ? "close" : "menu"} />
+        </button>
+      </div>
+    </header>
+    <div className="app-frame">
+      <aside className={"sidebar " + (menu ? "is-open" : "")}>
         <div className="nav-label">Workspace</div>
         <nav aria-label="Main navigation">
           {nav.map(([key, icon, label]) => (
@@ -141,22 +168,6 @@ function App() {
           ))}
         </nav>
       </aside>
-      <div className="mobile-bar">
-        <a href="/" className="home-link">
-          ←
-        </a>
-        <a href="#/overview">
-          <Mark />
-          <strong>DI Dashboard</strong>
-        </a>
-        <button
-          aria-label={menu ? "Close navigation" : "Open navigation"}
-          aria-expanded={menu}
-          onClick={() => setMenu(!menu)}
-        >
-          <Icon name={menu ? "close" : "menu"} />
-        </button>
-      </div>
       <main className="sheet" id="main">
         {error && (
           <div role="alert" className="error-box">
@@ -180,12 +191,52 @@ function App() {
           {toast}
         </div>
       )}
+      {picking && state && (
+        <ReportPicker state={state} pump={params.get("pump")} onClose={() => setPicking(false)} />
+      )}
       {opened && (
         <div className="modal-backdrop" onClick={() => setOpened(null)}>
           <VisitDrawer visit={opened} state={state} onClose={() => setOpened(null)} />
         </div>
       )}
     </div>
+    </>
   );
 }
 createRoot(document.getElementById("root")).render(<App />);
+
+// Download report: choose a DI handpump, then its report opens and the print window saves it as PDF
+function ReportPicker({ state, pump, onClose }) {
+  const groups = handpumpGroups(state.sites),
+    [name, setName] = useState(pump && groups.some((g) => g.name === pump) ? pump : groups[0]?.name || "");
+  const go = () => {
+    onClose();
+    location.hash = "/report?pump=" + encodeURIComponent(name) + "&print=1";
+  };
+  return (
+    <div className="picker-backdrop" onClick={onClose}>
+      <div className="picker" role="dialog" aria-modal="true" aria-labelledby="picker-title" onClick={(e) => e.stopPropagation()}>
+        <h2 id="picker-title">Download report</h2>
+        <p>Choose a DI handpump. Its detailed report opens, and the print window saves it as PDF.</p>
+        <label>
+          DI handpump
+          <select value={name} onChange={(e) => setName(e.target.value)} autoFocus>
+            {groups.map((g) => (
+              <option key={g.name} value={g.name}>
+                {g.name} · {[...g.sites].sort((x, y) => x.name.localeCompare(y.name)).map((s) => s.name).join(", ")}
+              </option>
+            ))}
+          </select>
+        </label>
+        <div className="picker-actions">
+          <button type="button" className="button" onClick={onClose}>
+            Cancel
+          </button>
+          <button type="button" className="button primary" onClick={go} disabled={!name}>
+            Download PDF
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Button, Icon } from "./shared.jsx";
 
+// Leaflet needs plain colour values, so read them from the shared theme (app/src/theme.css)
+const themeColour = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
 const valid = (a, b) =>
   a !== "" &&
   b !== "" &&
@@ -64,7 +67,7 @@ export function SiteMap({ sites = [], pick = null, onPick, height = 340 }) {
         if (!valid(lat, lon)) return null;
         const point = [+lat, +lon];
         bounds.push(point);
-        const color = kind === "spring" ? "#217b78" : "#9c6b38";
+        const color = themeColour(kind === "spring" ? "--water" : "--di-site"); // same colours as the planner's map
         const marker = L.circleMarker(point, {
           radius: kind === "spring" ? 7 : 6,
           color,

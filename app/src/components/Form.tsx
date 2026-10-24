@@ -124,7 +124,7 @@ function SpringStep({ form, setForm, springs, placing, setPlacing, onPickSpring,
       {warn && <p className="msg msg-warn">{warn}</p>}
       <div className="field">
         <label htmlFor="spring-name">Spring name</label>
-        <input id="spring-name" placeholder="e.g. Balench" value={form.spring.name} onChange={(e) => set('name', e.target.value)} />
+        <input id="spring-name" placeholder="e.g. Rasanulikhal" value={form.spring.name} onChange={(e) => set('name', e.target.value)} />
       </div>
       <div className="field">
         <label htmlFor="elev">Elevation <span className="muted">(optional, metres)</span></label>

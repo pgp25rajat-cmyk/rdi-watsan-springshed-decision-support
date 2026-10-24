@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { AssessRequest, AssessResponse, DatasetSpring, ExistingDiSite, Health } from './api';
 import { assess, getExistingDiSites, getHealth, getSprings } from './api';
-import { DEMO_SPRING, MOCK_HEALTH, demoDiSites, mockAssess, mockSprings } from './mock';
+import { DEMO_ANSWERS, DEMO_SPRING, MOCK_HEALTH, demoDiSites, mockAssess, mockSprings } from './mock';
 import { emptyForm, loadForm, newSiteId, saveForm, springPoint, toRequest, type FormState } from './form';
 import Form from './components/Form';
 import MapView, { type Focus, type Placing, type Tab } from './components/MapView';
@@ -129,8 +129,7 @@ export default function App() {
     setForm(() => ({
       ...emptyForm(),
       spring: { name: DEMO_SPRING.name, lat: String(DEMO_SPRING.latitude), lon: String(DEMO_SPRING.longitude), elevation: String(DEMO_SPRING.elevation_m) },
-      // Balench as recorded on the field form (18 Oct 2026)
-      answers: { flow_vs_past: 'more', lean_flow_lpm: '1', monsoon_flow_lpm: '3', low_flow_months: '3', dry_months: '0' },
+      answers: Object.fromEntries(Object.entries(DEMO_ANSWERS).map(([k, v]) => [k, String(v)])),
       sites: demoDiSites(),
     }));
     flyTo(DEMO_SPRING.latitude, DEMO_SPRING.longitude, 16);

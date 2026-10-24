@@ -1,13 +1,18 @@
 // Demo data used when the local tool server is not running.
 // The shapes follow api.ts exactly. Numbers are illustrative, not results.
 import type {
+  FieldAnswers,
   AResult, AssessRequest, AssessResponse, BResult, CResult, DatasetSpring, DiSite, DiSiteResult, Feature,
   FeatureCollection, FlowPath, Health, Indicator, Range, RechargeZone,
 } from './api';
 import { DEFAULT_ASSUMPTIONS } from './api';
 
-// the example is a real field-visit spring (Balench, Oct 2026) with the two WATSAN DI handpumps reported to feed it
-export const DEMO_SPRING = { name: 'Balench', latitude: 30.361833, longitude: 78.378175, elevation_m: 1710 };
+// the example is a real field-visit spring (Rasanulikhal, Kanatal, Oct 2026) with the WATSAN DI handpump reported to feed it
+// The example spring (Rajat 2026-10-24): Rasanulikhal (Ludru ka pani), Kanatal, field visit 19 Oct 2026; height from the DEM
+export const DEMO_SPRING = { name: 'Rasanulikhal', latitude: 30.41637, longitude: 78.32743, elevation_m: 2256 };
+
+// Its field answers as recorded on the form: flow more than 10-20 years ago, lean 10-15 L/min, monsoon 20-25 L/min, never dry
+export const DEMO_ANSWERS: FieldAnswers = { flow_vs_past: 'more', lean_flow_lpm: 12.5, monsoon_flow_lpm: 22.5, dry_months: 0 };
 
 export const MOCK_HEALTH: Health = { ok: true, version: 'demo', map_set: null, offline: false };
 
@@ -152,7 +157,7 @@ function moduleA(req: AssessRequest, elevation: number): AssessResponse['A'] {
       'Soil 0-30 cm (SoilGrids): clay 21%, sand 44%',
       'Yearly rain (CHIRPS 2018-2025): 1,600 mm (IMD 2001-2025: 1,540 mm)',
     ],
-    nearest_dataset_spring: { record_id: 'RDI-SPR-0001', spring_name: 'Balench', distance_m: 0 },
+    nearest_dataset_spring: { record_id: 'RDI-SPR-0007', spring_name: 'Rasanulikhal', distance_m: 0 },
     elevation_gap_m: 9,
     map: {
       rings: [
@@ -450,18 +455,18 @@ export function mockAssess(req: AssessRequest): AssessResponse {
   };
 }
 
-/** The example spring's DI handpumps: WATSAN's Arakot 1 and 2 (field visit, Oct 2026; data/02_processed/field_visit). */
+/** The example spring's DI handpump: WATSAN's Kanatal (field visit, Oct 2026; data/02_processed/field_visit). */
 export function demoDiSites(): DiSite[] {
   return [
-    { id: 'di-example-ark1', name: 'Arakot 1', latitude: 30.365046, longitude: 78.379673, roof_area_m2: 150, depth_m: 70, first_flush: true, filter: true },
-    { id: 'di-example-ark2', name: 'Arakot 2', latitude: 30.365313, longitude: 78.379288, roof_area_m2: 150, depth_m: 70, first_flush: true, filter: true },
+    // WATSAN's Kanatal DI handpump (field visit): 200 m² concrete roof, depth 70 m, first flush and filter working
+    { id: 'di-example-kan', name: 'Kanatal', latitude: 30.419538, longitude: 78.325791, roof_area_m2: 200, depth_m: 70, first_flush: true, filter: true },
   ];
 }
 
-/** A ready-made answer for the demo spring, with two DI sites. */
+/** A ready-made answer for the demo spring, with its DI handpump. */
 export const mockResponse = (): AssessResponse => mockAssess({
   spring: DEMO_SPRING,
-  field: { flow_vs_past: 'more', lean_flow_lpm: 1, monsoon_flow_lpm: 3, low_flow_months: 3, dry_months: 0 },
+  field: DEMO_ANSWERS,
   di: { sites: demoDiSites(), assumptions: {} },
 });
 
@@ -485,7 +490,7 @@ export function mockSprings(): DatasetSpring[] {
   let seed = 7;
   const rand = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
   const list: DatasetSpring[] = [{
-    id: 'RDI-SPR-0001', name: DEMO_SPRING.name, village: 'Arakot', district: 'Tehri Garhwal',
+    id: 'RDI-SPR-0007', name: DEMO_SPRING.name, village: 'Kanatal', district: 'Tehri Garhwal',
     latitude: DEMO_SPRING.latitude, longitude: DEMO_SPRING.longitude, elevation_m: DEMO_SPRING.elevation_m, source: 'Demo list',
   }];
   NAMES.forEach((name, i) => {
