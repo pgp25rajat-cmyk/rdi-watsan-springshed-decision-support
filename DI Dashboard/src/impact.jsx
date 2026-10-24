@@ -38,7 +38,6 @@ const tone = (d) =>
     : ["decrease", "likely_decrease", "not_working_now", "still_dry"].includes(d)
       ? "warning"
       : "";
-const isComparison = (role) => (role || "").toLowerCase().startsWith("comparison");
 const range = (p) => (p.low === p.high ? fmt(p.low, 1) : fmt(p.low, 1) + "–" + fmt(p.high, 1));
 export const changeText = (c) =>
   c.direction === "dry_to_flowing" || c.direction === "still_dry"
@@ -93,7 +92,6 @@ export function Dumbbell({ rows, earlier = "Before DI", later = "After DI" }) {
             <g key={r.key || i}>
               <text x={L} y={y - 18} className="chart-label dumbbell-name">
                 {r.name}
-                {isComparison(r.role) ? " · no DI (comparison)" : ""}
               </text>
               <text x={W - R} y={y - 18} textAnchor="end" className={"chart-label dumbbell-change " + tone(r.change.direction)}>
                 {changeText(r.change)}
@@ -198,7 +196,7 @@ export function PortfolioLastTwo({ state }) {
 }
 
 export function PumpBeforeAfter({ rows, compact = false }) {
-  if (!rows.length) return <Empty title="No DI handpump at this site">This is a comparison spring.</Empty>;
+  if (!rows.length) return <Empty title="No DI handpump linked yet">Add the handpump in the site details.</Empty>;
   return (
     <div className="pump-ba">
       {rows.map((p, i) => (

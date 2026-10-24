@@ -115,7 +115,7 @@ def build(folder=DEFAULT_DIR):
                 "other_names": r.get("other_names", ""),
                 "village": r["village"],
                 "district": r["district"],
-                "handpump_name": primary["name"] if primary else "No DI handpump (comparison spring)",
+                "handpump_name": primary["name"] if primary else "DI handpump to be added",
                 "gps_later": False,
                 "latitude": num(r["latitude"]),
                 "longitude": num(r["longitude"]),

@@ -338,7 +338,7 @@ def site_impact(site, state):
 
 
 def portfolio(impacts):
-    di_sites = [i for i in impacts if not i["role"].lower().startswith("comparison")]
+    di_sites = impacts
     numeric = [i["spring_before_after"] for i in di_sites if (i["spring_before_after"] or {}).get("kind") == "numeric"]
     reported = [i["spring_before_after"] for i in di_sites if (i["spring_before_after"] or {}).get("kind") == "reported"]
     pumps = [p for i in di_sites for p in i["handpumps_before_after"]]
@@ -347,7 +347,6 @@ def portfolio(impacts):
     volumes = {r["id"]: r["volume_m3"] for w in water for r in w["rows"] if r["volume_m3"] is not None}
     return {
         "di_sites": len(di_sites),
-        "comparison_sites": len(impacts) - len(di_sites),
         "spring_numeric": len(numeric),
         "spring_numeric_up": sum(
             r["change"]["direction"] in ("increase", "likely_increase", "dry_to_flowing") for r in numeric

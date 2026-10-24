@@ -338,6 +338,6 @@ def enrich(state, results):
             "decision": "No composite impact index. Keep spring, handpump, DI operation and village outcomes separate. "
             "Impact is shown before vs after DI first, then between the last two records.",
             "indicators": IMPACT_INDICATORS + INDICATORS,
-            "causal_contribution": "Not quantified without a suitable counterfactual/control design and sufficient repeated evidence.",
+            "causal_contribution": "Not quantified: each spring is judged against its own earlier records; rain and other works are shown beside each change.",
         },
     }

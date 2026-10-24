@@ -1149,8 +1149,8 @@ export function HowItWorks({ state }) {
           </p>
           <p>
             Stronger attribution needs repeated records before and after the intervention, verified asset
-            connections, comparable rainfall/seasonal conditions and an appropriate comparison or control
-            design.
+            connections, and rainfall and season recorded beside each reading. Each spring is judged against
+            its own earlier records, not against other springs.
           </p>
           <p className="notice">
             Current attribution: not quantified. Report the observed or reported change and its supporting
