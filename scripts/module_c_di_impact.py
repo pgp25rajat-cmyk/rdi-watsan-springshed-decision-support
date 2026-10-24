@@ -106,7 +106,6 @@ MONITORING = [
     "Start before the DI works if at all possible, so there is a baseline year to compare with.",
     "Read the water level in each DI handpump with a dip meter weekly in the monsoon and monthly otherwise.",
     "Keep a rain gauge in the village and log each DI injection (date, roof, rough volume).",
-    "Measure one nearby spring without DI the same way as a control, so a wet or dry year is not mistaken for the DI effect.",
     "Test water quality (turbidity, coliform, iron) at the spring before and after the first monsoon of injection.",
 ]
 

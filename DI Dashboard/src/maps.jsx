@@ -1,0 +1,191 @@
+import React, { useEffect, useRef, useState } from "react";
+import { Button, Icon } from "./shared.jsx";
+
+const valid = (a, b) =>
+  a !== "" &&
+  b !== "" &&
+  a != null &&
+  b != null &&
+  Number.isFinite(+a) &&
+  Number.isFinite(+b) &&
+  Math.abs(+a) <= 90 &&
+  Math.abs(+b) <= 180;
+export function SiteMap({ sites = [], pick = null, onPick, height = 340 }) {
+  const element = useRef(),
+    map = useRef(),
+    layers = useRef(),
+    callback = useRef(onPick),
+    [failed, setFailed] = useState(false),
+    [loading, setLoading] = useState(true);
+  callback.current = onPick;
+  useEffect(() => {
+    const L = window.L;
+    if (!L || !element.current) return;
+    const m = L.map(element.current, {
+      scrollWheelZoom: false,
+      zoomAnimation: false,
+      fadeAnimation: false,
+      markerZoomAnimation: false,
+    }).setView([30.385, 78.35], 12);
+    map.current = m;
+    layers.current = L.layerGroup().addTo(m);
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution:
+        '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a>',
+      referrerPolicy: "strict-origin-when-cross-origin",
+    })
+      .on("tileerror", () => {
+        setFailed(true);
+        setLoading(false);
+      })
+      .on("load", () => setLoading(false))
+      .addTo(m);
+    if (onPick) m.on("click", (e) => callback.current?.(e.latlng.lat, e.latlng.lng));
+    const observer = new ResizeObserver(() => m.invalidateSize());
+    observer.observe(element.current);
+    return () => {
+      observer.disconnect();
+      m.stop();
+      m.remove();
+      map.current = null;
+    };
+  }, []);
+  useEffect(() => {
+    const L = window.L,
+      m = map.current;
+    if (!m) return;
+    layers.current.clearLayers();
+    const bounds = [];
+    for (const s of sites) {
+      let spring = null,
+        pump = null;
+      const add = (lat, lon, kind, name, status) => {
+        if (!valid(lat, lon)) return null;
+        const point = [+lat, +lon];
+        bounds.push(point);
+        const color = kind === "spring" ? "#217b78" : "#9c6b38";
+        const marker = L.circleMarker(point, {
+          radius: kind === "spring" ? 7 : 6,
+          color,
+          weight: 2,
+          fillColor: color,
+          fillOpacity: status === "verified" ? 1 : 0.25,
+        }).addTo(layers.current);
+        const content = document.createElement("div");
+        const title = document.createElement("strong");
+        title.textContent = name;
+        content.append(title);
+        const text = document.createElement("p");
+        text.textContent =
+          (kind === "spring" ? "Spring" : "DI handpump") +
+          " · " +
+          (+lat).toFixed(6) +
+          ", " +
+          (+lon).toFixed(6) +
+          (status === "verified" ? " · GPS confirmed" : " · From field record; check position");
+        content.append(text);
+        const a = document.createElement("a");
+        a.href = "#/sites/" + s.id;
+        a.textContent = "Open site";
+        content.append(a);
+        marker.bindPopup(content);
+        return point;
+      };
+      spring = add(s.latitude, s.longitude, "spring", s.spring_name || s.name, s.location_status);
+      pump = add(
+        s.pump_latitude,
+        s.pump_longitude,
+        "pump",
+        s.handpump_name || s.name + " handpump",
+        s.pump_location_status || s.location_status,
+      );
+      if (spring && pump)
+        L.polyline([spring, pump], { color: "#81958f", weight: 1.5, dashArray: "5 6" }).addTo(layers.current);
+      for (const p of s.additional_handpumps || []) {
+        const pt = add(p.latitude, p.longitude, "pump", p.name, p.location_status);
+        if (spring && pt)
+          L.polyline([spring, pt], { color: "#aab6b1", weight: 1, dashArray: "3 7" }).addTo(layers.current);
+      }
+    }
+    if (pick && valid(pick.latitude, pick.longitude)) {
+      const pt = [+pick.latitude, +pick.longitude];
+      bounds.push(pt);
+      L.marker(pt, {
+        draggable: true,
+        icon: L.divIcon({
+          className: "picked-marker",
+          html: "<span></span>",
+          iconSize: [24, 24],
+          iconAnchor: [12, 12],
+        }),
+      })
+        .on("dragend", (e) => {
+          const p = e.target.getLatLng();
+          callback.current?.(p.lat, p.lng);
+        })
+        .addTo(layers.current);
+    }
+    if (bounds.length && !m._userMoved) {
+      m.fitBounds(bounds, { padding: [35, 35], maxZoom: pick ? 16 : 14, animate: false });
+      m._userMoved = true;
+    }
+  }, [sites, pick?.latitude, pick?.longitude]);
+  return (
+    <div className="map-wrap">
+      <div
+        ref={element}
+        style={{ height }}
+        className="site-map"
+        aria-label={onPick ? "Choose a location on the map" : "Map of springs and linked handpumps"}
+      />
+      {loading && (
+        <div className="map-loading" role="status">
+          Loading map…
+        </div>
+      )}
+      {failed && (
+        <div className="map-offline">
+          Some map tiles could not load. Saved markers remain available; check the internet connection.
+        </div>
+      )}
+      <div className="map-legend">
+        <span>
+          <i className="spring-dot" />
+          Spring
+        </span>
+        <span>
+          <i className="pump-dot" />
+          DI handpump
+        </span>
+        <span>Dashed line: recorded association, not proven groundwater flow</span>
+      </div>
+    </div>
+  );
+}
+
+export function LocationPicker({ title, latitude, longitude, onPick, otherPoint }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="location-picker">
+      <Button type="button" onClick={() => setOpen(!open)}>
+        <Icon name="site" size={16} />
+        {open ? "Close map" : "Choose " + title.toLowerCase() + " on map"}
+      </Button>
+      {open && (
+        <div className="location-map">
+          <p>Click the map or drag the pin. This sets only the {title.toLowerCase()} position.</p>
+          <SiteMap
+            sites={otherPoint ? [otherPoint] : []}
+            pick={{ latitude, longitude }}
+            onPick={onPick}
+            height={300}
+          />
+          <p className="caption">
+            Map tiles need internet and are provided by OpenStreetMap. Coordinates can also be typed above.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}

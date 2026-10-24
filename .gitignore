@@ -11,6 +11,8 @@ data/02_processed/*
 !data/02_processed/lineaments/
 !data/02_processed/spring_master/
 !data/02_processed/field_visit/
+# WATSAN DI sites data file read by the DI Dashboard
+!data/02_processed/watsan_di/
 # ERA5 winter snow grid and snow-height curve (a few KB; the raw ERA5 files are large and not kept)
 !data/02_processed/climate/
 data/03_outputs/*

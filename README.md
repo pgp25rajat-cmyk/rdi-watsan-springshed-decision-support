@@ -48,3 +48,7 @@ Do not put credentials, personal contact details, consent-sensitive photos, or u
 4. Keep observed data, community recall, staff hypotheses and project calculations distinct.
 
 The current register is an intake inventory, not an endorsement that each data source is suitable for modelling.
+
+## Separate DI impact dashboard
+
+This branch also contains [`DI Dashboard/`](DI%20Dashboard/README.md), an independent local application for repeat spring/handpump visits and impact tracking. Its launcher, frontend, API and database remain separate from the original planner. The public source package includes no DI field records, photos, exact site coordinates or runtime databases. Existing app behaviour and deployment are unchanged.
