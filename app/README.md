@@ -8,6 +8,13 @@ The page the team uses to assess one spring. You choose the spring (from the dat
 
 **Print report** prints a two-to-three page summary (the map is left out).
 
+## Pages
+
+- `#/` opening page: two doors (dashboard, planner), about, team. Code in `src/home/`.
+- `#/planner` the planner described above. Its title in the top bar goes back home.
+- `#/dashboard` slot for the WATSAN intervention dashboard (Abhishek). For now a "coming soon" page that lists the WATSAN DI sites from `/api/di_sites`. When the dashboard arrives, either add it as React components in `src/home/Dashboard.tsx`, or drop its built files in `public/dashboard/` and show `/dashboard/index.html` in that page. It should read the same data as the planner (`/api/springs`, `/api/di_sites`).
+- The SRHU logo is `public/brand/srhu-logo.png` (cropped from the high-resolution file).
+
 ## Everyday use (no Node.js needed)
 
 The built page in `dist/` is committed. Start the tool with `start_tool.bat` (or `python scripts/spring_tool_server.py`) and open http://127.0.0.1:8765. The Python server serves `dist/` and the API (`/api/health`, `/api/springs`, `/api/assess`) together.
