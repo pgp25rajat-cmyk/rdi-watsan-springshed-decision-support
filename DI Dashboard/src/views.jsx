@@ -684,6 +684,7 @@ export function Tracking({ state, onOpen }) {
     groupOf = (id) => groups.find((g) => g.sites.some((s) => s.id === id)),
     [selected, setSelected] = useState(
       (
+        groups.find((g) => g.name === query.get("pump")) ||
         groupOf(query.get("site")) ||
         groups.find((g) => g.sites.some((s) => assessment(state, s.id)?.visit_count)) ||
         groups[0]

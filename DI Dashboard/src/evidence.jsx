@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Panel, Empty, Tag, Icon, visitDate } from "./shared.jsx";
 import { ChoiceSelect } from "./controls.jsx";
-import { pumpPhotos, sitePumps } from "./photos.js";
+import { handpumpGroups, pumpPhotos, sitePumps } from "./photos.js";
 
 // A photo saved with the site wins; otherwise the field photo of its selected DI handpump.
 const fieldPhoto = (s) => sitePumps(s).flatMap((p) => pumpPhotos(p.name))[0];
@@ -89,12 +89,16 @@ function readable(e) {
   }
   return String(v);
 }
-export function EvidenceRows({ state, siteId, visitId, onOpen, asset }) {
+export function EvidenceRows({ state, siteId, siteIds, otherPumps = [], visitId, onOpen, asset }) {
   const [visible, setVisible] = useState(12);
-  useEffect(() => setVisible(12), [siteId, visitId, asset]);
+  useEffect(() => setVisible(12), [siteId, siteIds?.join(), visitId, asset]);
+  // Handpump records start with the handpump's name; hide those of another handpump at the same spring.
+  const otherPump = (e) => otherPumps.some((n) => (e.field || "").startsWith(n + " · "));
   const rows = (state.evidence_records || []).filter(
     (e) =>
       (!siteId || e.site_id === siteId) &&
+      (!siteIds || siteIds.includes(e.site_id)) &&
+      !otherPump(e) &&
       (!visitId || e.visit_id === visitId) &&
       (!asset || asset === "all" || e.asset === asset),
   );
@@ -171,8 +175,10 @@ export function EvidenceRows({ state, siteId, visitId, onOpen, asset }) {
   );
 }
 export function Sources({ state, onOpen }) {
-  const [site, setSite] = useState("all"),
-    [asset, setAsset] = useState("all");
+  const groups = handpumpGroups(state.sites),
+    [pump, setPump] = useState("all"),
+    [asset, setAsset] = useState("all"),
+    group = groups.find((g) => g.name === pump);
   return (
     <>
       <header className="page-head">
@@ -183,12 +189,16 @@ export function Sources({ state, onOpen }) {
       </header>
       <div className="source-controls">
         <label>
-          Site
-          <ChoiceSelect aria-label="Source site" value={site} onChange={(e) => setSite(e.target.value)}>
-            <option value="all">All sites</option>
-            {state.sites.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.name}
+          DI handpump
+          <ChoiceSelect aria-label="Source handpump" value={pump} onChange={(e) => setPump(e.target.value)}>
+            <option value="all">All DI handpumps</option>
+            {groups.map((g) => (
+              <option key={g.name} value={g.name}>
+                {g.name} ·{" "}
+                {[...g.sites]
+                  .sort((x, y) => x.name.localeCompare(y.name))
+                  .map((s) => s.name)
+                  .join(", ")}
               </option>
             ))}
           </ChoiceSelect>
@@ -212,7 +222,13 @@ export function Sources({ state, onOpen }) {
         </label>
       </div>
       <Panel title="Every value and where it came from" sub="Reports, field forms, team values and visits.">
-        <EvidenceRows state={state} siteId={site === "all" ? null : site} asset={asset} onOpen={onOpen} />
+        <EvidenceRows
+          state={state}
+          siteIds={group ? group.sites.map((s) => s.id) : null}
+          otherPumps={group ? groups.filter((g) => g !== group).map((g) => g.name) : []}
+          asset={asset}
+          onOpen={onOpen}
+        />
       </Panel>
     </>
   );

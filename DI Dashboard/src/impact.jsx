@@ -1,3 +1,4 @@
+import { handpumpGroups } from "./photos.js";
 import React from "react";
 import { Panel, Empty, Tag, fmt, date } from "./shared.jsx";
 import { useChartWidth } from "./graphics.jsx";
@@ -446,18 +447,32 @@ export function BeyondWater({ impact }) {
 }
 
 export function PortfolioBeyondWater({ state }) {
-  const rows = state.assessment.sites
-    .map((a) => ({ a, s: state.sites.find((s) => s.id === a.site_id) }))
-    .filter(({ a }) => a.impact.beyond_water?.story);
-  if (!rows.length) return null;
+  // One card per DI handpump; a handpump that feeds two springs shows both, one after another.
+  const story = (s) => state.assessment.sites.find((a) => a.site_id === s.id)?.impact.beyond_water?.story;
+  const cards = handpumpGroups(state.sites)
+    .map((g) => ({
+      g,
+      springs: [...g.sites].sort((x, y) => x.name.localeCompare(y.name)).filter((s) => story(s)),
+    }))
+    .filter((c) => c.springs.length);
+  if (!cards.length) return null;
   return (
     <Panel title="Impact beyond water" sub="What people told us on the field visit.">
       <div className="beyond-grid">
-        {rows.map(({ a, s }) => (
-          <a key={s.id} href={"#/tracking?site=" + s.id + "&asset=village"} className="beyond-card">
-            <strong>{s.name}</strong>
-            <span>{s.village}</span>
-            <p>{a.impact.beyond_water.story}</p>
+        {cards.map(({ g, springs }) => (
+          <a
+            key={g.name}
+            href={"#/tracking?pump=" + encodeURIComponent(g.name) + "&asset=village"}
+            className="beyond-card"
+          >
+            <strong>{g.name}</strong>
+            <span>{g.sites[0].village}</span>
+            {springs.map((s) => (
+              <p key={s.id}>
+                {springs.length > 1 || s.name !== g.name ? <b>{s.name} spring: </b> : null}
+                {story(s)}
+              </p>
+            ))}
           </a>
         ))}
       </div>
