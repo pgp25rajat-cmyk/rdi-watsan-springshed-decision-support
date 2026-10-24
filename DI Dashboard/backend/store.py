@@ -164,7 +164,8 @@ class Store:
 
     def import_records(self, digest, sites, visits, evidence, observations):
         """Load the WATSAN DI data file. Imported visits, evidence and observations are replaced as a set.
-        A site edited in the portal keeps the portal version; portal visits are never touched."""
+        A site edited in the portal keeps the portal version; portal visits are never touched. Imported sites no
+        longer in the file are removed."""
         with self.connect() as db:
             db.execute("BEGIN IMMEDIATE")
             row = db.execute("SELECT value FROM meta WHERE key='watsan_import'").fetchone()
@@ -181,6 +182,16 @@ class Store:
             db.execute("DELETE FROM source_observations")
             for vid in stale:
                 db.execute("DELETE FROM visits WHERE id=?", (vid,))
+            # An imported site that left the data file (e.g. Makhdet, DI not installed yet) goes too, unless the
+            # team edited it or recorded visits for it in the portal.
+            new_sites = {s["id"] for s in sites}
+            portal_visit_sites = {r["site_id"] for r in db.execute("SELECT site_id,data FROM visits")
+                                  if not json.loads(r["data"]).get("imported")}
+            for r in db.execute("SELECT id,data FROM sites").fetchall():
+                if (json.loads(r["data"]).get("imported") and r["id"] not in new_sites
+                        and r["id"] not in portal_visit_sites):
+                    db.execute("DELETE FROM visits WHERE site_id=?", (r["id"],))
+                    db.execute("DELETE FROM sites WHERE id=?", (r["id"],))
             for site in sites:
                 old = db.execute("SELECT data FROM sites WHERE id=?", (site["id"],)).fetchone()
                 if old and not json.loads(old["data"]).get("imported"):

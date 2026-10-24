@@ -131,6 +131,15 @@ class ImpactTests(unittest.TestCase):
         arakot2 = by_id["wdi-06"]["impact"]["di_water"]["volume_m3"]
         self.assertLess(abs(p["di_volume_m3"] - (per_site - arakot2)), 2)
 
+    def test_site_dropped_from_data_file_is_removed(self):
+        watsan_import.load(self.db)
+        digest, sites, visits, evidence, obs = watsan_import.build()
+        old = dict(sites[0], id="wdi-99", imported=True)
+        self.db.import_records("old", [*sites, old], visits, evidence, obs)
+        self.assertIn("wdi-99", {s["id"] for s in self.db.state()["sites"]})
+        self.db.import_records("new", sites, visits, evidence, obs)
+        self.assertNotIn("wdi-99", {s["id"] for s in self.db.state()["sites"]})
+
     def test_portal_edit_survives_reimport(self):
         watsan_import.load(self.db)
         old = next(s for s in self.db.state()["sites"] if s["id"] == "wdi-02")
