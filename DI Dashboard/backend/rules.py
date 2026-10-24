@@ -147,6 +147,8 @@ def validate_site(b, old=None):
     ):
         if old and k in old:
             s[k] = old[k]
+    if "additional_handpumps" in b:
+        s["additional_handpumps"] = validate_handpumps(b["additional_handpumps"], (old or {}).get("additional_handpumps"))
     if s["link_basis"] not in ("reported", "field_checked", "unknown"):
         raise Invalid("Choose how the spring and handpump are linked.")
     for k, limit in [
@@ -167,6 +169,24 @@ def validate_site(b, old=None):
         not s["di_year"].is_integer() or not 1900 <= s["di_year"] <= today().year
     ):
         raise Invalid("Check the DI installation year.")
+    # Keep imported details the form does not show (record ids, rainfall, role). A portal edit makes the site the
+    # team's own version, so later data-file imports leave it alone.
+    for k, v in (old or {}).items():
+        if k not in s and k != "imported":
+            s[k] = v
+    if (old or {}).get("handpumps"):
+        # Imported sites keep one list of all handpumps (with their data-file ids) for the impact results.
+        first = next((h for h in old["handpumps"] if h.get("primary")), old["handpumps"][0])
+        primary = {
+            **first,
+            "name": s["handpump_name"],
+            "latitude": s["pump_latitude"],
+            "longitude": s["pump_longitude"],
+            "roof_area_m2": s["roof_area_m2"],
+            "di_year": s["di_year"],
+            "primary": True,
+        }
+        s["handpumps"] = [primary] + [{**h, "primary": False} for h in s.get("additional_handpumps") or []]
     s.update(
         id=old["id"] if old else "site-" + uuid4().hex[:12],
         setup_complete=True,
@@ -174,6 +194,33 @@ def validate_site(b, old=None):
         updated_at=now(),
     )
     return s
+
+
+def validate_handpumps(rows, old_rows=None):
+    """Additional DI handpumps linked to the same spring: name, optional GPS, roof area and DI year."""
+    if not isinstance(rows, list) or len(rows) > 10:
+        raise Invalid("Check the additional handpumps.")
+    old_by_name = {p.get("name"): p for p in old_rows or []}
+    clean = []
+    for i, p in enumerate(rows):
+        if not isinstance(p, dict):
+            raise Invalid("Check the additional handpumps.")
+        name = text(p.get("name"), f"a name for additional handpump {i + 1}")
+        item = {**old_by_name.get(name, {}), "name": name}
+        lat, lon = p.get("latitude"), p.get("longitude")
+        if lat in ("", None) and lon in ("", None):
+            item["latitude"] = item["longitude"] = None
+        else:
+            item["latitude"] = number(lat, name + " latitude", -90, 90)
+            item["longitude"] = number(lon, name + " longitude", -180, 180)
+        for k, high in (("roof_area_m2", 1e5), ("di_year", today().year)):
+            item[k] = None if p.get(k) in ("", None) else number(p.get(k), name + " " + k.replace("_", " "), 0, high)
+        if item["di_year"] is not None and (not item["di_year"].is_integer() or item["di_year"] < 1900):
+            raise Invalid("Check the DI installation year for " + name + ".")
+        clean.append(item)
+    if len({p["name"].lower() for p in clean}) != len(clean):
+        raise Invalid("Give each additional handpump a different name.")
+    return clean
 
 
 def flow_readings(rows, label):
@@ -217,6 +264,8 @@ def validate_visit(b, state, submit=False):
             "supersedes",
             "correction_reason",
             "recent_rain",
+            "period",
+            "pump_asset_name",
         )
     }
     for k in ("spring", "pump", "di", "safety"):
@@ -254,6 +303,15 @@ def validate_visit(b, state, submit=False):
     v["visitor"] = text(v["visitor"], "who visited")
     if v["season"] not in SEASONS:
         raise Invalid("Choose the season, or Not sure.")
+    if v.get("period") in (None, "", "auto"):
+        v["period"] = ""
+    elif v["period"] not in ("before_di", "after_di"):
+        raise Invalid("Choose whether this visit was before or after DI.")
+    names = [site.get("handpump_name")] + [p.get("name") for p in site.get("additional_handpumps", [])]
+    if v.get("pump_asset_name") in (None, "") or v["pump_asset_name"] == site.get("handpump_name"):
+        v.pop("pump_asset_name", None)
+    elif v["pump_asset_name"] not in names:
+        raise Invalid("Choose one of this site's handpumps.")
     if not isinstance(v["spring"], dict):
         raise Invalid("Record the spring flow, or say why it was not measured.")
     spring = v["spring"]
@@ -294,6 +352,7 @@ def validate_visit(b, state, submit=False):
         "connected",
         "broken",
         "blocked",
+        "disconnected",
         "not_checked",
     ):
         raise Invalid("Choose the DI pipe condition.")
@@ -379,6 +438,14 @@ def rain_window(data, end, days=90):
     }
 
 
+def same_outlet(a, b):
+    """Two spring readings can be compared: same method and point, or one of them found the spring dry.
+    A dry spring has no flow at any point, so dry -> flowing (or flowing -> dry) is a valid change."""
+    if "no_flow_observed" in (a.get("method"), b.get("method")):
+        return True
+    return a.get("method") == b.get("method") and a.get("point", "") == b.get("point", "")
+
+
 def site_assessment(site, state):
     visits = [v for v in active_visits(state["visits"]) if v["site_id"] == site["id"]]
     measured = [v for v in visits if v["spring"].get("flow_lpm") is not None]
@@ -394,8 +461,7 @@ def site_assessment(site, state):
             and not current.get("date_accuracy")
             and v["spring"].get("capture") == "full"
             and current["spring"].get("capture") == "full"
-            and v["spring"].get("method") == current["spring"].get("method")
-            and v["spring"].get("point", "") == current["spring"].get("point", "")
+            and same_outlet(v["spring"], current["spring"])
         ]
         if past:
             old = past[-1]
@@ -409,6 +475,7 @@ def site_assessment(site, state):
                 "after_lpm": current["spring"]["flow_lpm"],
                 "difference_lpm": delta,
                 "percent": delta / old["spring"]["flow_lpm"] * 100 if old["spring"]["flow_lpm"] else None,
+                "dry_to_flowing": old["spring"]["flow_lpm"] == 0 and current["spring"]["flow_lpm"] > 0,
             }
     weather = state["weather"].get(coords_key(site))
     rain = None

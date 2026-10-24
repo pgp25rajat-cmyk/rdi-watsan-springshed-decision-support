@@ -8,6 +8,7 @@ from uuid import uuid4
 from backend.store import Store, encode, now
 from backend.rules import Invalid, validate_site, validate_visit, assess
 from backend.weather import RainfallWorker
+from backend import watsan_import
 
 HERE = Path(__file__).resolve().parent
 log = logging.getLogger("di.dashboard")
@@ -307,9 +308,12 @@ def main():
     p.add_argument("--port", type=int, default=8769)
     p.add_argument("--db", default=str(HERE / "runtime/di-dashboard.sqlite"))
     p.add_argument("--no-weather", action="store_true")
+    p.add_argument("--data", default=str(watsan_import.DEFAULT_DIR), help="WATSAN DI sites data folder")
     args = p.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
     store = Store(args.db)
+    if watsan_import.load(store, args.data):
+        log.info("Loaded the WATSAN DI sites data file from %s", args.data)
     worker = None if args.no_weather else RainfallWorker(store)
     if worker:
         worker.start()

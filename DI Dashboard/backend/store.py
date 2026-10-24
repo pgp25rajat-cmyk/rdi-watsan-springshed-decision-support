@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS weather_cache(coords_key TEXT PRIMARY KEY,data TEXT N
 CREATE TABLE IF NOT EXISTS weather_jobs(site_id TEXT PRIMARY KEY REFERENCES sites(id),data TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS requests(key TEXT PRIMARY KEY,request_hash TEXT NOT NULL,response TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS evidence_records(id TEXT PRIMARY KEY,site_id TEXT REFERENCES sites(id),visit_id TEXT REFERENCES visits(id),data TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS source_observations(id TEXT PRIMARY KEY,site_id TEXT REFERENCES sites(id),data TEXT NOT NULL);
 """
 # Public source checkout starts empty; field records stay local.
 STARTERS = []
@@ -75,7 +76,7 @@ class Store:
         with self.connect() as db:
             result = {
                 t: [json.loads(r["data"]) for r in db.execute(f"SELECT data FROM {t} ORDER BY rowid")]
-                for t in ("sites", "visits", "attachments", "weather_jobs", "evidence_records")
+                for t in ("sites", "visits", "attachments", "weather_jobs", "evidence_records", "source_observations")
             }
             result["weather"] = {
                 r["coords_key"]: json.loads(r["data"])
@@ -160,3 +161,49 @@ class Store:
     def backup(self, path):
         with self.connect() as src, closing(sqlite3.connect(path)) as dst:
             src.backup(dst)
+
+    def import_records(self, digest, sites, visits, evidence, observations):
+        """Load the WATSAN DI data file. Imported visits, evidence and observations are replaced as a set.
+        A site edited in the portal keeps the portal version; portal visits are never touched."""
+        with self.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute("SELECT value FROM meta WHERE key='watsan_import'").fetchone()
+            if row and row["value"] == digest:
+                return False
+            new_ids = {v["id"] for v in visits}
+            referenced = {r[0] for r in db.execute("SELECT supersedes FROM visits WHERE supersedes IS NOT NULL")}
+            stale = [
+                r["id"]
+                for r in db.execute("SELECT id,data FROM visits")
+                if json.loads(r["data"]).get("imported") and r["id"] not in new_ids and r["id"] not in referenced
+            ]
+            db.execute("DELETE FROM evidence_records WHERE id LIKE 'wdi-%'")
+            db.execute("DELETE FROM source_observations")
+            for vid in stale:
+                db.execute("DELETE FROM visits WHERE id=?", (vid,))
+            for site in sites:
+                old = db.execute("SELECT data FROM sites WHERE id=?", (site["id"],)).fetchone()
+                if old and not json.loads(old["data"]).get("imported"):
+                    continue
+                db.execute(
+                    "INSERT INTO sites VALUES(?,?) ON CONFLICT(id) DO UPDATE SET data=excluded.data",
+                    (site["id"], encode(site)),
+                )
+            for v in visits:
+                db.execute(
+                    "INSERT INTO visits VALUES(?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET "
+                    "visit_date=excluded.visit_date,data=excluded.data,saved_at=excluded.saved_at",
+                    (v["id"], v["site_id"], v["status"], v["visit_date"], encode(v), None, v["created_at"], v["saved_at"]),
+                )
+            for e in evidence:
+                db.execute(
+                    "INSERT OR REPLACE INTO evidence_records VALUES(?,?,?,?)",
+                    (e["id"], e["site_id"], e.get("visit_id"), encode(e)),
+                )
+            for o in observations:
+                db.execute("INSERT INTO source_observations VALUES(?,?,?)", (o["id"], o["site_id"], encode(o)))
+            db.execute(
+                "INSERT INTO meta VALUES('watsan_import',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+                (digest,),
+            )
+        return True

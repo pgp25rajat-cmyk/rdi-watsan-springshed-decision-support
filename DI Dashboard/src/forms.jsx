@@ -38,9 +38,12 @@ export function SiteForm({ site, onSaved }) {
       collection_before: "",
       supply: "",
       other_works: "",
+      additional_handpumps: [],
     },
     ...site,
   }));
+  const pumps = data.additional_handpumps || [];
+  const setPump = (i, k, v) => set("additional_handpumps", pumps.map((p, j) => (j === i ? { ...p, [k]: v } : p)));
   const [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
     [photo, setPhoto] = useState(null);
@@ -198,6 +201,38 @@ export function SiteForm({ site, onSaved }) {
                   <option value="unknown">The link still needs checking</option>
                 </ChoiceSelect>
               </Field>
+            </div>
+            <div className="extra-pumps">
+              <h3>Other DI handpumps linked to this spring</h3>
+              <p className="caption">For example Arakot 1 and Arakot 2 both feed Balench. Each keeps its own checks.</p>
+              {pumps.map((p, i) => (
+                <div className="form-grid extra-pump" key={i}>
+                  <Field label="Handpump name" required>
+                    <input value={p.name ?? ""} onChange={(e) => setPump(i, "name", e.target.value)} />
+                  </Field>
+                  <Field label="Roof area (m²)">
+                    <input type="number" min="0" step="any" value={p.roof_area_m2 ?? ""} onChange={(e) => setPump(i, "roof_area_m2", e.target.value)} />
+                  </Field>
+                  <Field label="Latitude">
+                    <input type="number" step="any" min="-90" max="90" value={p.latitude ?? ""} onChange={(e) => setPump(i, "latitude", e.target.value)} />
+                  </Field>
+                  <Field label="Longitude">
+                    <input type="number" step="any" min="-180" max="180" value={p.longitude ?? ""} onChange={(e) => setPump(i, "longitude", e.target.value)} />
+                  </Field>
+                  <Field label="Year DI was installed">
+                    <input type="number" min="1900" max={new Date().getFullYear()} step="1" value={p.di_year ?? ""} onChange={(e) => setPump(i, "di_year", e.target.value)} />
+                  </Field>
+                  <div className="field">
+                    <button type="button" className="button" onClick={() => set("additional_handpumps", pumps.filter((_, j) => j !== i))}>
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              ))}
+              <Button type="button" onClick={() => set("additional_handpumps", [...pumps, { name: "" }])}>
+                <Icon name="plus" size={15} />
+                Add another handpump
+              </Button>
             </div>
             {data.location_notes && <p className="notice">{data.location_notes}</p>}
           </Panel>
@@ -560,6 +595,30 @@ export function VisitForm({ state, onSaved, onDraftSaved, draft, correction, sit
                     ))}
                   </ChoiceSelect>
                 </Field>
+                <Field
+                  label="Before or after DI?"
+                  hint="Used for the before/after impact result. 'Work it out' uses the DI year on the site; with no year, the visit counts as after DI."
+                >
+                  <ChoiceSelect value={data.period || ""} onChange={(e) => set("period", e.target.value)}>
+                    <option value="">Work it out from the DI year</option>
+                    <option value="before_di">Before DI was fitted</option>
+                    <option value="after_di">After DI was fitted</option>
+                  </ChoiceSelect>
+                </Field>
+                {site && (site.additional_handpumps || []).length > 0 && (
+                  <Field label="Which handpump did you check?" hint="Record one handpump per visit.">
+                    <ChoiceSelect
+                      value={data.pump_asset_name || site.handpump_name}
+                      onChange={(e) => set("pump_asset_name", e.target.value)}
+                    >
+                      {[site.handpump_name, ...site.additional_handpumps.map((p) => p.name)].map((n) => (
+                        <option key={n} value={n}>
+                          {n}
+                        </option>
+                      ))}
+                    </ChoiceSelect>
+                  </Field>
+                )}
               </div>
               <div className="site-note">
                 <Icon name="site" />
@@ -669,6 +728,7 @@ export function VisitForm({ state, onSaved, onDraftSaved, draft, correction, sit
                       connected: "Connected",
                       broken: "Broken",
                       blocked: "Blocked",
+                      disconnected: "Disconnected",
                       not_checked: "Not checked",
                     }}
                   />

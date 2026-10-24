@@ -18,6 +18,16 @@ import { FlowChart, RainChart, VisitStrip } from "./graphics.jsx";
 import { ChoiceSelect } from "./controls.jsx";
 import { SiteMap } from "./maps.jsx";
 import { SitePhoto, EvidenceRows } from "./evidence.jsx";
+import {
+  ImpactSummary,
+  PortfolioBeforeAfter,
+  PortfolioLastTwo,
+  PortfolioPumps,
+  SiteBeforeAfter,
+  SiteLastTwo,
+  PumpBeforeAfter,
+  DIWater,
+} from "./impact.jsx";
 
 const pumpLabels = { working: "Working", no_water: "No water", broken: "Broken", not_checked: "Not checked" };
 const diLabels = {
@@ -123,7 +133,9 @@ function Progress({ state }) {
           {p.pump_working}
           <small> / {p.pump_checked} checked</small>
         </strong>
-        <p>{p.pump_restored} with documented before/after recovery</p>
+        <p>
+          {p.impact.pumps_restored} restored after DI (people's account) · {p.pump_restored} shown across two visits
+        </p>
       </div>
       <div>
         <span>DI lines connected</span>
@@ -144,7 +156,7 @@ function Progress({ state }) {
           {p.springs_with_flow}
           <small> / {p.sites} springs</small>
         </strong>
-        <p>{p.spring_comparisons} with a comparable follow-up</p>
+        <p>{p.spring_comparisons} with a same-season repeat visit</p>
       </div>
       <div>
         <span>Sites needing work</span>
@@ -292,7 +304,7 @@ export function Overview({ state, onOpen }) {
     <>
       <Header
         title="DI impact dashboard"
-        sub="Spring response, handpump performance and village change — kept separate."
+        sub="WATSAN's DI sites: spring flow and handpumps before and after DI, then the latest records."
         action={
           <Button primary href="#/sites/new">
             <Icon name="plus" size={16} />
@@ -300,6 +312,13 @@ export function Overview({ state, onOpen }) {
           </Button>
         }
       />
+      <ImpactSummary state={state} />
+      <div className="two-col">
+        <PortfolioBeforeAfter state={state} />
+        <PortfolioPumps state={state} />
+      </div>
+      <PortfolioLastTwo state={state} />
+      <h2 className="section-title">Equipment and follow-up</h2>
       <Progress state={state} />
       <div className="overview-map-grid">
         <Panel
@@ -316,11 +335,11 @@ export function Overview({ state, onOpen }) {
           <Panel title="What can we quantify now?">
             <div className="impact-readiness">
               <strong>{p.spring_comparisons + p.pump_comparisons}</strong>
-              <span>comparable before/after results</span>
+              <span>same-season visit pairs</span>
             </div>
             <p>
-              {p.visits} saved visits establish the starting record. Additional same-season visits are needed
-              to measure change.
+              The before/after results above rest on recall and an undated report. {p.visits} saved visits are the
+              starting record; repeat visits in the same season will give measured change.
             </p>
             <p className="caption">
               No single impact score is used. Natural recharge, repairs and other work also affect water.
@@ -590,6 +609,14 @@ export function SiteDetail({ site: s, state, onOpen }) {
       {tab === "results" && (
         <>
           <div className="two-col">
+            <Panel title="Before vs after DI" sub="Spring flow before DI compared with after DI.">
+              <SiteBeforeAfter impact={a.impact} />
+            </Panel>
+            <Panel title="Last two records" sub="The two most recent spring-flow records.">
+              <SiteLastTwo impact={a.impact} />
+            </Panel>
+          </div>
+          <div className="two-col">
             <Panel title="Spring" sub="Discharge and seasonal availability.">
               <FlowChart visits={visits} />
               <Compare comparison={a.spring.comparison} />
@@ -764,6 +791,14 @@ export function Tracking({ state, onOpen }) {
       {asset === "spring" && (
         <>
           <div className="two-col">
+            <Panel title="Before vs after DI" sub="Primary result. Dry-season flow is used first.">
+              <SiteBeforeAfter impact={a.impact} />
+            </Panel>
+            <Panel title="Last two records" sub="Latest movement, with cautions where records differ.">
+              <SiteLastTwo impact={a.impact} />
+            </Panel>
+          </div>
+          <div className="two-col">
             <Panel
               title="Spring discharge"
               sub="Points retain their evidence type; date-range records are not precise-day measurements."
@@ -794,6 +829,9 @@ export function Tracking({ state, onOpen }) {
       )}
       {asset === "pump" && (
         <>
+          <Panel title="Before vs after DI" sub="What people said the handpump was like before DI, and its condition now.">
+            <PumpBeforeAfter rows={a.impact.handpumps_before_after} />
+          </Panel>
           <div className="two-col">
             <Panel title="Handpump delivery" sub={site.handpump_name}>
               <FlowChart visits={pumpRows} metric="pump" />
@@ -822,11 +860,16 @@ export function Tracking({ state, onOpen }) {
       )}
       {asset === "di" && (
         <>
-          <Panel title="Equipment and recharge connection">
-            <Equipment a={a} onOpen={onOpen} state={state} />
-          </Panel>
           <div className="two-col">
-            <Panel title="Roof collection potential">
+            <Panel title="Equipment and recharge connection">
+              <Equipment a={a} onOpen={onOpen} state={state} />
+            </Panel>
+            <Panel title="Water DI can put into the ground" sub="Yearly estimate from roof area and rain, with the planner's defaults.">
+              <DIWater impact={a.impact} />
+            </Panel>
+          </div>
+          <div className="two-col">
+            <Panel title="Roof water in the last 90 days" sub="From the Open-Meteo rainfall, when online.">
               {a.roof_potential ? (
                 <>
                   <div className="roof-figure">
@@ -1115,8 +1158,8 @@ export function HowItWorks({ state }) {
           </p>
           <h3>The paper vulnerability screen is different</h3>
           <p>
-            The field form’s 10 indicators each score 1–3 and are added with equal weight: total 10–30; low
-            10–16, medium 17–23, high 24–30. That describes vulnerability. It is not a DI impact score and is
+            The field form’s 10 indicators each score 1–3 and are added with equal weight: total 10–30; below 15
+            low, 15–20 medium, above 20 high. That describes vulnerability. It is not a DI impact score and is
             not substituted for the results above.
           </p>
         </Panel>

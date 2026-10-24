@@ -1,7 +1,8 @@
 $ErrorActionPreference = 'Stop'
 $appRoot = $PSScriptRoot
-$pythonPath = Join-Path $env:USERPROFILE '.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe'
-if (-not (Test-Path -LiteralPath $pythonPath)) { $pythonPath = (Get-Command python -ErrorAction Stop).Source }
+$python = Get-Command py -ErrorAction SilentlyContinue
+if (-not $python) { $python = Get-Command python -ErrorAction Stop }
+$pythonPath = $python.Source
 $running = $false
 try { $health = Invoke-RestMethod 'http://127.0.0.1:8769/api/v2/health' -TimeoutSec 2; $running = $health.application -eq 'di-dashboard' } catch {}
 if (-not $running) {

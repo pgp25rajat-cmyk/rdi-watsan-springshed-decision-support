@@ -87,7 +87,7 @@ export function WaterPath() {
     </>
   );
 }
-function useChartWidth() {
+export function useChartWidth() {
   const ref = useRef(),
     [width, setWidth] = useState(500);
   useLayoutEffect(() => {

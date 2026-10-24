@@ -3,8 +3,9 @@
 import re
 from math import radians, sin, cos, asin, sqrt
 from .rules import active_visits, rainfall_location
+from .impact import INDICATORS as IMPACT_INDICATORS, portfolio as impact_portfolio, site_impact
 
-METHOD_VERSION = "3.0"
+METHOD_VERSION = "3.1"
 INDICATORS = [
     {
         "id": "spring_flow",
@@ -298,6 +299,7 @@ def enrich(state, results):
             rainfall_at=rainfall_location(site)["rainfall_at"],
             evidence_notes=notes,
             evidence_count=sum(e["site_id"] == site["id"] for e in state.get("evidence_records", [])),
+            impact=site_impact(site, state),
         )
         mapped += site.get("latitude") is not None
         pump_mapped += (site.get("pump_latitude") is not None) + sum(
@@ -324,6 +326,7 @@ def enrich(state, results):
         "handpumps_mapped": pump_mapped,
         "evidence_records": len(state.get("evidence_records", [])),
         "lab_results": sum(a["quality_test_count"] for a in results),
+        "impact": impact_portfolio([a["impact"] for a in results]),
     }
     return {
         "sites": results,
@@ -332,8 +335,9 @@ def enrich(state, results):
         "methodology": {
             "version": METHOD_VERSION,
             "composite_weights": None,
-            "decision": "No composite impact index. Keep spring, handpump, DI operation and village outcomes separate.",
-            "indicators": INDICATORS,
+            "decision": "No composite impact index. Keep spring, handpump, DI operation and village outcomes separate. "
+            "Impact is shown before vs after DI first, then between the last two records.",
+            "indicators": IMPACT_INDICATORS + INDICATORS,
             "causal_contribution": "Not quantified without a suitable counterfactual/control design and sufficient repeated evidence.",
         },
     }
