@@ -57,3 +57,4 @@
 .photo-view{position:fixed;inset:0;z-index:9500;background:#0d1f1ccc;display:grid;place-items:center;padding:16px}.photo-view figure{margin:0;max-width:min(1000px,100%);background:white;border-radius:8px;overflow:hidden}.photo-view img{display:block;max-width:100%;max-height:78vh;margin:auto}.photo-view figcaption{display:flex;justify-content:space-between;gap:16px;align-items:center;padding:12px 16px;font-size:13px}.photo-view figcaption button{font-size:13px;color:var(--teal)}
 .add-spring{margin:-8px 0 24px}
 .photo-site-content .site-card-head p{margin-bottom:0}
+.spring-ticks{display:flex;flex-wrap:wrap;gap:12px 28px;padding:6px 0}

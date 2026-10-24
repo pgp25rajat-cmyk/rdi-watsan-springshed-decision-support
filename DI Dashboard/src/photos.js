@@ -73,11 +73,19 @@ export const PUMP_PHOTOS = {
   Gunogi: [
     {
       src: "photos/gunogi/1.jpg",
+      caption: "Gunogi DI handpump",
+    },
+    {
+      src: "photos/gunogi/2.jpg",
+      caption: "Gunogi DI project board",
+    },
+    {
+      src: "photos/gunogi/3.jpg",
       caption: "Malani spring outlet",
       spring: "Malani",
     },
     {
-      src: "photos/gunogi/2.jpg",
+      src: "photos/gunogi/4.jpg",
       caption: "Malani spring and the slope above it",
       spring: "Malani",
     },
@@ -116,11 +124,11 @@ export const PUMP_PHOTOS = {
   Kunjapuri: [
     {
       src: "photos/kunjapuri/1.jpg",
-      caption: "Kunjapuri DI handpump",
+      caption: "Kunjapuri DI handpump and roof pipe",
     },
     {
       src: "photos/kunjapuri/2.jpg",
-      caption: "Kunjapuri DI handpump and roof pipe",
+      caption: "Kunjapuri DI handpump",
     },
   ],
 };

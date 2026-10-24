@@ -15,6 +15,7 @@ import {
   today,
   fmt,
 } from "./shared.jsx";
+import { handpumpGroups, sitePumps } from "./photos.js";
 
 const SPRING_FIELDS = ["spring_name", "gps_later", "latitude", "longitude", "link_basis"];
 const emptySpring = () => ({
@@ -432,21 +433,29 @@ export function SiteForm({ site, onSaved }) {
   );
 }
 
+const emptySpringCheck = () => ({
+  status: "",
+  point: "",
+  capture: "",
+  readings: [
+    { litres: "", seconds: "" },
+    { litres: "", seconds: "" },
+    { litres: "", seconds: "" },
+  ],
+});
+const sameName = (a, b) =>
+  String(a || "")
+    .trim()
+    .toLowerCase() ===
+  String(b || "")
+    .trim()
+    .toLowerCase();
 const emptyVisit = (site) => ({
   site_id: site || "",
   visit_date: today(),
   visitor: "",
   season: "",
-  spring: {
-    status: "",
-    point: "",
-    capture: "",
-    readings: [
-      { litres: "", seconds: "" },
-      { litres: "", seconds: "" },
-      { litres: "", seconds: "" },
-    ],
-  },
+  spring: emptySpringCheck(),
   pump: { status: "", measure: false },
   di: { status: "" },
   safety: { filter: "not_checked", first_flush: "not_checked", overflow: "not_checked" },
@@ -517,8 +526,39 @@ export function VisitForm({ state, onSaved, onDraftSaved, draft, correction, sit
             correction_reason: "",
             ...(correction.date_accuracy ? { visit_date: "" } : {}),
           }
-        : emptyVisit(siteId || state.sites[0]?.id),
+        : emptyVisit(siteId),
   );
+  // The visit starts at a DI handpump, then the springs it feeds that were visited. Each spring is saved as its
+  // own visit record carrying the same handpump check. A draft or correction is one spring and stays fixed.
+  const fixed = Boolean(draft || correction),
+    groups = handpumpGroups(state.sites);
+  const [pumpName, setPumpName] = useState(() => {
+    const s = state.sites.find((x) => x.id === data.site_id);
+    return s ? data.pump_asset_name || s.handpump_name || sitePumps(s)[0]?.name || "" : "";
+  });
+  const [chosen, setChosen] = useState(() => (data.site_id ? [data.site_id] : []));
+  const [springs, setSprings] = useState(() => (data.site_id ? { [data.site_id]: data.spring } : {}));
+  const savedIds = useRef(fixed && data.id ? { [data.site_id]: data.id } : {});
+  const group = groups.find((g) => sameName(g.name, pumpName)),
+    springSites = chosen.map((id) => state.sites.find((s) => s.id === id)).filter(Boolean);
+  const springOf = (id) => springs[id] || emptySpringCheck();
+  const setSpringPart = (id, k, v) => {
+    setSprings((all) => ({ ...all, [id]: { ...(all[id] || emptySpringCheck()), [k]: v } }));
+    key.current = crypto.randomUUID();
+    setSavedMessage("");
+  };
+  function pickPump(name) {
+    const g = groups.find((x) => sameName(x.name, name));
+    setPumpName(name);
+    setChosen(g && g.sites.length === 1 ? [g.sites[0].id] : []);
+    set("site_id", g?.sites[0]?.id || "");
+  }
+  const toggleSpring = (id, on) =>
+    setChosen((c) => {
+      const next = on ? [...c, id] : c.filter((x) => x !== id);
+      // Keep the order the springs are listed in for this handpump.
+      return (group?.sites || []).map((s) => s.id).filter((x) => next.includes(x));
+    });
   const [step, setStep] = useState(0),
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false),
@@ -532,7 +572,7 @@ export function VisitForm({ state, onSaved, onDraftSaved, draft, correction, sit
     setSavedMessage("");
   };
   const setPart = (part, k, v) => setData((d) => ({ ...d, [part]: { ...d[part], [k]: v } }));
-  const site = state.sites.find((s) => s.id === data.site_id);
+  const site = springSites[0];
   const input = (k, props = {}) =>
     props.type === "date" ? (
       <DatePicker value={data[k] ?? ""} onChange={(e) => set(k, e.target.value)} max={today()} />
@@ -541,15 +581,25 @@ export function VisitForm({ state, onSaved, onDraftSaved, draft, correction, sit
     );
   function validateStep() {
     if (!form.current.reportValidity()) return false;
-    if (!site?.setup_complete) {
+    if (!pumpName) {
+      setError("Choose the handpump you checked.");
+      return false;
+    }
+    if (!springSites.length) {
+      setError("Tick at least one spring you visited.");
+      return false;
+    }
+    if (springSites.some((s) => !s.setup_complete)) {
       setError("Finish the site details before recording a visit.");
       return false;
     }
-    if (step === 1) {
-      if (!data.spring.status || !data.pump.status || !data.di.status) {
-        setError("Choose the spring, handpump and DI pipe conditions.");
-        return false;
-      }
+    if (step === 1 && (!data.pump.status || !data.di.status)) {
+      setError("Choose the handpump and DI pipe conditions.");
+      return false;
+    }
+    if (step === 2 && springSites.some((s) => !springOf(s.id).status)) {
+      setError("Choose whether the flow was measured at each spring.");
+      return false;
     }
     return true;
   }
@@ -567,25 +617,47 @@ export function VisitForm({ state, onSaved, onDraftSaved, draft, correction, sit
       setError("Choose files up to 25 MB each. The visit can still be saved as a draft.");
       return;
     }
+    if (!springSites.length) {
+      setError("Choose the handpump and tick at least one spring you visited.");
+      return;
+    }
     setBusy(true);
+    let current;
     try {
-      let body = { ...data };
-      if (files.length) {
-        const d = await api("visits", { ...body, submit: false });
-        body = d;
-        setData(d);
-        for (const f of files) await attach(f, d.site_id, d.id);
-        setFiles([]);
+      for (const [i, s] of springSites.entries()) {
+        current = s;
+        const pump = sitePumps(s).find((p) => sameName(p.name, pumpName));
+        let body = {
+          ...data,
+          id: savedIds.current[s.id],
+          site_id: s.id,
+          spring: springOf(s.id),
+          pump_asset_name: pump?.name || "",
+        };
+        if (i === 0 && files.length) {
+          const d = await api("visits", { ...body, submit: false });
+          body = { ...body, id: d.id };
+          savedIds.current[s.id] = d.id;
+          for (const f of files) await attach(f, d.site_id, d.id);
+          setFiles([]);
+        }
+        const result = await api(
+          "visits",
+          { ...body, submit },
+          submit ? key.current + ":" + s.id : undefined,
+        );
+        savedIds.current[s.id] = result.id;
       }
-      const result = await api("visits", { ...body, submit }, submit ? key.current : undefined);
-      setData(result);
-      if (submit) await onSaved(result.site_id);
+      if (submit) await onSaved(springSites[0].id);
       else {
-        setSavedMessage("Draft saved in the database. You can continue it from the dashboard.");
+        setSavedMessage(
+          (springSites.length > 1 ? springSites.length + " drafts" : "Draft") +
+            " saved in the database. You can continue from the dashboard.",
+        );
         await onDraftSaved();
       }
     } catch (e) {
-      setError(e.message);
+      setError((springSites.length > 1 && current ? current.name + ": " : "") + e.message);
     } finally {
       setBusy(false);
     }
@@ -604,13 +676,14 @@ export function VisitForm({ state, onSaved, onDraftSaved, draft, correction, sit
     <>
       <Header
         title={correction ? "Correct a visit" : "Record a visit"}
-        sub="Enter the notes and readings you brought back from the field."
+        sub="Start with the handpump you checked, then each spring you visited."
       />
       <div className="wizard">
         <div className="wizard-steps" aria-label="Visit steps">
           {[
             ["visit", "Visit details"],
-            ["water", "Water and DI"],
+            ["site", "Handpump and DI"],
+            ["water", "Springs"],
             ["people", "Changes and notes"],
           ].map(([icon, label], i) => (
             <div key={label} className={step === i ? "current" : step > i ? "done" : ""}>
@@ -623,11 +696,15 @@ export function VisitForm({ state, onSaved, onDraftSaved, draft, correction, sit
           ref={form}
           onSubmit={(e) => {
             e.preventDefault();
-            step < 2 ? next() : save(true);
+            step < 3 ? next() : save(true);
           }}
         >
           <div className="visit-heading">
-            <span>{site?.name || "Choose a site"}</span>
+            <span>
+              {pumpName
+                ? pumpName + (springSites.length ? " · " + springSites.map((s) => s.name).join(", ") : "")
+                : "Choose a handpump"}
+            </span>
             <span>Fields marked * are needed.</span>
           </div>
           {step === 0 && correction?.date_accuracy && (
@@ -638,19 +715,37 @@ export function VisitForm({ state, onSaved, onDraftSaved, draft, correction, sit
           {step === 0 && (
             <Panel title="About this visit" sub="Site history and setup details are kept on the site page.">
               <div className="form-grid">
-                <Field label="Site" required wide>
-                  <ChoiceSelect
-                    disabled={Boolean(draft || correction)}
-                    value={data.site_id}
-                    onChange={(e) => set("site_id", e.target.value)}
-                  >
-                    {state.sites.map((s) => (
-                      <option key={s.id} value={s.id}>
-                        {s.name} · {s.village}
+                <Field label="Which DI handpump did you check?" required wide>
+                  <ChoiceSelect disabled={fixed} value={pumpName} onChange={(e) => pickPump(e.target.value)}>
+                    <option value="">Choose a handpump</option>
+                    {groups.map((g) => (
+                      <option key={g.name} value={g.name}>
+                        {g.name} · {g.sites[0].village}
                       </option>
                     ))}
                   </ChoiceSelect>
                 </Field>
+                {group && (
+                  <div className="field wide">
+                    <span className="field-label">
+                      Which springs did you visit? <span className="required">*</span>
+                    </span>
+                    <div className="spring-ticks">
+                      {group.sites.map((s) => (
+                        <label className="check-label" key={s.id}>
+                          <input
+                            type="checkbox"
+                            disabled={fixed}
+                            checked={chosen.includes(s.id)}
+                            onChange={(e) => toggleSpring(s.id, e.target.checked)}
+                          />
+                          {s.spring_name || s.name}
+                        </label>
+                      ))}
+                    </div>
+                    <small>Springs this handpump feeds. Each one gets its own flow reading.</small>
+                  </div>
+                )}
                 {site && !site.setup_complete && (
                   <div className="notice wide">
                     This site needs its one-time details first.{" "}
@@ -683,95 +778,18 @@ export function VisitForm({ state, onSaved, onDraftSaved, draft, correction, sit
                     <option value="after_di">After DI was fitted</option>
                   </ChoiceSelect>
                 </Field>
-                {site && (site.additional_handpumps || []).length > 0 && (
-                  <Field label="Which handpump did you check?" hint="Record one handpump per visit.">
-                    <ChoiceSelect
-                      value={data.pump_asset_name || site.handpump_name}
-                      onChange={(e) => set("pump_asset_name", e.target.value)}
-                    >
-                      {[site.handpump_name, ...site.additional_handpumps.map((p) => p.name)].map((n) => (
-                        <option key={n} value={n}>
-                          {n}
-                        </option>
-                      ))}
-                    </ChoiceSelect>
-                  </Field>
-                )}
               </div>
               <div className="site-note">
                 <Icon name="site" />
                 <p>
                   Need to change the roof area, households or water history?{" "}
-                  <a href={"#/sites/" + data.site_id + "/edit"}>Edit site details.</a>
+                  <a href={"#/sites/" + (site?.id || "") + "/edit"}>Edit site details.</a>
                 </p>
               </div>
             </Panel>
           )}
           {step === 1 && (
             <>
-              <Panel title="Spring flow" sub="Use the same outlet or collection point each time.">
-                <div className="field">
-                  <span className="field-label">
-                    Was the flow measured? <span className="required">*</span>
-                  </span>
-                  <PillChoice
-                    label="Spring flow status"
-                    value={data.spring.status}
-                    onChange={(v) => setPart("spring", "status", v)}
-                    options={{ measured: "Measured", dry: "No water flowing", not_measured: "Not measured" }}
-                  />
-                </div>
-                {data.spring.status === "measured" && (
-                  <>
-                    <Readings
-                      label="Spring"
-                      rows={data.spring.readings}
-                      onChange={(v) => setPart("spring", "readings", v)}
-                    />
-                    <div className="form-grid">
-                      <Field
-                        label="Measurement point"
-                        required
-                        hint="A pipe, outlet or landmark you can find again."
-                      >
-                        <input
-                          value={data.spring.point || ""}
-                          onChange={(e) => setPart("spring", "point", e.target.value)}
-                        />
-                      </Field>
-                      <Field label="Did you catch the whole flow?" required>
-                        <ChoiceSelect
-                          value={data.spring.capture || ""}
-                          onChange={(e) => setPart("spring", "capture", e.target.value)}
-                        >
-                          <option value="">Choose one</option>
-                          <option value="full">Yes, the whole flow</option>
-                          <option value="partial">Only part of the flow</option>
-                        </ChoiceSelect>
-                      </Field>
-                    </div>
-                  </>
-                )}
-                {data.spring.status === "not_measured" && (
-                  <Field label="Why was it not measured?" required>
-                    <ChoiceSelect
-                      value={data.spring.reason || ""}
-                      onChange={(e) => setPart("spring", "reason", e.target.value)}
-                    >
-                      <option value="">Choose one</option>
-                      <option>Could not reach the outlet</option>
-                      <option>Could not collect the flow</option>
-                      <option>No container or timing equipment</option>
-                      <option>Other reason — see notes</option>
-                    </ChoiceSelect>
-                  </Field>
-                )}
-                {data.spring.status === "dry" && (
-                  <p className="field-help">
-                    The visit will record zero flow, rather than a missing reading.
-                  </p>
-                )}
-              </Panel>
               <Panel title="Handpump and DI pipe">
                 <div className="field">
                   <span className="field-label">
@@ -951,6 +969,83 @@ export function VisitForm({ state, onSaved, onDraftSaved, draft, correction, sit
             </>
           )}
           {step === 2 && (
+            <>
+              {springSites.map((s) => (
+                <Panel
+                  key={s.id}
+                  title={"Spring flow: " + (s.spring_name || s.name)}
+                  sub="Use the same outlet or collection point each time."
+                >
+                  <div className="field">
+                    <span className="field-label">
+                      Was the flow measured? <span className="required">*</span>
+                    </span>
+                    <PillChoice
+                      label={"Spring flow status, " + s.name}
+                      value={springOf(s.id).status}
+                      onChange={(v) => setSpringPart(s.id, "status", v)}
+                      options={{
+                        measured: "Measured",
+                        dry: "No water flowing",
+                        not_measured: "Not measured",
+                      }}
+                    />
+                  </div>
+                  {springOf(s.id).status === "measured" && (
+                    <>
+                      <Readings
+                        label={"Spring " + s.name}
+                        rows={springOf(s.id).readings}
+                        onChange={(v) => setSpringPart(s.id, "readings", v)}
+                      />
+                      <div className="form-grid">
+                        <Field
+                          label="Measurement point"
+                          required
+                          hint="A pipe, outlet or landmark you can find again."
+                        >
+                          <input
+                            value={springOf(s.id).point || ""}
+                            onChange={(e) => setSpringPart(s.id, "point", e.target.value)}
+                          />
+                        </Field>
+                        <Field label="Did you catch the whole flow?" required>
+                          <ChoiceSelect
+                            value={springOf(s.id).capture || ""}
+                            onChange={(e) => setSpringPart(s.id, "capture", e.target.value)}
+                          >
+                            <option value="">Choose one</option>
+                            <option value="full">Yes, the whole flow</option>
+                            <option value="partial">Only part of the flow</option>
+                          </ChoiceSelect>
+                        </Field>
+                      </div>
+                    </>
+                  )}
+                  {springOf(s.id).status === "not_measured" && (
+                    <Field label="Why was it not measured?" required>
+                      <ChoiceSelect
+                        value={springOf(s.id).reason || ""}
+                        onChange={(e) => setSpringPart(s.id, "reason", e.target.value)}
+                      >
+                        <option value="">Choose one</option>
+                        <option>Could not reach the outlet</option>
+                        <option>Could not collect the flow</option>
+                        <option>No container or timing equipment</option>
+                        <option>Other reason — see notes</option>
+                      </ChoiceSelect>
+                    </Field>
+                  )}
+                  {springOf(s.id).status === "dry" && (
+                    <p className="field-help">
+                      The visit will record zero flow, rather than a missing reading.
+                    </p>
+                  )}
+                </Panel>
+              ))}
+            </>
+          )}
+          {step === 3 && (
             <>
               <Panel
                 title="Changes people noticed"
@@ -1161,12 +1256,18 @@ export function VisitForm({ state, onSaved, onDraftSaved, draft, correction, sit
               )}
             </div>
             <div>
-              <Button type="button" disabled={busy || !data.site_id} onClick={() => save(false)}>
+              <Button type="button" disabled={busy || !springSites.length} onClick={() => save(false)}>
                 Save draft
               </Button>
-              <Button type="submit" primary disabled={busy || !site?.setup_complete}>
-                {busy ? "Saving…" : step < 2 ? "Continue" : "Save visit"}
-                <Icon name={step < 2 ? "arrow" : "check"} size={16} />
+              <Button type="submit" primary disabled={busy}>
+                {busy
+                  ? "Saving…"
+                  : step < 3
+                    ? "Continue"
+                    : springSites.length > 1
+                      ? "Save " + springSites.length + " spring visits"
+                      : "Save visit"}
+                <Icon name={step < 3 ? "arrow" : "check"} size={16} />
               </Button>
             </div>
           </div>
