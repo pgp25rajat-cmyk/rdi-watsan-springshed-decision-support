@@ -678,29 +678,50 @@ export function SiteDetail({ site: s, state, onOpen }) {
 }
 
 export function Tracking({ state, onOpen }) {
-  const query = new URLSearchParams(location.hash.split("?")[1] || ""),
+  // Pick a DI handpump; spring results show for each spring it feeds, one after another.
+  const groups = handpumpGroups(state.sites),
+    query = new URLSearchParams(location.hash.split("?")[1] || ""),
+    groupOf = (id) => groups.find((g) => g.sites.some((s) => s.id === id)),
     [selected, setSelected] = useState(
-      query.get("site") ||
-        state.sites.find((s) => assessment(state, s.id)?.visit_count)?.id ||
-        state.sites[0]?.id,
+      (
+        groupOf(query.get("site")) ||
+        groups.find((g) => g.sites.some((s) => assessment(state, s.id)?.visit_count)) ||
+        groups[0]
+      )?.name,
     ),
     [asset, setAsset] = useState(query.get("asset") || "water");
-  const site = state.sites.find((s) => s.id === selected) || state.sites[0];
-  if (!site)
+  const group = groups.find((g) => g.name === selected) || groups[0];
+  if (!group)
     return <Empty title="Add a site first">Its spring, handpump and DI checks will appear here.</Empty>;
-  const a = assessment(state, site.id),
+  const site = group.sites[0],
+    a = assessment(state, site.id),
+    springs = [...group.sites].sort((x, y) => x.name.localeCompare(y.name)),
+    many = springs.length > 1,
+    sameName = (x) =>
+      x?.replace(/[^a-z0-9]/gi, "").toLowerCase() === group.name.replace(/[^a-z0-9]/gi, "").toLowerCase(),
     visits = active(state.visits).filter((v) => v.site_id === site.id),
-    pumpRows = visits.filter(
-      (v) =>
-        !v.pump_asset_name ||
-        v.pump_asset_name.replace(/[^a-z0-9]/gi, "").toLowerCase() ===
-          site.handpump_name?.replace(/[^a-z0-9]/gi, "").toLowerCase(),
+    pumpRows = visits.filter((v) => !v.pump_asset_name || sameName(v.pump_asset_name)),
+    visitDates = new Set(
+      active(state.visits)
+        .filter((v) => group.sites.some((s) => s.id === v.site_id))
+        .map((v) => v.visit_date || v.id),
     );
+  const perSpring = (render) =>
+    springs.map((s) => (
+      <section key={s.id} className="spring-section">
+        {many && <h3 className="spring-heading">Spring: {s.name}</h3>}
+        {render(
+          s,
+          assessment(state, s.id),
+          active(state.visits).filter((v) => v.site_id === s.id),
+        )}
+      </section>
+    ));
   return (
     <>
       <Header
         title="Track impact"
-        sub="Spring flow, handpumps, water injected and impact beyond water for each DI site."
+        sub="Spring flow, handpumps, water injected and impact beyond water for each DI handpump."
         action={
           <Button primary href={"#/visits/new?site=" + site.id}>
             Record a visit
@@ -709,17 +730,25 @@ export function Tracking({ state, onOpen }) {
       />
       <div className="toolbar">
         <label className="inline-label">
-          Site
-          <ChoiceSelect aria-label="Site" value={site.id} onChange={(e) => setSelected(e.target.value)}>
-            {state.sites.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.name} · {s.village}
+          DI handpump
+          <ChoiceSelect
+            aria-label="DI handpump"
+            value={group.name}
+            onChange={(e) => setSelected(e.target.value)}
+          >
+            {groups.map((g) => (
+              <option key={g.name} value={g.name}>
+                {g.name} · {g.sites.length > 1 ? "Springs" : "Spring"}:{" "}
+                {[...g.sites]
+                  .sort((x, y) => x.name.localeCompare(y.name))
+                  .map((s) => s.name)
+                  .join(", ")}
               </option>
             ))}
           </ChoiceSelect>
         </label>
         <span>
-          {a.visit_count} saved visits · <a href="#/how">Calculation methods</a>
+          {visitDates.size} saved visits · <a href="#/how">Calculation methods</a>
         </span>
       </div>
       <div className="asset-tabs" role="tablist" aria-label="Impact area">
@@ -741,46 +770,47 @@ export function Tracking({ state, onOpen }) {
           </button>
         ))}
       </div>
-      {asset === "spring" && (
-        <>
-          <div className="two-col">
-            <Panel
-              title="Dry-season spring flow: before vs after DI"
-              sub="Primary result. The square shows monsoon flow after DI."
-            >
-              <SiteBeforeAfter impact={a.impact} />
-            </Panel>
-            <Panel title="Last two readings" sub="After-DI dry flow, then after-DI monsoon flow (latest).">
-              <SiteLastTwo impact={a.impact} />
-            </Panel>
-          </div>
-          {hasReadings(visits) && (
+      {asset === "spring" &&
+        perSpring((s, a, visits) => (
+          <>
             <div className="two-col">
-              <Panel title="Spring flow at each visit" sub="Timed readings from saved visits.">
-                <FlowChart visits={visits} />
-                {a.spring.reported_range && (
-                  <p className="notice">
-                    Field-form estimate: {a.spring.reported_range.join("–")} L/min. This range is not replaced
-                    by a midpoint.
-                  </p>
-                )}
+              <Panel
+                title="Dry-season spring flow: before vs after DI"
+                sub="Primary result. The square shows monsoon flow after DI."
+              >
+                <SiteBeforeAfter impact={a.impact} />
               </Panel>
-              <Panel title="Change between matching visits">
-                <Compare comparison={a.spring.comparison} />
+              <Panel title="Last two readings" sub="After-DI dry flow, then after-DI monsoon flow (latest).">
+                <SiteLastTwo impact={a.impact} />
               </Panel>
             </div>
-          )}
-          <Quality visits={visits} asset="spring" onOpen={onOpen} />
-        </>
-      )}
+            {hasReadings(visits) && (
+              <div className="two-col">
+                <Panel title="Spring flow at each visit" sub="Timed readings from saved visits.">
+                  <FlowChart visits={visits} />
+                  {a.spring.reported_range && (
+                    <p className="notice">
+                      Field-form estimate: {a.spring.reported_range.join("–")} L/min. This range is not
+                      replaced by a midpoint.
+                    </p>
+                  )}
+                </Panel>
+                <Panel title="Change between matching visits">
+                  <Compare comparison={a.spring.comparison} />
+                </Panel>
+              </div>
+            )}
+            <Quality visits={visits} asset="spring" onOpen={onOpen} />
+          </>
+        ))}
       {asset === "pump" && (
         <>
           <Panel title="Before vs after DI" sub="Condition before DI, condition now, and remarks.">
-            <PumpBeforeAfter rows={a.impact.handpumps_before_after} />
+            <PumpBeforeAfter rows={a.impact.handpumps_before_after.filter((p) => sameName(p.name))} />
           </Panel>
           {hasReadings(pumpRows, "pump") && (
             <div className="two-col">
-              <Panel title="Handpump delivery" sub={site.handpump_name}>
+              <Panel title="Handpump delivery" sub={group.name}>
                 <FlowChart visits={pumpRows} metric="pump" />
                 <p className="caption">
                   Three timed readings and the pumping procedure are required. Strokes per bucket alone cannot
@@ -830,22 +860,25 @@ export function Tracking({ state, onOpen }) {
           <Panel title="Rainfall" sub="At the spring, as in the spring planner.">
             <RainInfo impact={a.impact} />
           </Panel>
-          <Panel
-            title="Water injected"
-            sub="Rain collected from the DI roofs, injected into the aquifer, and the part that may reach the spring."
-          >
-            <DIWater impact={a.impact} />
-          </Panel>
+          {perSpring((s, a) => (
+            <Panel
+              title="Water injected"
+              sub="Rain collected from the DI roofs, injected into the aquifer, and the part that may reach the spring."
+            >
+              <DIWater impact={a.impact} />
+            </Panel>
+          ))}
         </>
       )}
-      {asset === "village" && (
-        <Panel
-          title="Impact beyond water"
-          sub="What people told us changed for them, from the community interaction on the field forms."
-        >
-          <BeyondWater impact={a.impact} />
-        </Panel>
-      )}
+      {asset === "village" &&
+        perSpring((s, a) => (
+          <Panel
+            title="Impact beyond water"
+            sub="What people told us changed for them, from the community interaction on the field forms."
+          >
+            <BeyondWater impact={a.impact} />
+          </Panel>
+        ))}
     </>
   );
 }

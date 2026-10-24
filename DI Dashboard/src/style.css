@@ -60,3 +60,4 @@
 .spring-ticks{display:flex;flex-wrap:wrap;gap:12px 28px;padding:6px 0}
 @media(min-width:801px){.pump-table td:first-child strong{white-space:nowrap}}
 .pump-table .tag{justify-self:start;width:fit-content}
+.spring-section+.spring-section{margin-top:12px;padding-top:20px;border-top:1px solid var(--line)}.spring-heading{font-size:15px;margin:0 0 14px;color:var(--teal)}

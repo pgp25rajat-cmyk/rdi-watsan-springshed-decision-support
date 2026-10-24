@@ -540,7 +540,12 @@ export function SiteLastTwo({ impact }) {
         {[
           [r.before.record_label, range(r.before) + " L/min · " + r.before.basis_label],
           [r.after.record_label, range(r.after) + " L/min · " + r.after.basis_label],
-          ["Change", changeText(r.change) + " · " + directionText[r.change.direction]],
+          [
+            "Change",
+            changeText(r.change) === directionText[r.change.direction]
+              ? changeText(r.change)
+              : changeText(r.change) + " · " + directionText[r.change.direction],
+          ],
         ].map(([k, v]) => (
           <div key={k}>
             <dt>{k}</dt>
