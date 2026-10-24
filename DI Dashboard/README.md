@@ -21,9 +21,9 @@ The original Spring Health & Recharge Planner remains at the repository root wit
 
 On start, the server loads the WATSAN DI sites data file from `../data/02_processed/watsan_di/` (use `--data` for another folder). It is built by `python scripts/build_watsan_di_sites.py` from the same field-visit, report and spring-master tables as the planner:
 
-- 9 WATSAN DI springs.
-- 9 DI handpumps. Arakot 1 and 2 link to Balench; Arakot 2 may also feed Paniyar Dhar, so it is listed under both sites and its water is counted once in totals.
-- 69 values, each labelled before or after DI, with its record (before-DI recall, WATSAN report, field visit Oct 2026), basis (measured, estimate, report, recall, observed) and source.
+- 8 WATSAN DI springs (Makhdet/Dungsi left out until its DI is installed).
+- 8 DI handpumps. Arakot 1 and 2 link to Balench; Arakot 2 may also feed Paniyar Dhar, so it is listed under both sites and its water is counted once in totals.
+- 88 values, each labelled before or after DI, with its record (before-DI recall, WATSAN report, field visit Oct 2026), basis (measured, estimate, report, recall, observed) and source.
 
 The October 2026 field visit appears as saved visits; every value also appears under **Source records**. The import runs again only when the files change. Sites edited and visits entered in the portal are kept.
 

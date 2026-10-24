@@ -12,7 +12,7 @@ Inputs (all already in the repository):
   data/02_processed/spring_master/spring_master_v1.csv          coordinates, DEM elevation, CHIRPS annual rain
 
 Outputs: data/02_processed/watsan_di/
-  watsan_di_sites_v1.csv         one row per spring site (9 DI springs)
+  watsan_di_sites_v1.csv         one row per spring site (8 DI springs)
   watsan_di_handpumps_v1.csv     one row per DI handpump
   watsan_di_observations_v1.csv  one row per value: site, asset, before/after DI, record, value range, basis, source
   watsan_di_sites_v1.xlsx        the three tables plus a README sheet
@@ -58,20 +58,11 @@ SITES = [
     ("WDI-06", "RDI-SPR-0006", "FV26-PAN", "DI site", ["FV26-DI-ARK2"]),
     ("WDI-07", "RDI-SPR-0007", "FV26-RAS", "DI site", ["FV26-DI-KAN"]),
     ("WDI-08", "RDI-SPR-0008", None, "DI site", ["FV26-DI-KUN"]),
-    ("WDI-09", "RDI-SPR-0009", None, "DI site", ["SRC028-DI-DUN"]),
 ]
+# Makhdet / Dungsi (RDI-SPR-0009) is left out: its DI is not installed yet (Rajat, 2026-10-24).
 
 # Handpumps not visited: from the SRHU reports.
-REPORT_HANDPUMPS = [
-    {
-        "handpump_id": "SRC028-DI-DUN",
-        "name": "Dungsi (Domsi)",
-        "latitude": 30.481472,
-        "longitude": 78.236694,
-        "link_status": "Reported by the SRHU Dungsi & Makhdet report (SRC-028); not visited",
-        "source": "SRHU Dungsi & Makhdet hydrogeology report (SRC-028); handpump printed as 30°28'53.3\"N 78°14'12.1\"E",
-    }
-]
+REPORT_HANDPUMPS = []
 
 # Handpump condition now. Rajat (2026-10-24): every DI handpump was defunct before DI and works now, except
 # Kaddukhal, which is broken.
@@ -85,7 +76,6 @@ PUMP_AFTER = {
     "FV26-DI-KAN": ("working", ""),
     "FV26-DI-UNI": ("broken", "Handpump broken, possible vehicle damage (field form; confirmed by Rajat, 2026-10-24)"),
     "FV26-DI-KUN": ("working", "Water tapped directly from the handpump"),
-    "SRC028-DI-DUN": ("working", "Not visited; " + WORKING_NOTE),
 }
 DI_AFTER = {
     "FV26-DI-ARK1": "disconnected",  # roof pipe broken, so no water reaches the handpump (Rajat, 2026-10-24)
@@ -94,10 +84,13 @@ DI_AFTER = {
     "FV26-DI-CHP1": "connected",
     "FV26-DI-CHP2": "disconnected",
     "FV26-DI-KAN": "connected",
-    "FV26-DI-UNI": "not_checked",
+    "FV26-DI-UNI": "connected",  # DI line intact, checked on the visit (Rajat, 2026-10-24)
     "FV26-DI-KUN": "connected",
 }
 SAFETY = {"Working": "ok", "OK": "ok", "Not working": "needs_work", "Dirty/blocked": "needs_work"}
+# Checks the form left blank, filled in by Rajat (2026-10-24): Chopriyal 2 first flush was checked; its water was
+# orange-yellow (see REMARKS), the device itself was not reported faulty.
+SAFETY_OVERRIDE = {("FV26-DI-CHP2", "first_flush"): "ok"}
 
 # Before DI every handpump was defunct (Rajat, 2026-10-24). Extra detail people gave on the visit is kept.
 BEFORE_NOTE = "All WATSAN DI handpumps were defunct before DI (Rajat, 2026-10-24)"
@@ -130,12 +123,11 @@ REMARKS = {
     "FV26-DI-ARK2": "DI tested on the visit. Link to both springs not verified yet.",
     "FV26-DI-GUN": "Gives more water than before DI. Iron in the water is still a concern.",
     "FV26-DI-CHP1": "DI line, gutter and filter in good order.",
-    "FV26-DI-CHP2": "Water quality improved: it was red/brown with high iron before DI (no lab test). "
-    "DI line disconnected during house construction; filter blocked.",
+    "FV26-DI-CHP2": "Water still orange-yellow at the first flush, but it was red before DI, so it is at least "
+    "diluted now (no lab test). DI line disconnected during house construction; filter blocked.",
     "FV26-DI-KAN": "Water in the dry season, very good quality; travellers drink and wash here. Roadside DI site is dirty.",
-    "FV26-DI-UNI": "Handpump broken (possible vehicle damage). First flush not working, filter blocked.",
+    "FV26-DI-UNI": "Handpump broken (possible vehicle damage). DI line intact; first flush not working, filter blocked.",
     "FV26-DI-KUN": "Working again; people tap water directly. Exposed roof pipes at risk from animals and monkeys.",
-    "SRC028-DI-DUN": "Not visited; from the SRHU report.",
 }
 
 # Other work seen on the visit, beyond the pump, DI line and filter checks.
@@ -151,7 +143,7 @@ OTHER_WORK = {
 IMPACT_STORY = {
     "WDI-01": "A handpump that had stood defunct now gives water through the dry season, and the spring's dry-season "
     "flow has doubled. The water is decent to drink. Fixing the broken rooftop pipe at Arakot 1 will keep this going.",
-    "WDI-02": "Families once walked 2-3 km downhill for water. Today all 28 households (about 200 people) have water "
+    "WDI-02": "Families once walked 2-3 km downhill for water. Today all 27 households (about 135 people) have water "
     "in the village, and it now supports vegetation and farming. People also report more water in springs further "
     "downhill at Silogi. The Himmotthan solar pumping scheme works alongside DI here.",
     "WDI-03": "The naula is the only fallback for 2 households (about 10 people) when the JJM tap fails. People saw no "
@@ -206,7 +198,7 @@ CHANGES = {
             "access",
             "better",
             "Severe water crisis; people walked 2-3 km downhill for water",
-            "Water available in the village for all 28 households (about 200 people)",
+            "Water available in the village for all 27 households (about 135 people)",
             "Himmotthan solar pumping from the spring is a separate scheme and explains much of this.",
         ),
         (
@@ -302,7 +294,17 @@ LOCATION_DEFAULT = (
     "'in the catchment' share is used.",
 )
 
-INSTALL = {"FV26-DI-UNI": (2025, "Installed last year for the school (field visit, 20 Oct 2026)")}
+# DI install years (Rajat, 2026-10-24): 2025 everywhere except Kunjapuri (Badeda), fitted in 2026.
+INSTALL = {
+    hp: (2025, "Rajat, 2026-10-24")
+    for hp in ("FV26-DI-ARK1", "FV26-DI-ARK2", "FV26-DI-CHP1", "FV26-DI-CHP2", "FV26-DI-GUN", "FV26-DI-KAN")
+}
+INSTALL["FV26-DI-UNI"] = (2025, "Installed last year for the school (field visit, 20 Oct 2026; Rajat, 2026-10-24)")
+INSTALL["FV26-DI-KUN"] = (2026, "Rajat, 2026-10-24")
+BORE_DEPTH = {"FV26-DI-KUN": 60}  # Rajat, 2026-10-24
+# Households using each spring (Rajat, 2026-10-24); people = households x 5 where no count was taken.
+HOUSEHOLDS = {"WDI-01": 10, "WDI-02": 27, "WDI-04": 15, "WDI-06": 5, "WDI-07": 15, "WDI-08": 15}
+PEOPLE_PER_HOUSEHOLD = 5
 VISIT_DATE_OVERRIDE = {"FV26-DI-KUN": "2026-10-21"}
 
 
@@ -335,6 +337,14 @@ def metres(lat1, lon1, lat2, lon2):
 
     a, b, c, d = map(radians, (lat1, lon1, lat2, lon2))
     return 6371000 * 2 * asin(sqrt(sin((c - a) / 2) ** 2 + cos(a) * cos(c) * sin((d - b) / 2) ** 2))
+
+
+def people(site_id, f):
+    """People counted on the form, else households x 5."""
+    if site_id not in HOUSEHOLDS and f.get("people"):
+        return f["people"]
+    households = num(HOUSEHOLDS.get(site_id, f.get("households")))
+    return int(households * PEOPLE_PER_HOUSEHOLD) if households else ""
 
 
 def num(text):
@@ -427,8 +437,8 @@ def main():
                 "longitude": m["longitude"],
                 "elevation_m": m["elevation_m"],
                 **rain_fields(features.get(record_id, {}), secondary.get(record_id, {}), m),
-                "households": f.get("households", ""),
-                "people": f.get("people", ""),
+                "households": HOUSEHOLDS.get(site_id, f.get("households", "")),
+                "people": people(site_id, f),
                 "handpump_ids": ";".join(handpump_ids),
                 "di_link_status": LINK_OVERRIDE.get(site_id) or f.get("di_link_status")
                 or (pumps.get(handpump_ids[0], {}).get("link_basis", "") if handpump_ids else "")
@@ -517,14 +527,15 @@ def main():
                     "elevation_m": p["elevation_m"],
                     "height_above_spring_m": height,
                     "distance_to_spring_m": distance,
-                    "bore_depth_m": p["bore_depth_m"],
+                    "bore_depth_m": BORE_DEPTH.get(hp_id, p["bore_depth_m"]),
                     "roof_area_m2": "" if area is None else area,
                     "roof_note": area_note,
                     "roof_material": p["roof_material"],
                     "di_install_year": year,
                     "di_install_note": year_note,
-                    "first_flush": SAFETY.get(p["first_flush"], "not_checked"),
-                    "filter": SAFETY.get(p["filter"], "not_checked"),
+                    "first_flush": SAFETY_OVERRIDE.get((hp_id, "first_flush"))
+                    or SAFETY.get(p["first_flush"], "not_checked"),
+                    "filter": SAFETY_OVERRIDE.get((hp_id, "filter")) or SAFETY.get(p["filter"], "not_checked"),
                     "gutter_pipe": p["gutter_pipe"],
                     "pump_status": PUMP_AFTER.get(hp_id, ("not_checked", ""))[0],
                     "di_status": DI_AFTER.get(hp_id, "not_checked"),
@@ -585,7 +596,7 @@ def main():
 README = [
     ("What this is", "Springs where RDI/WATSAN has done DI recharge, their handpumps, and every flow or condition value "
      "we hold for them. Used by the DI impact dashboard (DI Dashboard/). Built by scripts/build_watsan_di_sites.py."),
-    ("Sites", "9 DI springs from the WATSAN Spring Assessment Report and the SRHU reports. Arakot 2 may feed both "
+    ("Sites", "8 DI springs from the WATSAN Spring Assessment Report and the SRHU Badera report. Makhdet (Dungsi) is left out until its DI is installed. Arakot 2 may feed both "
      "Balench and Paniyar Dhar, so it is listed under both; count its water once. Kokhliyal is a Himmotthan site without DI, so it is not included."),
     ("period", "before_di = how things were before DI (agreed values; no measured before-DI flow exists). "
      "after_di = any record taken after DI was fitted."),

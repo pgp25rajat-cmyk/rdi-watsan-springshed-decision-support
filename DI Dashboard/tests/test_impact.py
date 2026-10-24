@@ -90,7 +90,7 @@ class ImpactTests(unittest.TestCase):
         self.assertFalse(watsan_import.load(self.db))  # unchanged file: no second import
         result = assess(self.db.state())
         sites = {s["id"]: s for s in self.db.state()["sites"]}
-        self.assertEqual(len(sites), 9)
+        self.assertEqual(len(sites), 8)  # Makhdet/Dungsi left out: DI not installed yet
         by_id = {a["site_id"]: a for a in result["sites"]}
         balench = by_id["wdi-01"]["impact"]
         self.assertEqual(balench["spring_before_after"]["metric"], "lean_flow_lpm")
@@ -107,10 +107,11 @@ class ImpactTests(unittest.TestCase):
         kaddukhal = by_id["wdi-03"]["impact"]["handpumps_before_after"][0]
         self.assertEqual((kaddukhal["outcome"], kaddukhal["after"]), ("not_working_now", "broken"))
         self.assertIn("broken", kaddukhal["remarks"])
+        self.assertEqual(sites["wdi-08"]["handpumps"][0]["di_year"], 2026)
         self.assertTrue(by_id["wdi-02"]["impact"]["beyond_water"]["story"])
         p = result["portfolio"]["impact"]
-        self.assertEqual(p["di_sites"], 9)
-        self.assertEqual(p["pumps_restored"], 8)
+        self.assertEqual(p["di_sites"], 8)
+        self.assertEqual(p["pumps_restored"], 7)
         # Water injected follows the planner: collected = roof x rain used x 0.8, injected = x 0.85,
         # reaching = injected x share x depth factor.
         w = balench["di_water"]
@@ -123,7 +124,7 @@ class ImpactTests(unittest.TestCase):
         f = result["portfolio"]["follow_up"]
         self.assertEqual([n["handpump"] for n in f["handpumps"]["needs_work"]], ["Kaddukhal"])
         self.assertEqual({n["handpump"] for n in f["di_lines"]["needs_work"]}, {"Arakot 1", "Chopriyal 2"})
-        self.assertEqual(f["handpumps"]["checked"] + f["handpumps"]["not_checked"], 9)  # Arakot 2 counted once
+        self.assertEqual(f["handpumps"]["checked"] + f["handpumps"]["not_checked"], 8)  # Arakot 2 counted once
         self.assertLess(p["di_reaching_now_m3"][1], p["di_reaching_m3"][1])
         # Arakot 2 (linked to two springs) is counted once in the total.
         per_site = sum(a["impact"]["di_water"].get("volume_m3") or 0 for a in result["sites"])
