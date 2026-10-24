@@ -718,10 +718,9 @@ export function DIWater({ impact }) {
         ))}
       </dl>
       <p className="caption">
-        Same method and defaults as the spring planner's DI impact section. The share reaching the spring is
-        the planner's judgement range until monitoring shows the real link.
-        {rows.some((r) => r.location_class === "in_catchment") &&
-          " The planner's recharge zones are not run for these sites yet, so the 'in the catchment' share is used."}
+        Same method and defaults as the spring planner's DI impact section, with each handpump placed where the
+        planner places it (recharge zone, catchment or outside). The share reaching the spring is the planner's
+        judgement range until monitoring shows the real link.
         {w.missing_roofs?.length ? " No roof area for: " + w.missing_roofs.join(", ") + "." : ""}
       </p>
     </>

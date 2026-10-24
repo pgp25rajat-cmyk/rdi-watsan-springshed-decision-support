@@ -286,18 +286,29 @@ LINK_OVERRIDE = {
     "WDI-06": "Arakot 2 may feed Paniyar Dhar as well as Balench (Rajat, 2026-10-24); not verified",
 }
 
-# Where each DI handpump sits relative to its spring, in the planner's classes (Module C SHARE). The planner's recharge
-# zones (Module B) have not been run for these sites, so a handpump above its spring with a reported link is placed
-# "in_catchment" (the planner's share for a site in the surface catchment outside the top zones). Change a class here
-# once the planner has been run on the spring.
-LOCATION = {
+# Where each DI handpump sits relative to its spring, in the planner's classes (Module C SHARE), as the planner itself
+# places it: scripts/planner_di_locations.py runs the planner (recharge zones R1-R3 and catchment) for each spring and
+# writes planner_di_locations_v1.csv, so the dashboard and the planner give the same share reaching the spring
+# (Rajat, 2026-10-24). LOCATION_OVERRIDE wins over the planner where field evidence says otherwise.
+LOCATION_OVERRIDE = {
     "FV26-DI-UNI": ("outside", "Geologist found no connection between this handpump and the naula."),
 }
 LOCATION_DEFAULT = (
     "in_catchment",
-    "Above the spring with a reported link; the planner's recharge zones are not run for this site yet, so the "
-    "'in the catchment' share is used.",
+    "The planner has not been run for this handpump yet (scripts/planner_di_locations.py), so the 'in the "
+    "catchment' share is used.",
 )
+
+
+def planner_locations(folder):
+    """(site_id, handpump_id) -> (class, note) from the planner run, if it has been made."""
+    path = Path(folder) / "planner_di_locations_v1.csv"
+    if not path.is_file():
+        return {}
+    with open(path, encoding="utf-8") as f:
+        return {(r["site_id"], r["handpump_id"]): (r["location_class"], f"{r['location_note']} (Spring planner, {r['run_date']}.)")
+                for r in csv.DictReader(f)}
+
 
 # DI install years (Rajat, 2026-10-24): 2025 everywhere except Badeda, fitted in 2026.
 INSTALL = {
@@ -405,6 +416,7 @@ def main():
     master = {r["record_id"]: r for r in read(MASTER)}
     features = {r["record_id"]: r for r in read(FEATURES)}
     secondary = {r["record_id"]: r for r in read(SECONDARY)}
+    planned = planner_locations(OUT)
 
     site_rows, pump_rows, obs = [], [], []
 
@@ -533,6 +545,7 @@ def main():
                 distance = round(metres(float(p["latitude"]), float(p["longitude"]), float(m["latitude"]), float(m["longitude"])))
             year, year_note = INSTALL.get(hp_id, ("", ""))
             hp_date = VISIT_DATE_OVERRIDE.get(hp_id, visit_date)
+            location = LOCATION_OVERRIDE.get(hp_id) or planned.get((site_id, hp_id), LOCATION_DEFAULT)
             pump_rows.append(
                 {
                     "handpump_id": hp_id,
@@ -565,8 +578,8 @@ def main():
                     "remarks": REMARKS.get(hp_id, ""),
                     "other_work": OTHER_WORK.get(hp_id, ""),
                     "di_note": re.sub(r"^disconnected\s*\((.*)\)$", r"\1", p["di_status"], flags=re.I),
-                    "location_class": LOCATION.get(hp_id, LOCATION_DEFAULT)[0],
-                    "location_note": LOCATION.get(hp_id, LOCATION_DEFAULT)[1],
+                    "location_class": location[0],
+                    "location_note": location[1],
                 }
             )
             add(site_id, "handpump", hp_id, "before_di_agreed", "before_di", "", "pump_status", text="defunct",

@@ -1,0 +1,10 @@
+site_id,spring_name,handpump_id,handpump_name,location_class,zone_id,location_note,lean_flow_lpm,monsoon_flow_lpm,volume_m3_per_year,reaching_m3_mid,map_set,run_date
+WDI-01,Balench,FV26-DI-ARK1,Arakot 1,in_catchment,,In the surface catchment but outside the top recharge zones: little of the water is likely to reach this spring.,3.0,8.0,114.0,17.1,none approved,2026-10-24
+WDI-01,Balench,FV26-DI-ARK2,Arakot 2,outside,,Outside the spring's catchment and its recharge zones: the water will mostly feed other springs or streams.,3.0,8.0,114.0,2.3,none approved,2026-10-24
+WDI-02,Chorghadna,FV26-DI-CHP1,Chopriyal 1,in_catchment,,In the surface catchment but outside the top recharge zones: little of the water is likely to reach this spring.,12.0,20.0,183.4,27.5,none approved,2026-10-24
+WDI-03,Ganjrkhanal,FV26-DI-UNI,Kaddukhal,outside,,Outside the spring's catchment and its recharge zones: the water will mostly feed other springs or streams.,3.0,10.0,239.9,4.8,none approved,2026-10-24
+WDI-04,Malani,FV26-DI-GUN,Gunogi,in_catchment,,In the surface catchment but outside the top recharge zones: little of the water is likely to reach this spring.,10.0,17.0,119.1,12.5,none approved,2026-10-24
+WDI-05,Nimbujhard,FV26-DI-CHP2,Chopriyal 2,in_catchment,,In the surface catchment but outside the top recharge zones: little of the water is likely to reach this spring.,9.0,24.0,139.1,14.6,none approved,2026-10-24
+WDI-06,Paniyar Dhar,FV26-DI-ARK2,Arakot 2,in_catchment,,In the surface catchment but outside the top recharge zones: little of the water is likely to reach this spring.,0.0,4.0,114.0,17.1,none approved,2026-10-24
+WDI-07,Rasanulikhal,FV26-DI-KAN,Kanatal,in_zone_slope,R1,"Inside recharge zone R1, on the slope that drains to the spring: most of the injected water can reach it.",15.0,22.0,189.5,113.7,none approved,2026-10-24
+WDI-08,Badeda,FV26-DI-KUN,Badeda,in_catchment,,In the surface catchment but outside the top recharge zones: little of the water is likely to reach this spring.,,,147.7,15.5,none approved,2026-10-24

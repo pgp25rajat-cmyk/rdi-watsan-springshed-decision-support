@@ -628,9 +628,9 @@ INDICATORS = [
         "in the catchment; 0/0.02/0.10 outside it; 0 below the spring. Depth factor from the injection point "
         "(handpump ground − depth, 70 m if unknown) against the spring outlet: × 1.0 more than 10 m above, × 0.7 "
         "within 10 m, × 0.4 up to 50 m below, × 0.2 deeper. Same as the planner.",
-        "needs": "Handpump and spring heights (DEM), handpump depth, and where the handpump sits. The planner's "
-        "recharge zones are not run for these sites yet, so a handpump above its spring with a reported link uses "
-        "the 'in the catchment' share; Kaddukhal uses 'outside' (geologist found no link).",
+        "needs": "Handpump and spring heights (DEM), handpump depth, and where the handpump sits. Where it sits comes "
+        "from the spring planner (scripts/planner_di_locations.py: recharge zones R1-R3, catchment or outside), so "
+        "both give the same share; Kaddukhal stays 'outside' because the geologist found no link.",
         "missing": "Without a link to the spring the real share is zero; only monitoring can show it.",
         "interpretation": "An approximate range for planning and monitoring, not a measured flow. The rest of the "
         "water feeds other springs, streams or deeper groundwater.",
