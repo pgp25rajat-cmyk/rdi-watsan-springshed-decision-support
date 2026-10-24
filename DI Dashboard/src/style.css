@@ -61,6 +61,20 @@
 @media(min-width:801px){.pump-table td:first-child strong{white-space:nowrap}}
 .pump-table .tag{justify-self:start;width:fit-content}
 .spring-section+.spring-section{margin-top:12px;padding-top:20px;border-top:1px solid var(--line)}.spring-heading{font-size:15px;margin:0 0 14px;color:var(--teal)}
-.home-link{display:inline-block;font-size:13px;color:var(--teal);margin:0 0 22px 12px}.mobile-bar .home-link{margin:0 4px 0 0;font-size:18px}
 /* page titles in the shared serif, as on the opening page and the planner */
 .sheet h1,.brand strong,.mobile-bar strong{font-family:var(--serif);font-weight:600;letter-spacing:-.01em}
+/* top bar, as in the planner: Home, logo and name on the left, Download report on the right */
+.dash-topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 18px;background:var(--brand);color:#fff;position:sticky;top:0;z-index:45}
+.dash-topbar-left,.dash-topbar-right{display:flex;align-items:center;gap:10px;min-width:0}
+.dash-home{flex:none;margin-right:6px;display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.55);color:#fff;font-size:14px;font-weight:600}
+.dash-home:hover{background:rgba(255,255,255,.14);text-decoration:none}
+.dash-brand{display:flex;align-items:center;gap:10px;color:#fff;min-width:0}.dash-brand:hover{text-decoration:none}
+.dash-brand strong{font-family:var(--serif);font-size:19px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dash-logo{width:30px;height:30px;flex:none;background:#fff;border-radius:8px;display:grid;place-items:center;color:var(--brand)}.dash-logo svg{width:24px;height:24px}
+.dash-download{padding:8px 14px;border-radius:8px;background:rgba(255,255,255,.95);color:var(--brand);font-weight:600;font-size:14px;white-space:nowrap}
+.dash-download:hover{background:#fff}
+.dash-menu{display:none;width:40px;height:40px;color:#fff;place-items:center}
+.app-frame{min-height:calc(100vh - 56px)}.sidebar{top:64px;height:calc(100vh - 72px);padding-top:22px}.sheet{min-height:calc(100vh - 72px)}
+@media(max-width:800px){.dash-menu{display:grid}.dash-topbar{padding:8px 12px}.dash-brand strong{font-size:16px}.dash-download{padding:6px 10px;font-size:13px}.sidebar.is-open{inset:56px 0 auto 0;background:var(--bg);border-bottom:1px solid var(--line)}.app-frame{padding-top:8px}}
+@media(max-width:420px){.dash-home{padding:4px 9px}.dash-logo{display:none}}
+@media print{.dash-topbar,.sidebar,.mobile-bar,.toast,.page-head .button,.header-actions{display:none!important}.app-frame{display:block;padding:0;min-height:0}.sheet{border:0;padding:0;min-height:0}:root{background:#fff}}

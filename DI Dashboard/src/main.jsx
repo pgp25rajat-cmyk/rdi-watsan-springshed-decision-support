@@ -126,17 +126,36 @@ function App() {
     ["how", "help", "How it works"],
   ];
   return (
-    <div className="app-frame">
-      <aside className={"sidebar " + (menu ? "is-open" : "")}>
-        <a href="/" className="home-link">
+    <>
+    <header className="dash-topbar">
+      <div className="dash-topbar-left">
+        <a href="/" className="dash-home" title="Back to the opening page">
           ← Home
         </a>
-        <a href="#/overview" className="brand">
-          <Mark />
-          <div>
-            <strong>DI Dashboard</strong>
-          </div>
+        <a href="#/overview" className="dash-brand">
+          <span className="dash-logo">
+            <Mark />
+          </span>
+          <strong>DI Dashboard</strong>
         </a>
+      </div>
+      <div className="dash-topbar-right">
+        {/* the page being viewed, printed or saved as PDF from the print window */}
+        <button type="button" className="dash-download" onClick={() => window.print()} title="Save this page as PDF">
+          Download report
+        </button>
+        <button
+          className="dash-menu"
+          aria-label={menu ? "Close navigation" : "Open navigation"}
+          aria-expanded={menu}
+          onClick={() => setMenu(!menu)}
+        >
+          <Icon name={menu ? "close" : "menu"} />
+        </button>
+      </div>
+    </header>
+    <div className="app-frame">
+      <aside className={"sidebar " + (menu ? "is-open" : "")}>
         <div className="nav-label">Workspace</div>
         <nav aria-label="Main navigation">
           {nav.map(([key, icon, label]) => (
@@ -147,22 +166,6 @@ function App() {
           ))}
         </nav>
       </aside>
-      <div className="mobile-bar">
-        <a href="/" className="home-link">
-          ←
-        </a>
-        <a href="#/overview">
-          <Mark />
-          <strong>DI Dashboard</strong>
-        </a>
-        <button
-          aria-label={menu ? "Close navigation" : "Open navigation"}
-          aria-expanded={menu}
-          onClick={() => setMenu(!menu)}
-        >
-          <Icon name={menu ? "close" : "menu"} />
-        </button>
-      </div>
       <main className="sheet" id="main">
         {error && (
           <div role="alert" className="error-box">
@@ -192,6 +195,7 @@ function App() {
         </div>
       )}
     </div>
+    </>
   );
 }
 createRoot(document.getElementById("root")).render(<App />);
