@@ -28,6 +28,7 @@ RECORD_LABELS = {
     "after_di_agreed": "After DI",
     "watsan_report": "WATSAN report (undated)",
     "field_visit_2026_10": "Field visit, Oct 2026",
+    "rajat_2026_10_24": "Team note (Rajat, Oct 2026)",
 }
 VISITOR = "DOCC/WATSAN field team"
 # Planner defaults (scripts/module_c_di_impact.py): RDI design collects 70-80% of roof rain.

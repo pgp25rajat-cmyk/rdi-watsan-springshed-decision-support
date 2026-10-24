@@ -302,6 +302,15 @@ INSTALL = {
 INSTALL["FV26-DI-UNI"] = (2025, "Installed last year for the school (field visit, 20 Oct 2026; Rajat, 2026-10-24)")
 INSTALL["FV26-DI-KUN"] = (2026, "Rajat, 2026-10-24")
 BORE_DEPTH = {"FV26-DI-KUN": 60}  # Rajat, 2026-10-24
+# Roof areas confirmed by Rajat (2026-10-24). The form gave 300 m2 for Arakot 1 and 2 together; each roof is 150 m2.
+ROOF = {
+    "FV26-DI-ARK1": (150, "150 m2 each for Arakot 1 and 2 (Rajat, 2026-10-24)"),
+    "FV26-DI-ARK2": (150, "150 m2 each for Arakot 1 and 2 (Rajat, 2026-10-24)"),
+    "FV26-DI-GUN": (120, "Form value hard to read; 120 m2 kept (Rajat, 2026-10-24)"),
+    "FV26-DI-KUN": (150, "Rajat, 2026-10-24"),
+}
+# Springs with no flow record yet, and why (Rajat, 2026-10-24).
+NOT_MEASURED = {"WDI-08": "Not measured yet: the spring is covered, so there is no access to the outlet"}
 # Households using each spring (Rajat, 2026-10-24); people = households x 5 where no count was taken.
 HOUSEHOLDS = {"WDI-01": 10, "WDI-02": 27, "WDI-04": 15, "WDI-06": 5, "WDI-07": 15, "WDI-08": 15}
 PEOPLE_PER_HOUSEHOLD = 5
@@ -355,10 +364,10 @@ def num(text):
 
 
 def roof(text, handpump_id):
-    """Roof area in m2. Arakot 1 and 2 share one 300 m2 figure on the form, split evenly."""
+    """Roof area in m2: Rajat's confirmed value where given, else the form."""
+    if handpump_id in ROOF:
+        return ROOF[handpump_id]
     value = num(text)
-    if value is not None and handpump_id in ("FV26-DI-ARK1", "FV26-DI-ARK2"):
-        return value / 2, "Form gives 300 m2 for Arakot 1 and 2 together; split evenly"
     return value, ("Form value unclear" if text and "unclear" in text else "")
 
 
@@ -494,6 +503,9 @@ def main():
                     text=direction, basis="recall", source=FORM,
                     note=f"Flow compared with 10-20 years ago: {f['flow_vs_10_20_years']}. "
                     + (f.get("community_notes") or ""))
+        if site_id in NOT_MEASURED:
+            add(site_id, "spring", record_id, "rajat_2026_10_24", "after_di", "", "flow_lpm",
+                text=NOT_MEASURED[site_id], basis="not_measured", source="Rajat, 2026-10-24")
         # Handpumps
         for i, hp_id in enumerate(handpump_ids):
             p = pumps.get(hp_id)
