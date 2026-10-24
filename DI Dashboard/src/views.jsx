@@ -187,7 +187,8 @@ function Progress({ state }) {
           </button>
           {f.other.count ? (
             <button className="follow-alert" onClick={() => setOpen("other")}>
-              {f.other.needs_work.map((n) => n.handpump).join(", ")}
+              {f.other.count} handpump{f.other.count === 1 ? "" : "s"} require{f.other.count === 1 ? "s" : ""}{" "}
+              additional work. Click to know more.
             </button>
           ) : (
             <p>Nothing else recorded</p>
