@@ -26,17 +26,18 @@ COLLECTION = 0.8
 INJECTION = 0.85
 LEAN_MONTHS = 5
 MINUTES_PER_YEAR = 525_600
-BASIS_RANK = {"measured": 4, "observed": 4, "estimate": 3, "report": 2, "recall": 1}
+BASIS_RANK = {"measured": 4, "observed": 4, "agreed": 3, "estimate": 3, "report": 2, "recall": 1}
 BASIS_LABEL = {
     "measured": "Measured (bucket and stopwatch)",
     "observed": "Seen on the visit",
     "estimate": "Estimated by eye",
     "report": "Report value, method not stated",
     "recall": "What people recalled",
+    "agreed": "Team value (RDI reports and field forms)",
 }
 NOT_WORKING = ("defunct", "no_water", "no_water_dry_season", "broken")
 SPRING_METRICS = [
-    ("lean_flow_lpm", "Dry-season (lean) flow"),
+    ("lean_flow_lpm", "Dry-season spring flow"),
     ("flow_lpm", "Flow on the day"),
 ]
 
@@ -53,6 +54,8 @@ def change(before, after):
         direction = "dry_to_flowing"
     elif before["high"] == 0 and after["high"] == 0:
         direction = "still_dry"
+    elif low == high == 0:
+        direction = "no_change"
     elif low > 0:
         direction = "increase"
     elif high < 0:
@@ -198,6 +201,14 @@ def spring_before_after(obs):
                 "evidence": weakest["basis"],
                 "evidence_label": BASIS_LABEL.get(weakest["basis"], weakest["basis"]),
                 "like_for_like": b["basis"] == a["basis"],
+                "monsoon_after": next(
+                    (
+                        point(o)
+                        for o in sorted(spring, key=order_key)[::-1]
+                        if o["metric"] == "monsoon_flow_lpm" and o["period"] == "after_di"
+                    ),
+                    None,
+                ),
             }
     reported = sorted(
         [o for o in obs if o["asset"] == "spring" and o["metric"] == "reported_change"], key=order_key
@@ -215,7 +226,42 @@ def spring_before_after(obs):
     return None
 
 
+SEQUENCE_LABELS = {
+    ("before_di", "lean_flow_lpm"): "Before DI · dry season",
+    ("after_di", "lean_flow_lpm"): "After DI · dry season",
+    ("after_di", "monsoon_flow_lpm"): "After DI · monsoon",
+}
+
+
 def last_two(obs):
+    """Readings in order (Rajat, 2026-10-24): before-DI dry flow first, after-DI dry flow next, after-DI monsoon
+    flow latest; any later portal visit follows. The last two are compared."""
+    spring = [o for o in obs if o["asset"] == "spring" and o["low"] is not None]
+    agreed = {
+        (o["period"], o["metric"]): o
+        for o in spring
+        if o["basis"] == "agreed" and (o["period"], o["metric"]) in SEQUENCE_LABELS
+    }
+    if agreed:
+        seq = [
+            {**point(agreed[k]), "record_label": label}
+            for k, label in SEQUENCE_LABELS.items()
+            if k in agreed
+        ]
+        last_date = max((agreed[k].get("date") or "" for k in agreed), default="")
+        portal = sorted(
+            [o for o in spring if o["record"] == "portal_visit" and (o.get("date") or "") > last_date
+             and o["metric"] in ("flow_lpm", "lean_flow_lpm") and not o["id"].endswith("-flow-day")],
+            key=order_key,
+        )
+        seq += [point(o) for o in portal]
+        if len(seq) >= 2:
+            b, a = seq[-2], seq[-1]
+            cautions = []
+            if "dry season" in b["record_label"] and "monsoon" in a["record_label"]:
+                cautions.append("Dry-season flow compared with monsoon flow: much of this rise is the rain season.")
+            return {"before": b, "after": a, "change": change(b, a), "like_for_like": not cautions,
+                    "cautions": cautions, "sequence": seq}
     flows = sorted(
         [o for o in obs if o["asset"] == "spring" and o["metric"] == "flow_lpm" and o["low"] is not None],
         key=order_key,
@@ -230,7 +276,8 @@ def last_two(obs):
         reasons.append("One record has no date or season, so the order and season are assumed.")
     elif b.get("season") and a.get("season") and b["season"] != a["season"]:
         reasons.append("Different seasons.")
-    return {"before": point(b), "after": point(a), "change": change(b, a), "like_for_like": not reasons, "cautions": reasons}
+    return {"before": point(b), "after": point(a), "change": change(b, a), "like_for_like": not reasons,
+            "cautions": reasons, "sequence": [point(o) for o in flows]}
 
 
 def pump_before_after(site, obs):
@@ -341,7 +388,8 @@ def portfolio(impacts):
     di_sites = impacts
     numeric = [i["spring_before_after"] for i in di_sites if (i["spring_before_after"] or {}).get("kind") == "numeric"]
     reported = [i["spring_before_after"] for i in di_sites if (i["spring_before_after"] or {}).get("kind") == "reported"]
-    pumps = [p for i in di_sites for p in i["handpumps_before_after"]]
+    # A handpump linked to two springs (Arakot 2) is counted once.
+    pumps = list({p["name"]: p for i in di_sites for p in i["handpumps_before_after"]}.values())
     water = [i["di_water"] for i in di_sites if i["di_water"]["available"]]
     # A handpump linked to two springs (Arakot 2) is counted once in the total.
     volumes = {r["id"]: r["volume_m3"] for w in water for r in w["rows"] if r["volume_m3"] is not None}
@@ -388,7 +436,8 @@ INDICATORS = [
         "asset": "spring",
         "name": "Change between the last two records",
         "unit": "L/min and %",
-        "formula": "Same change formula, using the two most recent spring-flow records of any kind",
+        "formula": "Same change formula. Readings in order: before-DI dry flow, after-DI dry flow, after-DI monsoon "
+        "flow (latest), then any later visit. The last two are compared.",
         "weights": "No weights.",
         "needs": "Two spring-flow records. An undated report is placed before any dated visit.",
         "missing": "Shown with cautions when the methods or seasons differ, or a date is missing.",

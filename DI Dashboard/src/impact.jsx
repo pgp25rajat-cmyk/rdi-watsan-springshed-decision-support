@@ -8,6 +8,7 @@ export const directionText = {
   decrease: "Decrease",
   likely_decrease: "Likely decrease (ranges overlap)",
   no_clear_change: "No clear change",
+  no_change: "No change",
   dry_to_flowing: "Dry → flowing",
   still_dry: "Still dry",
   same: "About the same",
@@ -52,11 +53,12 @@ export function Dumbbell({ rows, earlier = "Before DI", later = "After DI" }) {
   const [ref, W] = useChartWidth();
   if (!rows.length) return <div ref={ref} />;
   const rowH = 58,
-    T = W < 500 ? 42 : 26,
+    T = W < 500 ? 58 : 26,
     L = 8,
     R = 16,
     H = T + rows.length * rowH + 30;
-  const top = Math.max(1, ...rows.flatMap((r) => [r.before.high, r.after.high])) * 1.12;
+  const top = Math.max(1, ...rows.flatMap((r) => [r.before.high, r.after.high, r.monsoon_after?.high || 0])) * 1.12;
+  const hasMonsoon = rows.some((r) => r.monsoon_after);
   const x = (n) => L + (n / top) * (W - L - R);
   const ticks = (W < 500 ? [0, 0.5, 1] : [0, 0.25, 0.5, 0.75, 1]).map((f) => top * f),
     last = ticks.length - 1,
@@ -83,6 +85,14 @@ export function Dumbbell({ rows, earlier = "Before DI", later = "After DI" }) {
           <text x={legendX + 10} y={narrow ? 30 : 14}>
             {later}
           </text>
+          {hasMonsoon && (
+            <>
+              <rect x={narrow ? L + 1 : legendX + 30 + later.length * 7} y={narrow ? 37 : 5} width="10" height="10" fill="white" stroke="var(--teal)" strokeWidth="2" transform="" />
+              <text x={narrow ? L + 16 : legendX + 46 + later.length * 7} y={narrow ? 46 : 14}>
+                Monsoon flow, after DI
+              </text>
+            </>
+          )}
         </g>
         {rows.map((r, i) => {
           const y = T + i * rowH + 34,
@@ -109,6 +119,11 @@ export function Dumbbell({ rows, earlier = "Before DI", later = "After DI" }) {
               <line x1={x(b.mid)} x2={x(a.mid)} y1={y} y2={y} stroke="var(--muted)" strokeWidth="1.5" strokeDasharray="3 3" />
               <circle cx={x(b.mid)} cy={y} r="6" fill="white" stroke="var(--muted)" strokeWidth="2" />
               <circle cx={x(a.mid)} cy={y} r="6" fill="var(--accent)" />
+              {r.monsoon_after && (
+                <rect x={x(r.monsoon_after.mid) - 5} y={y - 5} width="10" height="10" fill="white" stroke="var(--teal)" strokeWidth="2">
+                  <title>Monsoon flow after DI: {range(r.monsoon_after)} L/min</title>
+                </rect>
+              )}
             </g>
           );
         })}
@@ -137,8 +152,8 @@ export function PortfolioBeforeAfter({ state }) {
     .filter(({ a }) => !a.impact.spring_before_after);
   return (
     <Panel
-      title="Spring flow: before vs after DI"
-      sub="The main impact result. Dry-season flow first, as DI should matter most when rain stops."
+      title="Dry-season spring flow: before vs after DI"
+      sub="The main impact result. Dry-season flow, as DI should matter most when rain stops. Squares show monsoon flow after DI."
     >
       {numeric.length ? (
         <Dumbbell rows={numeric} />
@@ -147,8 +162,8 @@ export function PortfolioBeforeAfter({ state }) {
       )}
       {numeric.length > 0 && (
         <p className="caption">
-          Before-DI flows are what people recalled on the October 2026 visit; WATSAN has no measured flow from before
-          DI. Hover a bar to see the source.
+          Before DI: earlier RDI reports, or the lowest record so far. After DI: the October 2026 field forms. Values
+          agreed by the team; hover a point to see the source.
         </p>
       )}
       {reported.length > 0 && (
@@ -176,16 +191,15 @@ export function PortfolioLastTwo({ state }) {
   const rows = rowsFrom(state, (i) => i.last_two);
   return (
     <Panel
-      title="Spring flow: last two records"
-      sub="The two most recent flow records for each spring, of any kind. Shows the latest movement."
+      title="Spring flow: last two readings"
+      sub="Readings in order: before-DI dry, after-DI dry, then after-DI monsoon (latest). The last two are compared."
     >
       {rows.length ? (
         <>
-          <Dumbbell rows={rows} earlier="Earlier record" later="Latest record" />
+          <Dumbbell rows={rows} earlier="After DI · dry season" later="After DI · monsoon (latest)" />
           <p className="caption">
-            Here the earlier record is mostly the WATSAN report (date, season and method not stated) and the latest is
-            the October 2026 visit, so these are not like-for-like. They become so once two visits in the same season
-            are recorded.
+            After-DI dry-season flow compared with after-DI monsoon flow. Much of this rise is the rain season itself, so
+            read it as how much the spring responds to rain. New visits will become the latest reading.
           </p>
         </>
       ) : (
@@ -226,10 +240,10 @@ export function PortfolioPumps({ state }) {
   return (
     <Panel
       title="Handpumps: before vs after DI"
-      sub={`${p.pumps_restored} restored and ${p.pumps_improved} improved, of ${p.pumps_with_before} handpumps with an account of before DI.`}
+      sub={`${p.pumps_restored} of ${p.pumps} DI handpumps were defunct before DI and work now.`}
     >
       <PumpBeforeAfter rows={rows} compact />
-      <p className="caption">Before DI is what people said on the visit. After DI is the condition seen in October 2026.</p>
+      <p className="caption">Agreed by the team (2026-10-24). The Kaddukhal field form had recorded the pump as broken.</p>
     </Panel>
   );
 }
@@ -259,7 +273,12 @@ export function SiteBeforeAfter({ impact }) {
         {[
           ["Before DI", range(r.before) + " L/min · " + r.before.basis_label],
           ["After DI", range(r.after) + " L/min · " + r.after.basis_label + (r.after.date ? " · " + date(r.after.date) : "")],
-          ["Change", changeText(r.change) + " · range " + fmt(r.change.low, 1) + " to " + fmt(r.change.high, 1) + " L/min"],
+          ...(r.monsoon_after ? [["Monsoon flow after DI", range(r.monsoon_after) + " L/min"]] : []),
+          [
+            "Change",
+            changeText(r.change) +
+              (r.change.low === r.change.high ? "" : " · range " + fmt(r.change.low, 1) + " to " + fmt(r.change.high, 1) + " L/min"),
+          ],
           ["Result", directionText[r.change.direction]],
         ].map(([k, v]) => (
           <div key={k}>
@@ -278,7 +297,12 @@ export function SiteLastTwo({ impact }) {
   if (!r) return <Empty title="Two flow records are needed">The next visit will give a second record.</Empty>;
   return (
     <>
-      <Dumbbell rows={[{ name: "Flow on the day", ...r }]} earlier={r.before.record_label} later={r.after.record_label} />
+      <Dumbbell rows={[{ name: "Spring flow", ...r }]} earlier={r.before.record_label} later={r.after.record_label} />
+      {r.sequence?.length > 2 && (
+        <p className="caption">
+          All readings: {r.sequence.map((p) => p.record_label + " " + range(p)).join(" → ")} L/min
+        </p>
+      )}
       <dl className="facts">
         {[
           [r.before.record_label, range(r.before) + " L/min · " + r.before.basis_label],
@@ -352,21 +376,18 @@ export function ImpactSummary({ state }) {
   return (
     <div className="progress-grid">
       <div>
-        <span>Springs: before vs after DI</span>
+        <span>Dry-season spring flow up after DI</span>
         <strong>
           {p.spring_numeric_up + p.spring_reported_up}
-          <small> / {p.di_sites} DI springs</small>
+          <small> / {p.spring_numeric + p.spring_reported} springs with flow data</small>
         </strong>
-        <p>
-          more water now ({p.spring_numeric} with numbers, {p.spring_reported} by what people say); {p.spring_no_data} not
-          known yet
-        </p>
+        <p>{p.spring_no_data} of {p.di_sites} DI springs have no flow data yet</p>
       </div>
       <div>
-        <span>Handpumps restored or improved</span>
+        <span>Handpumps restored after DI</span>
         <strong>
           {p.pumps_restored + p.pumps_improved}
-          <small> / {p.pumps_with_before} with a before-DI account</small>
+          <small> / {p.pumps} DI handpumps</small>
         </strong>
         <p>{p.pumps_not_working} not working now</p>
       </div>
@@ -379,9 +400,9 @@ export function ImpactSummary({ state }) {
         <p>Upper estimate for {p.di_sites_with_volume} sites with a roof area</p>
       </div>
       <div>
-        <span>Springs with two flow records</span>
+        <span>Springs with readings after DI</span>
         <strong>{p.last_two}</strong>
-        <p>Compared in “last two records”</p>
+        <p>Dry-season vs monsoon in “last two readings”</p>
       </div>
     </div>
   );

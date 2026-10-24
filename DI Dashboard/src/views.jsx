@@ -609,10 +609,10 @@ export function SiteDetail({ site: s, state, onOpen }) {
       {tab === "results" && (
         <>
           <div className="two-col">
-            <Panel title="Before vs after DI" sub="Spring flow before DI compared with after DI.">
+            <Panel title="Dry-season spring flow: before vs after DI" sub="Before DI compared with after DI.">
               <SiteBeforeAfter impact={a.impact} />
             </Panel>
-            <Panel title="Last two records" sub="The two most recent spring-flow records.">
+            <Panel title="Last two readings" sub="After-DI dry flow, then after-DI monsoon flow (latest).">
               <SiteLastTwo impact={a.impact} />
             </Panel>
           </div>
@@ -791,10 +791,10 @@ export function Tracking({ state, onOpen }) {
       {asset === "spring" && (
         <>
           <div className="two-col">
-            <Panel title="Before vs after DI" sub="Primary result. Dry-season flow is used first.">
+            <Panel title="Dry-season spring flow: before vs after DI" sub="Primary result. The square shows monsoon flow after DI.">
               <SiteBeforeAfter impact={a.impact} />
             </Panel>
-            <Panel title="Last two records" sub="Latest movement, with cautions where records differ.">
+            <Panel title="Last two readings" sub="After-DI dry flow, then after-DI monsoon flow (latest).">
               <SiteLastTwo impact={a.impact} />
             </Panel>
           </div>

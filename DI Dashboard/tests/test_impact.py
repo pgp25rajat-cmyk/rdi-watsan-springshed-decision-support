@@ -94,12 +94,15 @@ class ImpactTests(unittest.TestCase):
         by_id = {a["site_id"]: a for a in result["sites"]}
         balench = by_id["wdi-01"]["impact"]
         self.assertEqual(balench["spring_before_after"]["metric"], "lean_flow_lpm")
-        self.assertEqual(balench["spring_before_after"]["change"]["mid"], 1)
+        self.assertEqual(balench["spring_before_after"]["change"]["mid"], 1.5)
         self.assertEqual(balench["handpumps_before_after"][0]["outcome"], "restored")
         self.assertGreater(balench["di_water"]["volume_m3"], 0)
         # Arakot 2 is linked to Balench and Paniyar Dhar; its water is counted once in the total.
         self.assertEqual(by_id["wdi-06"]["impact"]["handpumps_before_after"][0]["name"], "Arakot 2")
-        self.assertAlmostEqual(by_id["wdi-04"]["current_flow"], by_id["wdi-04"]["impact"]["last_two"]["after"]["low"], places=1)
+        # Last two readings: after-DI dry (10) then after-DI monsoon (17) for Malani.
+        malani = by_id["wdi-04"]["impact"]["last_two"]
+        self.assertEqual((malani["before"]["mid"], malani["after"]["mid"]), (10, 17))
+        self.assertEqual(len(malani["sequence"]), 3)
         p = result["portfolio"]["impact"]
         self.assertEqual(p["di_sites"], 9)
         per_site = sum(a["impact"]["di_water"].get("volume_m3") or 0 for a in result["sites"])

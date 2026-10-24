@@ -24,6 +24,8 @@ DEFAULT_DIR = Path(__file__).resolve().parents[2] / "data/02_processed/watsan_di
 FILES = ("watsan_di_sites_v1.csv", "watsan_di_handpumps_v1.csv", "watsan_di_observations_v1.csv")
 RECORD_LABELS = {
     "before_di_recall": "Before DI (recalled)",
+    "before_di_agreed": "Before DI",
+    "after_di_agreed": "After DI",
     "watsan_report": "WATSAN report (undated)",
     "field_visit_2026_10": "Field visit, Oct 2026",
 }

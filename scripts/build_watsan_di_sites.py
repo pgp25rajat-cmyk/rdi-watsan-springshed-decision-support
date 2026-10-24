@@ -20,8 +20,9 @@ Outputs: data/02_processed/watsan_di/
 Rules
 - Field form values are primary (as for the planner). WATSAN report values are kept as an earlier, undated record.
 - Kokhliyal (Bhawani Khala) is a Himmotthan site with no DI, so it is left out.
-- "Before DI" values come only from what people recalled on the field visit; no WATSAN before-DI measurement exists.
-  They are labelled basis = recall. Where the recall gives only a direction (more / same), no number is invented.
+- Spring flow before and after DI (dry season) and after DI (monsoon) are the values Rajat agreed on 2026-10-24 from
+  the earlier RDI reports and the field forms (basis = agreed). Every DI handpump was defunct before DI and works now
+  (Rajat, 2026-10-24); the Kaddukhal form had recorded it broken.
 - Arakot 2 may feed both Balench and Paniyar Dhar (Rajat, 2026-10-24), so it is listed under both sites. Its water is
   counted once in any total.
 - DI installation year is left blank unless a source states it (Uniyal Gaon: "installed last year" on 20 Oct 2026).
@@ -69,16 +70,18 @@ REPORT_HANDPUMPS = [
     }
 ]
 
-# Field-form text -> dashboard status codes.
+# Handpump condition now. Rajat (2026-10-24): every DI handpump was defunct before DI and works now.
+WORKING_NOTE = "Working (Rajat, 2026-10-24)"
 PUMP_AFTER = {
-    "FV26-DI-ARK1": ("working", "Pump condition not ticked; delivery test 6-7 strokes for 1-2 L shows it gives water"),
-    "FV26-DI-ARK2": ("not_checked", "Pump condition not recorded"),
+    "FV26-DI-ARK1": ("working", "Delivery test 6-7 strokes for 1-2 L"),
+    "FV26-DI-ARK2": ("working", "Pump box not ticked on the form; " + WORKING_NOTE),
     "FV26-DI-GUN": ("working", ""),
     "FV26-DI-CHP1": ("working", ""),
-    "FV26-DI-CHP2": ("not_checked", "Pump condition not recorded; people said it has water in the dry season now"),
+    "FV26-DI-CHP2": ("working", "Pump box not ticked on the form; people said it has water in the dry season"),
     "FV26-DI-KAN": ("working", ""),
-    "FV26-DI-UNI": ("broken", "Possible vehicle damage (not confirmed)"),
+    "FV26-DI-UNI": ("working", "Field form recorded it broken (possible vehicle damage); " + WORKING_NOTE),
     "FV26-DI-KUN": ("working", "Water tapped directly from the handpump"),
+    "SRC028-DI-DUN": ("working", "Not visited; " + WORKING_NOTE),
 }
 DI_AFTER = {
     "FV26-DI-ARK1": "disconnected",  # roof pipe broken, so no water reaches the handpump (Rajat, 2026-10-24)
@@ -92,39 +95,30 @@ DI_AFTER = {
 }
 SAFETY = {"Working": "ok", "OK": "ok", "Not working": "needs_work", "Dirty/blocked": "needs_work"}
 
-# What people said about the time before DI (field visit recall). Codes: defunct, no_water_dry_season,
-# poor_quality, working.  Text is kept as said.
-PUMP_BEFORE = {
-    "FV26-DI-ARK1": ("defunct", "Handpump was defunct before DI, now has water in the dry season (Balench form)"),
-    "FV26-DI-CHP2": ("defunct", "Handpump was defunct, with red/brown high-iron water, before DI"),
-    "FV26-DI-GUN": ("poor_quality", "Handpump gave less water and had high iron before DI; flow has increased"),
-    "FV26-DI-KAN": ("no_water_dry_season", "Handpump has water in the dry season now (implies it did not before)"),
-    "FV26-DI-KUN": ("defunct", "DI was fitted on a previously defunct handpump"),
+# Before DI every handpump was defunct (Rajat, 2026-10-24). Extra detail people gave on the visit is kept.
+BEFORE_NOTE = "All WATSAN DI handpumps were defunct before DI (Rajat, 2026-10-24)"
+PUMP_BEFORE_DETAIL = {
+    "FV26-DI-ARK1": "Balench form: handpump was defunct before DI, now has water in the dry season",
+    "FV26-DI-CHP2": "Defunct, with red/brown high-iron water, before DI",
+    "FV26-DI-GUN": "People said it gave less water and had high iron before DI",
+    "FV26-DI-KAN": "People said it has water in the dry season now",
+    "FV26-DI-KUN": "DI was fitted on a previously defunct handpump",
 }
 
-# Condition after DI from what people said, where the form's pump box was left blank.
-PUMP_AFTER_RECALL = {"FV26-DI-CHP2": ("working", "People said the handpump has water in the dry season now")}
-
-# Spring before/after DI from recall. (metric, before low-high, after low-high, note)
-SPRING_RECALL = {
-    "FV26-BAL": [
-        (
-            "lean_flow_lpm",
-            (1, 2),
-            (2, 3),
-            "Guide: lean flow 1-2 L/min before DI, 2-3 L/min now. The form's lean-flow box says about 1 L/min, "
-            "so the gain is uncertain.",
-        )
-    ],
-    "FV26-PAN": [
-        (
-            "lean_flow_lpm",
-            (0, 0),
-            (0, 0),
-            "People said the flow has stayed similar: it still dries every summer.",
-        )
-    ],
+# Spring flow agreed by Rajat (2026-10-24), L/min: (before DI dry season, after DI dry season, after DI monsoon).
+# Built from the earlier RDI reports (or the lowest record so far) for before, and the field forms for after.
+TEAM_FLOWS = {
+    "FV26-BAL": (1.5, 3, 8),
+    "FV26-PAN": (0, 0, 4),
+    "FV26-CHO": (8, 12, 20),
+    "FV26-GAN": (3, 3, 10),
+    "FV26-MAL": (7, 10, 17),
+    "FV26-NIM": (6, 9, 24),
+    "FV26-RAS": (12, 15, 22),
 }
+TEAM_SOURCE = "Agreed by Rajat (2026-10-24) from the earlier RDI reports (before) and the October 2026 field forms (after)"
+HANDPUMP_NAMES = {"FV26-DI-UNI": "Kaddukhal"}
+
 # Direction of change people reported (after DI, compared with earlier years).
 DIRECTION = {"More": "increase", "Same": "same", "Less": "decrease", "Dries at times": "same"}
 
@@ -308,23 +302,21 @@ def main():
             else:
                 add(site_id, "spring", record_id, "field_visit_2026_10", "after_di", visit_date, "flow_lpm",
                     text=f["flow_today_text"], basis="not_measured", source=FORM)
-            for metric, key in (("lean_flow_lpm", "lean"), ("monsoon_flow_lpm", "monsoon")):
-                lo, hi = num(f.get(f"{key}_flow_lpm_low")), num(f.get(f"{key}_flow_lpm_high"))
-                if lo is not None and field_id not in SPRING_RECALL:
-                    add(site_id, "spring", record_id, "field_visit_2026_10", "after_di", visit_date, metric, lo, hi,
-                        range_text(lo, hi) + " L/min", "recall", FORM, "Typical flow people gave for this season now.")
+            if field_id in TEAM_FLOWS:
+                before, after_dry, after_monsoon = TEAM_FLOWS[field_id]
+                add(site_id, "spring", record_id, "before_di_agreed", "before_di", "", "lean_flow_lpm", before, before,
+                    f"{before:g} L/min", "agreed", TEAM_SOURCE, "Dry-season flow before DI.")
+                add(site_id, "spring", record_id, "field_visit_2026_10", "after_di", visit_date, "lean_flow_lpm",
+                    after_dry, after_dry, f"{after_dry:g} L/min", "agreed", TEAM_SOURCE, "Dry-season flow after DI.")
+                add(site_id, "spring", record_id, "field_visit_2026_10", "after_di", visit_date, "monsoon_flow_lpm",
+                    after_monsoon, after_monsoon, f"{after_monsoon:g} L/min", "agreed", TEAM_SOURCE,
+                    "Monsoon flow after DI.")
             direction = DIRECTION.get(f.get("flow_vs_10_20_years", ""))
             if direction:
                 add(site_id, "spring", record_id, "field_visit_2026_10", "after_di", visit_date, "reported_change",
                     text=direction, basis="recall", source=FORM,
                     note=f"Flow compared with 10-20 years ago: {f['flow_vs_10_20_years']}. "
                     + (f.get("community_notes") or ""))
-            for metric, before, after, note in SPRING_RECALL.get(field_id, []):
-                add(site_id, "spring", record_id, "before_di_recall", "before_di", "", metric, *before,
-                    range_text(*before) + " L/min", "recall", FORM + " (recalled on " + visit_date + ")", note)
-                add(site_id, "spring", record_id, "field_visit_2026_10", "after_di", visit_date, metric, *after,
-                    range_text(*after) + " L/min", "recall", FORM, note)
-
         # Handpumps
         for i, hp_id in enumerate(handpump_ids):
             p = pumps.get(hp_id)
@@ -332,7 +324,12 @@ def main():
                 rp = next(x for x in REPORT_HANDPUMPS if x["handpump_id"] == hp_id)
                 pump_rows.append({"handpump_id": hp_id, "site_id": site_id, "primary": "yes" if i == 0 else "no",
                                   "name": rp["name"], "latitude": rp["latitude"], "longitude": rp["longitude"],
-                                  "link_status": rp["link_status"], "source": rp["source"]})
+                                  "link_status": rp["link_status"], "source": rp["source"], "pump_status": "working",
+                                  "notes": PUMP_AFTER[hp_id][1]})
+                add(site_id, "handpump", hp_id, "before_di_agreed", "before_di", "", "pump_status", text="defunct",
+                    basis="agreed", source=BEFORE_NOTE)
+                add(site_id, "handpump", hp_id, "after_di_agreed", "after_di", "", "pump_status", text="working",
+                    basis="agreed", source=BEFORE_NOTE, note=PUMP_AFTER[hp_id][1])
                 continue
             area, area_note = roof(p["roof_area_m2"], hp_id)
             height, distance = p["height_above_spring_dem_m"], p["distance_to_spring_m"]
@@ -347,7 +344,7 @@ def main():
                     "handpump_id": hp_id,
                     "site_id": site_id,
                     "primary": "yes" if i == 0 else "no",
-                    "name": p["name"],
+                    "name": HANDPUMP_NAMES.get(hp_id, p["name"]),
                     "latitude": p["latitude"],
                     "longitude": p["longitude"],
                     "elevation_m": p["elevation_m"],
@@ -371,17 +368,10 @@ def main():
                     "notes": "; ".join(x for x in (PUMP_AFTER.get(hp_id, ("", ""))[1], p["di_status"], p["notes"]) if x),
                 }
             )
-            if hp_id in PUMP_BEFORE:
-                code, said = PUMP_BEFORE[hp_id]
-                add(site_id, "handpump", hp_id, "before_di_recall", "before_di", "", "pump_status", text=code,
-                    basis="recall", source=FORM + " (recalled on " + hp_date + ")", note=said)
-            pump_status = PUMP_AFTER.get(hp_id, ("not_checked", ""))[0]
-            add(site_id, "handpump", hp_id, "field_visit_2026_10", "after_di", hp_date, "pump_status", text=pump_status,
-                basis="observed", source=FORM, note=PUMP_AFTER.get(hp_id, ("", ""))[1])
-            if hp_id in PUMP_AFTER_RECALL:
-                code, said = PUMP_AFTER_RECALL[hp_id]
-                add(site_id, "handpump", hp_id, "field_visit_2026_10", "after_di", hp_date, "pump_status", text=code,
-                    basis="recall", source=FORM, note=said)
+            add(site_id, "handpump", hp_id, "before_di_agreed", "before_di", "", "pump_status", text="defunct",
+                basis="agreed", source=BEFORE_NOTE, note=PUMP_BEFORE_DETAIL.get(hp_id, ""))
+            add(site_id, "handpump", hp_id, "field_visit_2026_10", "after_di", hp_date, "pump_status", text="working",
+                basis="agreed", source=FORM + "; " + BEFORE_NOTE, note=PUMP_AFTER.get(hp_id, ("", ""))[1])
             if p["pump_yield_text"]:
                 add(site_id, "handpump", hp_id, "field_visit_2026_10", "after_di", hp_date, "pump_yield",
                     text=p["pump_yield_text"], basis="observed", source=FORM,
@@ -423,12 +413,12 @@ README = [
      "we hold for them. Used by the DI impact dashboard (DI Dashboard/). Built by scripts/build_watsan_di_sites.py."),
     ("Sites", "9 DI springs from the WATSAN Spring Assessment Report and the SRHU reports. Arakot 2 may feed both "
      "Balench and Paniyar Dhar, so it is listed under both; count its water once. Kokhliyal is a Himmotthan site without DI, so it is not included."),
-    ("period", "before_di = how things were before DI (recall only; no measured before-DI flow exists). "
+    ("period", "before_di = how things were before DI (agreed values; no measured before-DI flow exists). "
      "after_di = any record taken after DI was fitted."),
-    ("record", "before_di_recall = what people said on the field visit about the time before DI; "
+    ("record", "before_di_agreed = before-DI values agreed by Rajat on 2026-10-24 from the earlier RDI reports; "
      "watsan_report = WATSAN Spring Assessment Report values (undated, after DI); "
      "field_visit_2026_10 = DOCC/WATSAN field visit, 18-21 Oct 2026."),
-    ("basis", "measured = bucket and stopwatch; estimate = judged by eye; report = value printed in a report, method "
+    ("basis", "agreed = value agreed by Rajat (2026-10-24) from reports and field forms; measured = bucket and stopwatch; estimate = judged by eye; report = value printed in a report, method "
      "not stated; recall = what people said; observed = condition seen on the visit."),
     ("village_change", "A change people described: value_text = now, note = earlier (then | any caveat), with "
      "change_area and change_direction."),
