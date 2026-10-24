@@ -662,7 +662,7 @@ export function Tracking({ state, onOpen }) {
         state.sites.find((s) => assessment(state, s.id)?.visit_count)?.id ||
         state.sites[0]?.id,
     ),
-    [asset, setAsset] = useState(query.get("asset") || "spring");
+    [asset, setAsset] = useState(query.get("asset") || "water");
   const site = state.sites.find((s) => s.id === selected) || state.sites[0];
   if (!site)
     return <Empty title="Add a site first">Its spring, handpump and DI checks will appear here.</Empty>;
@@ -702,9 +702,9 @@ export function Tracking({ state, onOpen }) {
       </div>
       <div className="asset-tabs" role="tablist" aria-label="Impact area">
         {[
+          ["water", "Water injected"],
           ["spring", "Spring response"],
           ["pump", "Handpump performance"],
-          ["water", "Water injected"],
           ["di", "DI and maintenance"],
           ["village", "Impact beyond water"],
         ].map(([id, label]) => (
