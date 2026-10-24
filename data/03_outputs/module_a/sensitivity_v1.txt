@@ -1,46 +1,48 @@
-Module A sensitivity to the draft weights (2026-10-16)
+Module A sensitivity to the draft weights (2026-10-24)
 Input springs with at least one scored indicator: 1407 (test springs not used).
 The dataset has no field answers except WATSAN's flow estimates and seasonality labels, so this mostly tests
 the map indicators. The last section shows the decline question as a what-if.
 
-Baseline classes: Low 325, Medium 928, High 154
+Baseline classes: Low 381, Medium 818, High 208
 
 1. One weight at a time: % of springs that change class
    indicator                                     weight  halved  +50%  dropped
-   Dry-season rain (Nov-Apr)                         7     9.5   6.5     18.7
-   Built-up, cropland and bare land within 500 m     5     8.3   6.4     17.3
-   Mean slope within 500 m                           3     5.9   6.5     11.4
-   Rain / evaporation demand (aridity index)         4     5.2   4.3     10.8
-   Building growth within 1 km, 2016-2023            3     4.7   4.3     10.8
-   Year-to-year rain variability                     3     4.2   4.5     10.0
-   Land rising above the spring within 1 km          3     4.0   3.4      9.1
-   Rainfall trend 2001-2025                          4     3.3   3.6      7.1
-   Lean-season flow (May-June)                       7     2.3   0.9      3.2
-   Monsoon flow / lean flow                          3     0.4   2.1      2.2
-   Seasonality label                                 2     0.2   0.1      2.1
+   Dry-season rain (Nov-Apr)                         7    10.1   7.2     22.2
+   Built-up, cropland and bare land within 500 m     4     7.2   5.5     13.9
+   Rain / evaporation demand (aridity index)         4     6.9   4.8     12.9
+   Rainfall trend 2001-2025                          4     6.2   4.2     11.0
+   Mapped landslides within 500 m                    2     6.0   7.2     10.8
+   Soil depth to bedrock                             3     4.9   6.6     10.2
+   Mean slope within 500 m                           2     3.6   4.7      8.1
+   Building growth within 1 km, 2016-2023            2     3.3   3.4      7.7
+   Year-to-year rain variability                     2     2.6   3.3      5.3
+   Land rising above the spring within 1 km          2     2.5   3.3      5.3
+   Lean-season flow (May-June)                      10     1.4   2.6      3.8
+   Monsoon flow / lean flow                          3     1.8   0.3      2.6
+   Seasonality label                                 2     1.7   0.0      1.9
 
 2. 1000 random weight sets (each weight times 0.5-1.5): how often a spring keeps its class
-   Same class in at least 90% of sets: 71% of springs
-   Same class in at least 75% of sets: 86% of springs
+   Same class in at least 90% of sets: 69% of springs
+   Same class in at least 75% of sets: 82% of springs
    Same class in under half the sets:  0% of springs (these sit near a cut-off)
 
-3. Cut-offs moved by 5 points (baseline Low < 35, High >= 65)
-   Cut-offs 30 / 60: 20% change class; Low 197, Medium 898, High 312
-   Cut-offs 40 / 70: 18% change class; Low 478, Medium 872, High 57
+3. Cut-offs moved by 5 points (baseline Low < 35, High >= 60)
+   Cut-offs 30 / 55: 22% change class; Low 231, Medium 802, High 374
+   Cut-offs 40 / 65: 20% change class; Low 502, Medium 857, High 48
 
 4. What-if: every hill spring (1266) gives the same answer to 'flow now vs 10-20 years ago'
    Share of springs in each class (Low / Medium / High), by the weight of the decline question:
    answer            weight 15            weight 20            weight 25            
-   same or more      52/48/0              67/33/0              81/19/0              
-   a bit less        5/93/3               2/97/1               1/99/0               
-   much less / dries 0/47/53              0/36/64              0/26/74              
+   same or more      57/43/0              74/26/0              92/8/0               
+   a bit less        8/88/4               5/93/2               2/96/1               
+   much less / dries 0/35/65              0/24/76              0/12/88              
 
-5. Equal weights for all 20 indicators vs the draft weights
-   12% of springs change class (173 of 1407); list in equal_weights_changes_v1.csv
+5. Equal weights for all 23 indicators vs the draft weights
+   20% of springs change class (286 of 1407); list in equal_weights_changes_v1.csv
    rows = draft class, columns = equal-weights class
                 Low  Medium    High
-   Low          255      70       0
-   Medium        33     889       6
-   High           0      64      90
+   Low          293      88       0
+   Medium        35     778       5
+   High           0     158      50
    With no field answers the dataset springs are scored mostly on map indicators, so this shows how much the
    draft's extra weight on rain and land matters. With field answers, the decline question (20 vs 5) matters most.
