@@ -90,7 +90,12 @@ DI_AFTER = {
 SAFETY = {"Working": "ok", "OK": "ok", "Not working": "needs_work", "Dirty/blocked": "needs_work"}
 # Checks the form left blank, filled in by Rajat (2026-10-24): Chopriyal 2 first flush was checked; its water was
 # orange-yellow (see REMARKS), the device itself was not reported faulty.
-SAFETY_OVERRIDE = {("FV26-DI-CHP2", "first_flush"): "ok"}
+# Badeda is the most recent DI: filter and first flush working and clean.
+SAFETY_OVERRIDE = {
+    ("FV26-DI-CHP2", "first_flush"): "ok",
+    ("FV26-DI-KUN", "first_flush"): "ok",
+    ("FV26-DI-KUN", "filter"): "ok",
+}
 
 # Before DI every handpump was defunct (Rajat, 2026-10-24). Extra detail people gave on the visit is kept.
 BEFORE_NOTE = "All WATSAN DI handpumps were defunct before DI (Rajat, 2026-10-24)"
@@ -114,7 +119,7 @@ TEAM_FLOWS = {
     "FV26-RAS": (12, 15, 22),
 }
 TEAM_SOURCE = "Agreed by Rajat (2026-10-24) from the earlier RDI reports (before) and the October 2026 field forms (after)"
-HANDPUMP_NAMES = {"FV26-DI-UNI": "Kaddukhal"}
+HANDPUMP_NAMES = {"FV26-DI-UNI": "Kaddukhal", "FV26-DI-KUN": "Badeda"}  # Badeda: was "Kunjapuri" (Rajat, 2026-10-24)
 
 # Remarks shown beside each handpump's before/after status: water quality, breakages, DI line condition.
 # From the field forms (DI section and community interaction) and Rajat's corrections (2026-10-24).
@@ -127,7 +132,7 @@ REMARKS = {
     "diluted now (no lab test). DI line disconnected during house construction; filter blocked.",
     "FV26-DI-KAN": "Water in the dry season, very good quality; travellers drink and wash here. Roadside DI site is dirty.",
     "FV26-DI-UNI": "Handpump broken (possible vehicle damage). DI line intact; first flush not working, filter blocked.",
-    "FV26-DI-KUN": "Working again; people tap water directly. Exposed roof pipes at risk from animals and monkeys.",
+    "FV26-DI-KUN": "Most recent DI (2026); filter and first flush clean. Working again; people tap water directly. Exposed roof pipes at risk from animals and monkeys.",
 }
 
 # Other work seen on the visit, beyond the pump, DI line and filter checks.
@@ -294,7 +299,7 @@ LOCATION_DEFAULT = (
     "'in the catchment' share is used.",
 )
 
-# DI install years (Rajat, 2026-10-24): 2025 everywhere except Kunjapuri (Badeda), fitted in 2026.
+# DI install years (Rajat, 2026-10-24): 2025 everywhere except Badeda, fitted in 2026.
 INSTALL = {
     hp: (2025, "Rajat, 2026-10-24")
     for hp in ("FV26-DI-ARK1", "FV26-DI-ARK2", "FV26-DI-CHP1", "FV26-DI-CHP2", "FV26-DI-GUN", "FV26-DI-KAN")

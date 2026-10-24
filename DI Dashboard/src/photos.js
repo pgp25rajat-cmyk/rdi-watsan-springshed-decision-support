@@ -121,14 +121,14 @@ export const PUMP_PHOTOS = {
       caption: "Building next to the Kaddukhal handpump",
     },
   ],
-  Kunjapuri: [
+  Badeda: [
     {
-      src: "photos/kunjapuri/1.jpg",
-      caption: "Kunjapuri DI handpump and roof pipe",
+      src: "photos/badeda/1.jpg",
+      caption: "Badeda DI handpump and roof pipe",
     },
     {
-      src: "photos/kunjapuri/2.jpg",
-      caption: "Kunjapuri DI handpump",
+      src: "photos/badeda/2.jpg",
+      caption: "Badeda DI handpump",
     },
   ],
 };
