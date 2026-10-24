@@ -80,7 +80,7 @@ PUMP_AFTER = {
     "FV26-DI-KUN": ("working", "Water tapped directly from the handpump"),
 }
 DI_AFTER = {
-    "FV26-DI-ARK1": "broken",
+    "FV26-DI-ARK1": "disconnected",  # roof pipe broken, so no water reaches the handpump (Rajat, 2026-10-24)
     "FV26-DI-ARK2": "connected",
     "FV26-DI-GUN": "connected",
     "FV26-DI-CHP1": "connected",
@@ -127,10 +127,11 @@ SPRING_RECALL = {
 # Direction of change people reported (after DI, compared with earlier years).
 DIRECTION = {"More": "increase", "Same": "same", "Less": "decrease", "Dries at times": "same"}
 
-# The report puts Malani at Chopdiyal Gaon and Nimbujhard at Gunogi; the field GPS puts them the other way round.
+# The report printed the wrong villages for these two springs; the values belong to the spring names
+# (Rajat, 2026-10-24: Malani is at Gunogi, Nimbujhard at Chopriyal 2).
 REPORT_NOTE = {
-    "RDI-SPR-0004": "The report places Malani at Chopdiyal Gaon (field GPS: Gunogi), so its row may belong to Nimbujhard.",
-    "RDI-SPR-0005": "The report places Nimbujhard at Gunogi (field GPS: Chopriyal), so its row may belong to Malani.",
+    "RDI-SPR-0004": "The report prints Chopdiyal Gaon as the village; Malani is at Gunogi (report error, confirmed by Rajat).",
+    "RDI-SPR-0005": "The report prints Gunogi as the village; Nimbujhard is at Chopriyal 2 (report error, confirmed by Rajat).",
 }
 
 # Changes people described on the field visit, as (asset, area, direction, earlier, now, note). Wording kept close
