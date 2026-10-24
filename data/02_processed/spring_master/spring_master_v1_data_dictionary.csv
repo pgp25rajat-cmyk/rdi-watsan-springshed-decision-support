@@ -50,7 +50,7 @@ rainfall_monsoon_share_pct,%,CHIRPS v2 2018-2025,Share falling June-September.
 rainfall_dry_season_mm,mm,CHIRPS v2 2018-2025,November-April rain.
 et0_mean_annual_mm,mm/year,FAO WaPOR v3,Reference evapotranspiration.
 aridity_index,,Derived,Rainfall / ET0.
-rainfall_imd_mean_annual_mm,mm/year,"IMD 0.25 degree grid, 2001-2025 (2012 missing)","Mean annual rainfall, ~25 km. Cross-check on CHIRPS; IMD reads lower in the hills."
+rainfall_imd_mean_annual_mm,mm/year,"IMD 0.25 degree grid, 2001-2025 (all 25 years)","Mean annual rainfall, ~25 km. Cross-check on CHIRPS; IMD reads lower in the hills."
 rainfall_imd_min_annual_mm,mm/year,"IMD 0.25 degree grid, 2001-2025",Driest year.
 rainfall_imd_cv_pct,%,"IMD 0.25 degree grid, 2001-2025",Year-to-year variation.
 rainfall_imd_max_1day_mm,mm,"IMD 0.25 degree grid, 2001-2025",Wettest single day.

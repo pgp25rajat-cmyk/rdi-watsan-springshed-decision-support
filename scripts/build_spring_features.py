@@ -15,7 +15,7 @@ Public layers (downloaded once into a local cache, never committed):
 Layers downloaded by hand (logins or manual export), read from --local-layers DIR:
 - Bhoonidhi/*.zip      NRSC CartoDEM v3 30 m tiles, as downloaded from Bhoonidhi
 - IMD/*.nc             IMD 0.25 degree daily gridded rainfall (one calendar year per file; every year found is used,
-                       2001-2025 with 2012 missing as of 2026-10-14)
+                       2001-2025, 2012 added 2026-10-24)
 - SoilGrids/<prop>_<depth>_mean.tif   ISRIC SoilGrids 2.0 exports (clay, silt, sand, bdod, ocd, cfvo;
                        depths 0-5, 5-15 and 15-30 cm)
 DEM lineament candidates come from scripts/extract_dem_lineaments.py (--lineaments FILE).
@@ -604,7 +604,7 @@ class LocalLayers:
         self.imd = {}  # year -> (days x rows x cols array, transform)
         for path in sorted((folder / "IMD").glob("*.nc")):
             with rasterio.open(path) as ds:
-                # read only the hills (IMD_BOUNDS): the all-India grid for 24 years would need over 1 GB of memory
+                # read only the hills (IMD_BOUNDS): the all-India grid for 25 years would need over 1 GB of memory
                 rows, cols = zip(*(centre_index(ds.transform, x, y) for x in IMD_BOUNDS[::2] for y in IMD_BOUNDS[1::2]))
                 r0, c0 = max(0, min(rows)), max(0, min(cols))
                 window = rasterio.windows.Window(c0, r0, min(ds.width, max(cols) + 1) - c0, min(ds.height, max(rows) + 1) - r0)
@@ -1194,7 +1194,7 @@ def main():
             "HWSD v2.0": {"urls": HWSD_URLS, "resolution": "30 arc-second (~1 km)", "licence": "FAO/IIASA, CC BY-NC-SA 3.0 IGO (non-commercial)"},
             "NRSC CartoDEM v3 30 m": {"source": "Bhoonidhi (bhoonidhi.nrsc.gov.in), downloaded by hand 2026-10-10; 1-degree tiles P5_PAN_CD_N*_E*_30m",
                                       "licence": "NRSC data policy; raw tiles not committed"},
-            "IMD 0.25 degree daily gridded rainfall": {"source": "IMD Pune, files RF25_ind2001_rfp25.nc to RF25_ind2025_rfp25.nc (calendar years 2001-2025; 2012 not downloaded), downloaded by hand 2026-10-10 (2025), 2026-10-12 (2021-2024) and 2026-10-14 (2001-2020)",
+            "IMD 0.25 degree daily gridded rainfall": {"source": "IMD Pune, files RF25_ind2001_rfp25.nc to RF25_ind2025_rfp25.nc (calendar years 2001-2025), downloaded by hand 2026-10-10 (2025), 2026-10-12 (2021-2024), 2026-10-14 (2001-2020, then 2012)",
                                                        "licence": "IMD data policy; raw file not committed"},
             "ISRIC SoilGrids 2.0": {"source": "soilgrids.org map export, mean, bbox lon 76-81 lat 28.7-32.4; 0-5 cm downloaded by hand 2026-10-10, "
                                               "5-15 and 15-30 cm (files named by property) on 2026-10-12",

@@ -134,7 +134,7 @@ COLUMNS = [
     ("rainfall_dry_season_mm", "mm", "CHIRPS v2 2018-2025", "November-April rain."),
     ("et0_mean_annual_mm", "mm/year", "FAO WaPOR v3", "Reference evapotranspiration."),
     ("aridity_index", "", "Derived", "Rainfall / ET0."),
-    ("rainfall_imd_mean_annual_mm", "mm/year", "IMD 0.25 degree grid, 2001-2025 (2012 missing)", "Mean annual rainfall, ~25 km. Cross-check on CHIRPS; IMD reads lower in the hills."),
+    ("rainfall_imd_mean_annual_mm", "mm/year", "IMD 0.25 degree grid, 2001-2025 (all 25 years)", "Mean annual rainfall, ~25 km. Cross-check on CHIRPS; IMD reads lower in the hills."),
     ("rainfall_imd_min_annual_mm", "mm/year", "IMD 0.25 degree grid, 2001-2025", "Driest year."),
     ("rainfall_imd_cv_pct", "%", "IMD 0.25 degree grid, 2001-2025", "Year-to-year variation."),
     ("rainfall_imd_max_1day_mm", "mm", "IMD 0.25 degree grid, 2001-2025", "Wettest single day."),
@@ -601,7 +601,7 @@ GUIDE = [
                      "record from another source within 30 m filled it; the *_from column names that record."),
     ("Not filled", "Nothing is estimated, averaged from neighbours or invented. Blank means no source has it; gaps_remaining lists what is missing."),
     ("Caveats", "Layer values describe the spring point or a circle around it, not the real recharge area. CHIRPS rainfall is ~5 km, "
-                "HWSD soil ~1 km, SoilGrids 250 m, IMD ~25 km (2001-2025, 2012 missing). DEM lineaments are unvalidated candidates. "
+                "HWSD soil ~1 km, SoilGrids 250 m, IMD ~25 km (2001-2025). DEM lineaments are unvalidated candidates. "
                 "Drainage area, wetness index and distance to stream come from a 30 m DEM: small hollows are invisible and a 30 m GPS "
                 "error can move a spring into the next cell, so compare drainage_area_ha with drainage_area_max30m_ha. "
                 "GSI geology is a state-scale map: a spring's polygon is a map overlay, not a field check, and it covers Uttarakhand only."),
