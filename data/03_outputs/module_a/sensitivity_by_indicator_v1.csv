@@ -1,12 +1,14 @@
 id,indicator,weight,springs_with_value,pct_changing_class_if_halved,pct_changing_class_if_raised_by_half,pct_changing_class_if_dropped
-dry_season_rain,Dry-season rain (Nov-Apr),7.0,1266,9.5,6.5,18.7
-disturbed_land,"Built-up, cropland and bare land within 500 m",5.0,1266,8.3,6.4,17.3
-slope,Mean slope within 500 m,3.0,1266,5.9,6.5,11.4
-aridity,Rain / evaporation demand (aridity index),4.0,1266,5.2,4.3,10.8
-building_growth,"Building growth within 1 km, 2016-2023",3.0,1266,4.7,4.3,10.8
-rain_variability,Year-to-year rain variability,3.0,1266,4.2,4.5,10.0
-upslope_room,Land rising above the spring within 1 km,3.0,1266,4.0,3.4,9.1
-rain_trend,Rainfall trend 2001-2025,4.0,1266,3.3,3.6,7.1
-lean_flow,Lean-season flow (May-June),7.0,252,2.3,0.9,3.2
-flow_ratio,Monsoon flow / lean flow,3.0,252,0.4,2.1,2.2
-seasonality,Seasonality label,2.0,252,0.2,0.1,2.1
+dry_season_rain,Dry-season rain (Nov-Apr),7.0,1266,10.1,7.2,22.2
+disturbed_land,"Built-up, cropland and bare land within 500 m",4.0,1266,7.2,5.5,13.9
+aridity,Rain / evaporation demand (aridity index),4.0,1266,6.9,4.8,12.9
+rain_trend,Rainfall trend 2001-2025,4.0,1266,6.2,4.2,11.0
+landslides_map,Mapped landslides within 500 m,2.0,1224,6.0,7.2,10.8
+shallow_soil,Soil depth to bedrock,3.0,1266,4.9,6.6,10.2
+slope,Mean slope within 500 m,2.0,1266,3.6,4.7,8.1
+building_growth,"Building growth within 1 km, 2016-2023",2.0,1266,3.3,3.4,7.7
+rain_variability,Year-to-year rain variability,2.0,1266,2.6,3.3,5.3
+upslope_room,Land rising above the spring within 1 km,2.0,1266,2.5,3.3,5.3
+lean_flow,Lean-season flow (May-June),10.0,252,1.4,2.6,3.8
+flow_ratio,Monsoon flow / lean flow,3.0,252,1.8,0.3,2.6
+seasonality,Seasonality label,2.0,252,1.7,0.0,1.9

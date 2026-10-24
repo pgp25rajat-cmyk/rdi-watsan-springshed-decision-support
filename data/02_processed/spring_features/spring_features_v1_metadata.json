@@ -64,7 +64,7 @@
       "licence": "NRSC data policy; raw tiles not committed"
     },
     "IMD 0.25 degree daily gridded rainfall": {
-      "source": "IMD Pune, files RF25_ind2001_rfp25.nc to RF25_ind2025_rfp25.nc (calendar years 2001-2025; 2012 not downloaded), downloaded by hand 2026-10-10 (2025), 2026-10-12 (2021-2024) and 2026-10-14 (2001-2020)",
+      "source": "IMD Pune, files RF25_ind2001_rfp25.nc to RF25_ind2025_rfp25.nc (calendar years 2001-2025), downloaded by hand 2026-10-10 (2025), 2026-10-12 (2021-2024), 2026-10-14 (2001-2020, then 2012)",
       "licence": "IMD data policy; raw file not committed"
     },
     "ISRIC SoilGrids 2.0": {
@@ -103,7 +103,7 @@
   },
   "local_layers_found": [
     "CartoDEM: 14 tiles",
-    "IMD: 24 years (2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025)",
+    "IMD: 25 years (2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025)",
     "SoilGrids: 17 layers",
     "DEM lineaments: 26672 segments"
   ],
@@ -125,7 +125,7 @@
       ],
       "local_layers_found": [
         "CartoDEM: 1 tiles",
-        "IMD: 24 years (2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025)",
+        "IMD: 25 years (2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025)",
         "SoilGrids: 18 layers",
         "DEM lineaments: 26672 segments"
       ]
@@ -138,7 +138,7 @@
       ],
       "local_layers_found": [
         "CartoDEM: 1 tiles",
-        "IMD: 24 years (2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025)",
+        "IMD: 25 years (2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025)",
         "SoilGrids: 18 layers",
         "DEM lineaments: 26672 segments"
       ]

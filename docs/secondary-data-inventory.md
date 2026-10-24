@@ -19,7 +19,7 @@ Since 2026-10-23 the tool reads the secondary layers through `scripts/secondary_
 | CartoDEM v3 30 m | SRC-022 | `Bhoonidhi` | 14 tiles, Uttarakhand | In use (cross-check) | |
 | ESA WorldCover 2021, 10 m | SRC-019 | `MapCache` | All springs | In use | Tree cover is one class: no dense/open split |
 | Sentinel-2 NDVI, Oct-Nov 2025, 20 m | SRC-033 | `Sentinel2` | Tehri district | In use (Module B) | Forest density: splits tree cover into dense, open and sparse in the recharge-zone score. Provisional cut-offs: dense >= 0.70, open 0.50-0.70. `scripts/build_sentinel2_ndvi.py` |
-| IMD 0.25 degree rainfall 2001-2025 | SRC-023 | `IMD` | India | In use | 2012 file now present but not yet used |
+| IMD 0.25 degree rainfall 2001-2025 | SRC-023 | `IMD` | India | In use | All 25 years used, 2012 included (2026-10-24) |
 | CHIRPS rainfall and ET0 (WaPOR) | SRC-020 | `MapCache` | All springs | In use | |
 | ERA5 winter snowfall 2019-20 to 2024-25 (water equivalent) and ERA5 ground height | SRC-035 via TRN-021 | in the repo: `data/02_processed/climate/` (2 KB grid + snow-height curve) | lon 76-81.1, lat 28.7-32.4 | In use (Module C; context in A) | 27 km cells average lower ground than the springs, so the model reads the snow-height curve at the spring's elevation. Snow matters only above about 1,900 m (44 mm at 1,875 m, 162 mm at 2,375 m). `scripts/build_era5_snowfall.py` |
 

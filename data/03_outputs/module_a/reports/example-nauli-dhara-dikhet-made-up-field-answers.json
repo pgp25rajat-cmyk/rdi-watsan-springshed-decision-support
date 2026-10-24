@@ -166,7 +166,7 @@
         "weight_used_pct": 4.0,
         "points": 0.9,
         "comparison": "Yearly rain changed by -0.5% per decade over 2001-2025 (IMD); 23% of the input springs are drying more slowly or getting wetter.",
-        "why": "Falling rain means less recharge year after year: the rainfall stressor of Daniel et al. 2021. Trend over 24 IMD years (2012 missing); at most cells it is not statistically certain, so read it as a direction."
+        "why": "Falling rain means less recharge year after year: the rainfall stressor of Daniel et al. 2021. Trend over 25 IMD years (2001-2025); at most cells it is not statistically certain, so read it as a direction."
       },
       {
         "id": "rain_variability",
@@ -177,7 +177,7 @@
         "weight_used_pct": 3.0,
         "points": 0.3,
         "comparison": "Yearly rain varies by 18% from year to year (IMD 2001-2025); 11% of the input springs vary less.",
-        "why": "Dry years hit harder where rain swings a lot from year to year. 24 years of IMD data."
+        "why": "Dry years hit harder where rain swings a lot from year to year. 25 years of IMD data (2001-2025)."
       },
       {
         "id": "slope",
