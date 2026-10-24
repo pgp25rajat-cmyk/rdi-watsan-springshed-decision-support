@@ -120,6 +120,10 @@ class ImpactTests(unittest.TestCase):
         self.assertAlmostEqual(arakot1["reaching_m3"][1], arakot1["volume_m3"] * 0.15, places=0)
         self.assertFalse(arakot1["online"])  # roof pipe broken
         self.assertEqual(p["di_offline"], ["Arakot 1", "Chopriyal 2"])
+        f = result["portfolio"]["follow_up"]
+        self.assertEqual([n["handpump"] for n in f["handpumps"]["needs_work"]], ["Kaddukhal"])
+        self.assertEqual({n["handpump"] for n in f["di_lines"]["needs_work"]}, {"Arakot 1", "Chopriyal 2"})
+        self.assertEqual(f["handpumps"]["checked"] + f["handpumps"]["not_checked"], 9)  # Arakot 2 counted once
         self.assertLess(p["di_reaching_now_m3"][1], p["di_reaching_m3"][1])
         # Arakot 2 (linked to two springs) is counted once in the total.
         per_site = sum(a["impact"]["di_water"].get("volume_m3") or 0 for a in result["sites"])

@@ -33,6 +33,7 @@ Usage: python scripts/build_watsan_di_sites.py
 from __future__ import annotations
 
 import csv
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -135,6 +136,14 @@ REMARKS = {
     "FV26-DI-UNI": "Handpump broken (possible vehicle damage). First flush not working, filter blocked.",
     "FV26-DI-KUN": "Working again; people tap water directly. Exposed roof pipes at risk from animals and monkeys.",
     "SRC028-DI-DUN": "Not visited; from the SRHU report.",
+}
+
+# Other work seen on the visit, beyond the pump, DI line and filter checks.
+OTHER_WORK = {
+    "FV26-DI-CHP2": "Test the handpump water (quality improved, but no lab test yet)",
+    "FV26-DI-GUN": "Test the handpump water for iron",
+    "FV26-DI-KAN": "Clean the roadside DI site (litter, dirty inflow)",
+    "FV26-DI-KUN": "Protect the exposed roof pipes from animals and monkeys",
 }
 
 # Impact beyond water: what people told us in the community interaction part of the field forms, one short
@@ -526,6 +535,8 @@ def main():
                     "notes": "; ".join(x for x in (PUMP_AFTER.get(hp_id, ("", ""))[1], p["di_status"], p["notes"]) if x),
 
                     "remarks": REMARKS.get(hp_id, ""),
+                    "other_work": OTHER_WORK.get(hp_id, ""),
+                    "di_note": re.sub(r"^disconnected\s*\((.*)\)$", r"\1", p["di_status"], flags=re.I),
                     "location_class": LOCATION.get(hp_id, LOCATION_DEFAULT)[0],
                     "location_note": LOCATION.get(hp_id, LOCATION_DEFAULT)[1],
                 }

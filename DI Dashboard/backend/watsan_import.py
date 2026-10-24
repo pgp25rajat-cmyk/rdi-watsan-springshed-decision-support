@@ -94,6 +94,8 @@ def build(folder=DEFAULT_DIR):
                 "di_install_note": p.get("di_install_note", ""),
                 "link_status": p.get("link_status", ""),
                 "remarks": p.get("remarks", ""),
+                "other_work": p.get("other_work", ""),
+                "di_note": p.get("di_note", ""),
                 "pump_status": p.get("pump_status", ""),
                 "di_status": p.get("di_status", ""),
                 "location_class": p.get("location_class", ""),

@@ -131,48 +131,105 @@ function VisitList({ visits, onOpen }) {
     </div>
   );
 }
+const followItems = [
+  ["handpumps", "Handpumps working", "working"],
+  ["di_lines", "DI lines connected", "connected"],
+  ["filters", "Filters working", "working"],
+];
 function Progress({ state }) {
-  const p = state.assessment.portfolio;
+  const f = state.assessment.portfolio.follow_up,
+    [open, setOpen] = useState(null);
+  const shown =
+    open &&
+    (open === "other"
+      ? { title: "Other work", ...f.other }
+      : { title: followItems.find((x) => x[0] === open)[1], ...f[open] });
   return (
-    <div className="progress-grid">
-      <div>
-        <span>Handpumps working</span>
-        <strong>
-          {p.pump_working}
-          <small> / {p.pump_checked} checked</small>
-        </strong>
-        <p>
-          {p.impact.pumps_restored} restored after DI (people's account) · {p.pump_restored} shown across two
-          visits
-        </p>
+    <>
+      <div className="progress-grid follow-grid">
+        {followItems.map(([key, label, word]) => {
+          const c = f[key];
+          return (
+            <div key={key}>
+              <span>{label}</span>
+              <button
+                className="follow-number"
+                onClick={() => setOpen(key)}
+                aria-label={label + ": show sites"}
+              >
+                <strong>
+                  {c.ok}
+                  <small> / {c.checked} checked</small>
+                </strong>
+              </button>
+              {c.needs_work.length ? (
+                <button className="follow-alert" onClick={() => setOpen(key)}>
+                  {c.needs_work.length} not {word}: {c.needs_work.map((n) => n.handpump).join(", ")}
+                </button>
+              ) : (
+                <p>All checked ones {word}</p>
+              )}
+              {c.not_checked > 0 && <p>{c.not_checked} not checked yet</p>}
+            </div>
+          );
+        })}
+        <div>
+          <span>Any other work?</span>
+          <button
+            className="follow-number"
+            onClick={() => setOpen("other")}
+            aria-label="Other work: show sites"
+          >
+            <strong>
+              {f.other.count}
+              <small> handpumps</small>
+            </strong>
+          </button>
+          {f.other.count ? (
+            <button className="follow-alert" onClick={() => setOpen("other")}>
+              {f.other.needs_work.map((n) => n.handpump).join(", ")}
+            </button>
+          ) : (
+            <p>Nothing else recorded</p>
+          )}
+        </div>
       </div>
-      <div>
-        <span>DI lines connected</span>
-        <strong>
-          {p.di_connected}
-          <small> / {p.di_checked} checked</small>
-        </strong>
-        <p>
-          {p.di_connected_percent == null
-            ? "No checks yet"
-            : fmt(p.di_connected_percent) + "% of checked lines"}{" "}
-          · unchecked excluded
-        </p>
-      </div>
-      <div>
-        <span>Spring flow records</span>
-        <strong>
-          {p.springs_with_flow}
-          <small> / {p.sites} springs</small>
-        </strong>
-        <p>{p.spring_comparisons} with a same-season repeat visit</p>
-      </div>
-      <div>
-        <span>Sites needing work</span>
-        <strong>{p.needs_work}</strong>
-        <p>From dated pump, pipe and filter checks</p>
-      </div>
-    </div>
+      {shown && (
+        <div className="modal-backdrop popup-backdrop" onClick={() => setOpen(null)}>
+          <div className="popup" role="dialog" aria-label={shown.title} onClick={(e) => e.stopPropagation()}>
+            <div className="drawer-head">
+              <h2>{shown.title}: sites needing work</h2>
+              <button onClick={() => setOpen(null)} aria-label="Close">
+                <Icon name="close" size={16} />
+              </button>
+            </div>
+            {shown.needs_work.length ? (
+              shown.needs_work.map((n) => (
+                <div key={n.handpump} className="work-row">
+                  <Icon name="help" />
+                  <div>
+                    <strong>{n.handpump}</strong>
+                    <p>{n.issue}</p>
+                    <p>
+                      {n.sites.map((s, i) => (
+                        <React.Fragment key={s.id}>
+                          {i > 0 && " · "}
+                          <a href={"#/sites/" + s.id} onClick={() => setOpen(null)}>
+                            {s.name}
+                          </a>
+                        </React.Fragment>
+                      ))}
+                    </p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <Empty title="Nothing to fix">No handpump needs work on this check.</Empty>
+            )}
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 function Compare({ comparison, kind = "spring" }) {
@@ -261,8 +318,7 @@ function Quality({ visits, onOpen, asset }) {
 }
 export function Overview({ state, onOpen }) {
   const p = state.assessment.portfolio,
-    drafts = state.visits.filter((v) => v.status === "draft"),
-    attention = state.assessment.sites.filter((a) => a.maintenance.length);
+    drafts = state.visits.filter((v) => v.status === "draft");
   return (
     <>
       <Header
@@ -310,72 +366,6 @@ export function Overview({ state, onOpen }) {
             </Panel>
           </aside>
         )}
-      </div>
-      <div className="two-col">
-        <Panel
-          title="Latest spring records"
-          sub="Reported values and estimates are labelled; no seasonal or annual totals are assumed."
-          action={
-            <Button href="#/sites">
-              All sites <Icon name="arrow" size={14} />
-            </Button>
-          }
-        >
-          <div className="summary-rows">
-            {state.sites.map((s) => {
-              const a = assessment(state, s.id);
-              return (
-                <a href={"#/sites/" + s.id} className="summary-row" key={s.id}>
-                  <div>
-                    <strong>{s.name}</strong>
-                    <span>{s.village}</span>
-                  </div>
-                  <div>
-                    <strong>{shownFlow(a)}</strong>
-                    <span>
-                      {a.flow_date
-                        ? (a.latest_flow_visit?.entry_method === "source_review" ? "Source: " : "Visit: ") +
-                          visitDate(a.latest_flow_visit)
-                        : a.spring.reported_range
-                          ? "Estimate in field form"
-                          : "No numerical reading"}
-                    </span>
-                  </div>
-                </a>
-              );
-            })}
-          </div>
-        </Panel>
-        <Panel
-          title="Work to follow up"
-          sub="A dated maintenance list; no safety checks are traded off against one another."
-        >
-          {attention.length ? (
-            attention.map((a) => {
-              const s = state.sites.find((s) => s.id === a.site_id);
-              return (
-                <a key={a.site_id} href={"#/sites/" + a.site_id} className="work-row">
-                  <Icon name="help" />
-                  <div>
-                    <strong>{s.name}</strong>
-                    <p>{a.maintenance.join(" · ")}</p>
-                  </div>
-                  <Icon name="arrow" size={14} />
-                </a>
-              );
-            })
-          ) : (
-            <Empty title="No maintenance issues recorded">
-              Unchecked equipment is still unknown; it is not automatically marked as working.
-            </Empty>
-          )}
-          <div className="record-actions">
-            <Button primary href="#/visits/new">
-              Record a visit <Icon name="plus" size={15} />
-            </Button>
-            <Button href="#/sources">Source records</Button>
-          </div>
-        </Panel>
       </div>
       <div className="data-footer">
         <span>Source summaries, portal measurements and calculated changes keep their own labels.</span>

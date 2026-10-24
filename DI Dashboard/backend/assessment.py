@@ -175,6 +175,53 @@ def pump_comparison(visits):
     }
 
 
+BAD = ("broken", "no_water", "blocked", "disconnected", "needs_work", "missing")
+
+
+def follow_up(results, state):
+    """Four equipment checks for the overview, each with the handpumps that need work. A handpump linked to two
+    springs is counted once."""
+    names = {s["id"]: s.get("name") for s in state["sites"]}
+    gear = {}
+    for a in results:
+        for p in a["equipment"]:
+            item = gear.setdefault(p["name"], {**p, "sites": []})
+            item["sites"].append({"id": a["site_id"], "name": names.get(a["site_id"])})
+    gear = list(gear.values())
+
+    def check(key, ok, words):
+        checked = [p for p in gear if p[key] != "not_checked"]
+        need = [{"handpump": p["name"], "sites": p["sites"], "issue": words(p)} for p in checked if p[key] in BAD]
+        return {
+            "ok": sum(p[key] == ok for p in checked),
+            "checked": len(checked),
+            "not_checked": len(gear) - len(checked),
+            "needs_work": need,
+        }
+
+    other = []
+    for p in gear:
+        issues = [
+            k.replace("_", " ").capitalize() + " " + p[k].replace("_", " ")
+            for k in ("first_flush", "overflow")
+            if p[k] in BAD
+        ]
+        if p.get("other_work"):
+            issues.append(p["other_work"])
+        if issues:
+            other.append({"handpump": p["name"], "sites": p["sites"], "issue": "; ".join(issues)})
+    return {
+        "handpumps": check("pump_status", "working", lambda p: "Handpump " + p["pump_status"].replace("_", " ")),
+        "di_lines": check(
+            "di_status",
+            "connected",
+            lambda p: "DI line " + p["di_status"] + (" (" + p["di_note"].lower() + ")" if p.get("di_note") else ""),
+        ),
+        "filters": check("filter", "ok", lambda p: "Filter " + {"needs_work": "dirty or blocked"}.get(p["filter"], p["filter"])),
+        "other": {"count": len(other), "needs_work": other},
+    }
+
+
 def enrich(state, results):
     active = active_visits(state["visits"])
     mapped = 0
@@ -200,12 +247,19 @@ def enrich(state, results):
                 else [v for v in rows if normal(v.get("pump_asset_name")) == normal(p["name"])]
             )
             check = checks[-1] if checks else None
+            safety = (check or {}).get("safety") or {}
+            known_pump = next((h for h in site.get("handpumps") or [] if h.get("name") == p["name"]), p)
             equipment.append(
                 {
                     "name": p["name"],
                     "primary": is_primary,
                     "pump_status": check["pump"]["status"] if check else "not_checked",
                     "di_status": check["di"]["status"] if check else "not_checked",
+                    "filter": safety.get("filter") or "not_checked",
+                    "first_flush": safety.get("first_flush") or "not_checked",
+                    "overflow": safety.get("overflow") or "not_checked",
+                    "other_work": known_pump.get("other_work", ""),
+                    "di_note": known_pump.get("di_note", ""),
                     "visit_date": check["visit_date"] if check else None,
                     "visit_id": check["id"] if check else None,
                 }
@@ -310,6 +364,7 @@ def enrich(state, results):
     connected = sum(p["di_status"] == "connected" for p in checked)
     pump_checked = [p for p in gear if p["pump_status"] != "not_checked"]
     portfolio = {
+        "follow_up": follow_up(results, state),
         "sites": len(results),
         "visits": len(active),
         "springs_with_flow": sum(a["current_flow"] is not None for a in results),
