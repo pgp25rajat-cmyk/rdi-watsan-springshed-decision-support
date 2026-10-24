@@ -48,3 +48,7 @@ Do not put credentials, personal contact details, consent-sensitive photos, or u
 4. Keep observed data, community recall, staff hypotheses and project calculations distinct.
 
 The current register is an intake inventory, not an endorsement that each data source is suitable for modelling.
+
+## One platform: opening page, planner and DI dashboard
+
+`start_tool.bat` (or `python scripts/spring_tool_server.py`) opens the opening page at http://127.0.0.1:8765. From there, **Open planner** goes to the Spring Health & Recharge Planner (`#/planner`) and **Open dashboard** to the [DI impact dashboard](DI%20Dashboard/README.md) (`/dashboard/`), for repeat spring and handpump visits and impact tracking. The dashboard keeps its own frontend and database (`DI Dashboard/runtime/`, never committed).

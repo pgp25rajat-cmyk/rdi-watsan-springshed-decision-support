@@ -20,6 +20,9 @@ Endpoints:
                         Copernicus DEM files the modules use, so the 3D view works without internet; gaps are
                         filled from public Terrarium tiles (saved for offline use) or the nearest local height
 Each assessment is saved in data/03_outputs/tool_runs/<run_id>/ (result.json and report.md).
+
+The same server also runs the DI dashboard ("DI Dashboard/"): its page at /dashboard/ and its API at /api/v2/,
+with its own database in "DI Dashboard/runtime/". Pages: / (opening page), /#/planner, /dashboard/.
 """
 
 from __future__ import annotations
@@ -55,6 +58,7 @@ DIST = ROOT / "app" / "dist"
 RUNS = Path(os.environ.get("SPRING_RUNS_DIR", str(ROOT / "data" / "03_outputs" / "tool_runs")))
 SPRINGS_CSV = ROOT / "data" / "02_processed" / "spring_master" / "spring_master_v1_clean.csv"
 FIELD_SPRINGS_CSV = ROOT / "data" / "02_processed" / "field_visit" / "field_visit_springs_v1.csv"
+DASHBOARD = ROOT / "DI Dashboard"
 DI_SITES_CSV = ROOT / "data" / "02_processed" / "field_visit" / "field_visit_di_sites_v1.csv"  # WATSAN's existing DI sites
 MAX_BODY = 1 << 20
 MAX_SITES = 50
@@ -566,9 +570,31 @@ def save_run(response, request):
 
 
 # ---------------------------------------------------------------------- web
+def dashboard_handler(weather=True):
+    """The DI dashboard's request handler (DI Dashboard/server.py), with its database and WATSAN data loaded."""
+    import importlib.util
+    import logging
+    sys.path.insert(0, str(DASHBOARD))
+    spec = importlib.util.spec_from_file_location("di_dashboard_server", DASHBOARD / "server.py")
+    dash = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(dash)
+    logging.getLogger("di.dashboard").setLevel(logging.WARNING)
+    store = dash.Store(str(DASHBOARD / "runtime" / "di-dashboard.sqlite"))
+    dash.watsan_import.load(store, dash.watsan_import.DEFAULT_DIR)
+    worker = dash.RainfallWorker(store) if weather else None
+    if worker:
+        worker.start()
+    return dash.handler(store, worker)
+
+
+def dashboard_path(path: str) -> bool:
+    return path == "/dashboard" or path.startswith(("/dashboard/", "/api/v2/"))
+
+
 class Handler(BaseHTTPRequestHandler):
     server_version = "SpringTool/1.0"
     tool: Tool = None
+    dashboard = None  # the DI dashboard's handler class, mixed in by main()
 
     def _send(self, status, body: bytes, content_type: str):
         self.send_response(status)
@@ -583,6 +609,14 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         path = self.path.split("?", 1)[0]
+        if self.dashboard and dashboard_path(path):
+            if path == "/dashboard":
+                self.send_response(HTTPStatus.FOUND)
+                self.send_header("Location", "/dashboard/")
+                self.send_header("Content-Length", "0")
+                self.end_headers()
+                return
+            return self.dashboard.do_GET(self)
         if path == "/api/health":
             return self._json(HTTPStatus.OK, self.tool.health())
         if path == "/api/springs":
@@ -621,6 +655,8 @@ class Handler(BaseHTTPRequestHandler):
         self._send(HTTPStatus.OK, file.read_bytes(), content_type)
 
     def do_POST(self):
+        if self.dashboard and dashboard_path(self.path.split("?", 1)[0]):
+            return self.dashboard.do_POST(self)
         if self.path.split("?", 1)[0] != "/api/assess":
             return self._json(HTTPStatus.NOT_FOUND, {"error": "Unknown address"})
         length = int(self.headers.get("Content-Length") or 0)
@@ -645,6 +681,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--open", action="store_true", help="open the page in the browser")
+    parser.add_argument("--no-dashboard", action="store_true", help="run the planner only, without the DI dashboard")
+    parser.add_argument("--no-weather", action="store_true", help="DI dashboard: do not fetch rainfall from Open-Meteo")
     args = parser.parse_args()
     print("Starting the spring tool...")
     Handler.tool = Tool()
@@ -657,7 +695,17 @@ def main():
         print("No approved map set: missing map tiles are downloaded as needed. See docs/spring-tool-guide.md.")
     # Read the Bhukosh map layers now (15-40 s) rather than during the first assessment
     threading.Thread(target=lambda: Handler.tool.session.secondary.vectors, daemon=True).start()
-    server = ThreadingHTTPServer(("127.0.0.1", args.port), Handler)
+    handler = Handler
+    if not args.no_dashboard:
+        try:
+            dash = dashboard_handler(weather=not args.no_weather)
+            # one class with both: the planner's routes first, the dashboard's send/save_file helpers behind them
+            handler = type("Handler", (Handler, dash), {"dashboard": dash})
+            print("DI dashboard loaded (/dashboard/).")
+        except Exception as error:  # the planner still runs
+            traceback.print_exc()
+            print(f"WARNING: the DI dashboard could not start ({error}); the planner runs without it.")
+    server = ThreadingHTTPServer(("127.0.0.1", args.port), handler)
     url = f"http://127.0.0.1:{args.port}"
     print(f"Spring tool running at {url}  (keep this window open; Ctrl+C to stop)")
     if not (DIST / "index.html").is_file():

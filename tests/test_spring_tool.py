@@ -384,3 +384,25 @@ def test_lean_months_come_from_the_field_answers():
     assert months({"low_flow_months": 1}) == 3
     assert months({"dry_months": 6}) == 6
     assert months({"low_flow_months": 4}, {"lean_season_months": 7}) == 5  # a sent value is applied by estimate, not here
+
+
+def test_one_server_serves_the_di_dashboard():
+    import json as _json
+    import threading
+    import urllib.request
+    from http.server import ThreadingHTTPServer
+
+    dash = server.dashboard_handler(weather=False)
+    handler = type("Handler", (server.Handler, dash), {"dashboard": dash})
+    httpd = ThreadingHTTPServer(("127.0.0.1", 0), handler)
+    threading.Thread(target=httpd.serve_forever, daemon=True).start()
+    base = f"http://127.0.0.1:{httpd.server_address[1]}"
+    try:
+        assert _json.load(urllib.request.urlopen(base + "/api/v2/health"))["application"] == "di-dashboard"
+        page = urllib.request.urlopen(base + "/dashboard").read().decode()  # redirected to /dashboard/
+        assert "/dashboard/assets/" in page
+        state = _json.load(urllib.request.urlopen(base + "/api/v2/state"))
+        assert state["sites"]
+        assert server.dashboard_path("/api/v2/state") and not server.dashboard_path("/api/springs")
+    finally:
+        httpd.shutdown()

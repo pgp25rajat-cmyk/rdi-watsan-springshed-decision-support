@@ -1,0 +1,15 @@
+# Local data must never be published
+node_modules/
+runtime/
+data/
+.taste-skill/
+__pycache__/
+*.py[cod]
+*.sqlite*
+*.db
+.env
+.env.*
+!.env.example
+desktop.ini
+Thumbs.db
+~$*

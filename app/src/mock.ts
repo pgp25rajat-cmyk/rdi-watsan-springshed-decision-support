@@ -411,7 +411,6 @@ function moduleC(req: AssessRequest, lat: number, lon: number, elev: number, b: 
     ],
     monitoring_plan: [
       'Measure the spring flow with a bucket and stopwatch on the 1st of every month, starting now, before any work.',
-      'Keep the same record for one nearby spring that gets no recharge work, to compare.',
       'Note rain on the day of each reading and any cleaning of first-flush diverters and filters.',
       'Check water in the DI handpumps once a month after the monsoon (a dip-meter or a rope with a weight).',
       'Compare May-June flows over at least two years before judging the result.',
