@@ -118,8 +118,15 @@ def handler(store, worker=None):
                 return self.send(
                     file.read_bytes(), mime=mimetypes.guess_type(file.name)[0] or "application/octet-stream"
                 )
+            if path == "/" or path == "/dashboard":
+                self.send_response(302)
+                self.send_header("Location", "/dashboard/")
+                self.send_header("Content-Length", "0")
+                self.end_headers()
+                return
             root = (HERE / "dist").resolve()
-            file = (root / path.lstrip("/")).resolve()
+            # the page is built for /dashboard/ (vite base), so it can also be served inside the spring tool
+            file = (root / path.removeprefix("/dashboard").lstrip("/")).resolve()
             if not file.is_relative_to(root):
                 return self.send({"error": "Page not found."}, 404)
             if not file.is_file():

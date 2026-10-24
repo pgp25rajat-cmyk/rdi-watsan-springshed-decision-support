@@ -49,6 +49,6 @@ Do not put credentials, personal contact details, consent-sensitive photos, or u
 
 The current register is an intake inventory, not an endorsement that each data source is suitable for modelling.
 
-## Separate DI impact dashboard
+## One platform: opening page, planner and DI dashboard
 
-This branch also contains [`DI Dashboard/`](DI%20Dashboard/README.md), an independent local application for repeat spring/handpump visits and impact tracking. Its launcher, frontend, API and database remain separate from the original planner. The public source package includes no DI field records, photos, exact site coordinates or runtime databases. Existing app behaviour and deployment are unchanged.
+`start_tool.bat` (or `python scripts/spring_tool_server.py`) opens the opening page at http://127.0.0.1:8765. From there, **Open planner** goes to the Spring Health & Recharge Planner (`#/planner`) and **Open dashboard** to the [DI impact dashboard](DI%20Dashboard/README.md) (`/dashboard/`), for repeat spring and handpump visits and impact tracking. The dashboard keeps its own frontend and database (`DI Dashboard/runtime/`, never committed).

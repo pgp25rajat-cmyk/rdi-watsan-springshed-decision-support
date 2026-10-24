@@ -2,14 +2,14 @@ import { StrictMode, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
 import Home from './home/Home';
-import Dashboard from './home/Dashboard';
 import './styles.css';
 import './home/home.css';
 
-// Three pages on hash addresses, so the Python server needs no change: #/ (opening page), #/planner, #/dashboard
+// Pages: #/ (opening page) and #/planner here; the DI dashboard is its own page at /dashboard/ (DI Dashboard/, same server)
 function route() {
   const h = window.location.hash.replace(/^#\/?/, '').split(/[?/]/)[0];
-  return h === 'planner' || h === 'dashboard' ? h : 'home';
+  if (h === 'dashboard') window.location.replace('/dashboard/'); // old address of the dashboard slot
+  return h === 'planner' ? h : 'home';
 }
 
 function Root() {
@@ -20,11 +20,9 @@ function Root() {
     return () => window.removeEventListener('hashchange', on);
   }, []);
   useEffect(() => {
-    document.title = page === 'planner' ? 'Spring Health & Recharge Planner'
-      : page === 'dashboard' ? 'WATSAN Intervention Dashboard' : 'Springs of the Himalaya · RDI WATSAN';
+    document.title = page === 'planner' ? 'Spring Health & Recharge Planner' : 'Springs of the Himalaya · RDI WATSAN';
   }, [page]);
   if (page === 'planner') return <App />;
-  if (page === 'dashboard') return <Dashboard />;
   return <Home />;
 }
 

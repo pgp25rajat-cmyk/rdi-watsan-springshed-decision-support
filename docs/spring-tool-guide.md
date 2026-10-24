@@ -12,7 +12,8 @@ Everything runs on your laptop. The tool calls no paid service and uses no AI mo
 
 **Windows (Rajat's laptop):** double-click **`start_tool.bat`** in the `Tool` folder.
 
-- A black window opens and the page opens in your browser at http://127.0.0.1:8765.
+- A black window opens and the opening page opens in your browser at http://127.0.0.1:8765.
+- Click **Open planner** for this tool, or **Open dashboard** for the DI impact dashboard (http://127.0.0.1:8765/dashboard/). Both have a **← Home** link back.
 - Keep the black window open while you use the tool. Close it to stop.
 
 The start file looks for its map folders next to the `Tool` folder:

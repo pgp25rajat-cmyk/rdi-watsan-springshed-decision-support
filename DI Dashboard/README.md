@@ -1,21 +1,23 @@
 # DI Dashboard
 
-A separate local application for tracking spring, DI handpump and village outcomes through occasional field visits. This module does not call, import or write to the original spring-planning app. No authentication is included; the service binds to this computer only.
+A local application for tracking spring, DI handpump and village outcomes through occasional field visits. Its code does not call, import or write to the spring planner's modules. No authentication is included; the service binds to this computer only.
 
 ## Run
 
-On Windows, double-click **Open DI Dashboard.cmd**. Alternatively, with Python 3.11 or newer:
+The spring tool runs the dashboard for you: start it with `start_tool.bat` (or `python scripts/spring_tool_server.py`) and click **Open dashboard** on the opening page, or go to http://127.0.0.1:8765/dashboard/.
+
+To run the dashboard on its own, double-click **Open DI Dashboard.cmd**, or with Python 3.11 or newer:
 
 ```sh
 cd "DI Dashboard"
 python server.py --port 8769
 ```
 
-Open http://127.0.0.1:8769/. Built frontend assets are included, so Node is not needed to run the app. To rebuild, install Node 22.12+ (or 20.19+) and run `npm ci` then `npm run build` in this folder. The server uses Python's standard library; there is no pip installation step.
+Open http://127.0.0.1:8769/dashboard/. Built frontend assets are included, so Node is not needed to run the app. To rebuild, install Node 22.12+ (or 20.19+) and run `npm ci` then `npm run build` in this folder. The server uses Python's standard library; there is no pip installation step.
 
-## Separate applications
+## One platform
 
-The original Spring Health & Recharge Planner remains at the repository root with its existing launcher and API. DI Dashboard has its own server, frontend and SQLite database. Run each with its own launcher; use different ports if needed. No shared runtime or integration is introduced by this branch.
+The opening page, the Spring Health & Recharge Planner and this dashboard are served by one server (`scripts/spring_tool_server.py`, port 8765). The page is built for `/dashboard/` (vite `base`), and the API stays at `/api/v2/`. The dashboard keeps its own frontend and SQLite database (`runtime/di-dashboard.sqlite`), so the same data opens whether it is run inside the spring tool or on its own (not both at once). `--no-dashboard` runs the planner without it; `--no-weather` stops the rainfall requests.
 
 ## WATSAN DI sites data
 

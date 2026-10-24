@@ -122,6 +122,9 @@ function App() {
   return (
     <div className="app-frame">
       <aside className={"sidebar " + (menu ? "is-open" : "")}>
+        <a href="/" className="home-link">
+          ← Home
+        </a>
         <a href="#/overview" className="brand">
           <Mark />
           <div>
@@ -139,6 +142,9 @@ function App() {
         </nav>
       </aside>
       <div className="mobile-bar">
+        <a href="/" className="home-link">
+          ←
+        </a>
         <a href="#/overview">
           <Mark />
           <strong>DI Dashboard</strong>

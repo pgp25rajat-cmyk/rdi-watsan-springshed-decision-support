@@ -27,7 +27,7 @@ export default function Home() {
       </header>
 
       <section className="doors" aria-label="Open a section">
-        <a className="door door-dash" href="#/dashboard">
+        <a className="door door-dash" href="/dashboard/">
           <span className="door-kicker"><ChartIcon />WATSAN interventions</span>
           <h2>Dashboard</h2>
           <p>Track the springs and their recharge handpumps. What changed, and by how much.</p>
