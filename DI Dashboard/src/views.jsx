@@ -299,6 +299,8 @@ function Compare({ comparison, kind = "spring" }) {
     </Empty>
   );
 }
+// Timed flow readings entered on visits (not the agreed before/after values).
+const hasReadings = (visits, metric = "spring") => visits.some((v) => v[metric]?.flow_lpm != null);
 function Quality({ visits, onOpen, asset }) {
   const rows = [...visits]
     .reverse()
@@ -309,6 +311,7 @@ function Quality({ visits, onOpen, asset }) {
         )
         .map((t) => ({ ...t, visit: v })),
     );
+  if (!rows.length) return null;
   return (
     <Panel
       title="Water tests"
@@ -372,13 +375,9 @@ export function Overview({ state, onOpen }) {
       <div className={drafts.length ? "overview-map-grid" : ""}>
         <Panel
           title="Springs and linked handpumps"
-          sub={`${p.springs_mapped} spring positions · ${p.handpumps_mapped} handpump positions recorded. Open a marker to see the site.`}
+          sub={`${p.springs_mapped} springs · ${p.handpumps_mapped} DI handpumps. Open a marker to see the site.`}
         >
           <SiteMap sites={state.sites} height={325} />
-          <p className="caption">
-            Pale markers use transcribed field coordinates. Missing handpump positions are left unmapped.
-            Links and distant coordinate pairs still need field confirmation.
-          </p>
         </Panel>
         {drafts.length > 0 && (
           <aside>
@@ -397,7 +396,7 @@ export function Overview({ state, onOpen }) {
         )}
       </div>
       <div className="data-footer">
-        <span>Source summaries, portal measurements and calculated changes keep their own labels.</span>
+        <span />
         <div>
           <a href="/api/v2/export.csv">Download visits</a>
           <a href="/api/v2/backup">Back up database</a>
@@ -545,11 +544,11 @@ export function SiteDetail({ site: s, state, onOpen }) {
             <strong>{s.handpump_name || "Not added"}</strong>
           </div>
           <div>
-            <span>Households recorded once</span>
+            <span>Households</span>
             <strong>{s.households ?? "Not recorded"}</strong>
           </div>
           <a href={"#/tracking?site=" + s.id}>
-            Open separate impact views <Icon name="arrow" size={15} />
+            See it in Track impact <Icon name="arrow" size={15} />
           </a>
         </div>
       </div>
@@ -575,17 +574,15 @@ export function SiteDetail({ site: s, state, onOpen }) {
               <SiteLastTwo impact={a.impact} />
             </Panel>
           </div>
-          <div className="two-col">
-            <Panel title="Spring" sub="Discharge and seasonal availability.">
-              <FlowChart visits={visits} />
-              <Compare comparison={a.spring.comparison} />
-            </Panel>
-            <Panel title="Handpumps and DI lines" sub="Equipment status is separate from spring response.">
+          <div className={hasReadings(visits) ? "two-col" : ""}>
+            {hasReadings(visits) && (
+              <Panel title="Spring flow at each visit" sub="Timed readings from saved visits.">
+                <FlowChart visits={visits} />
+                <Compare comparison={a.spring.comparison} />
+              </Panel>
+            )}
+            <Panel title="Handpumps and DI lines" sub="Condition at the latest check.">
               <Equipment a={a} state={state} onOpen={onOpen} />
-              <p className="caption">
-                A working handpump and a connected DI pipe are separate checks. No injection volume is
-                inferred from either.
-              </p>
             </Panel>
           </div>
           <Panel title="Impact beyond water" sub="What people told us changed for them.">
@@ -755,23 +752,22 @@ export function Tracking({ state, onOpen }) {
               <SiteLastTwo impact={a.impact} />
             </Panel>
           </div>
-          <div className="two-col">
-            <Panel
-              title="Spring discharge"
-              sub="Points retain their evidence type; date-range records are not precise-day measurements."
-            >
-              <FlowChart visits={visits} />
-              {a.spring.reported_range && (
-                <p className="notice">
-                  Field-form estimate: {a.spring.reported_range.join("–")} L/min. This range is not replaced
-                  by a midpoint.
-                </p>
-              )}
-            </Panel>
-            <Panel title="Observed flow change">
-              <Compare comparison={a.spring.comparison} />
-            </Panel>
-          </div>
+          {hasReadings(visits) && (
+            <div className="two-col">
+              <Panel title="Spring flow at each visit" sub="Timed readings from saved visits.">
+                <FlowChart visits={visits} />
+                {a.spring.reported_range && (
+                  <p className="notice">
+                    Field-form estimate: {a.spring.reported_range.join("–")} L/min. This range is not replaced
+                    by a midpoint.
+                  </p>
+                )}
+              </Panel>
+              <Panel title="Change between matching visits">
+                <Compare comparison={a.spring.comparison} />
+              </Panel>
+            </div>
+          )}
           <Quality visits={visits} asset="spring" onOpen={onOpen} />
         </>
       )}
@@ -780,26 +776,28 @@ export function Tracking({ state, onOpen }) {
           <Panel title="Before vs after DI" sub="Condition before DI, condition now, and remarks.">
             <PumpBeforeAfter rows={a.impact.handpumps_before_after} />
           </Panel>
-          <div className="two-col">
-            <Panel title="Handpump delivery" sub={site.handpump_name}>
-              <FlowChart visits={pumpRows} metric="pump" />
-              <p className="caption">
-                Three timed readings and the pumping procedure are required. Strokes per bucket alone cannot
-                give L/min.
-              </p>
-            </Panel>
-            <Panel title="Handpump change">
-              <Compare comparison={a.handpump.comparison} kind="handpump" />
-              <div className="pump-state">
-                <Tag tone={warning(a.handpump.status)}>{pumpLabels[a.handpump.status]}</Tag>
-                <span>
-                  {a.handpump.restored
-                    ? "Recovery documented across two visits"
-                    : "No before/after recovery established"}
-                </span>
-              </div>
-            </Panel>
-          </div>
+          {hasReadings(pumpRows, "pump") && (
+            <div className="two-col">
+              <Panel title="Handpump delivery" sub={site.handpump_name}>
+                <FlowChart visits={pumpRows} metric="pump" />
+                <p className="caption">
+                  Three timed readings and the pumping procedure are required. Strokes per bucket alone cannot
+                  give L/min.
+                </p>
+              </Panel>
+              <Panel title="Handpump change">
+                <Compare comparison={a.handpump.comparison} kind="handpump" />
+                <div className="pump-state">
+                  <Tag tone={warning(a.handpump.status)}>{pumpLabels[a.handpump.status]}</Tag>
+                  <span>
+                    {a.handpump.restored
+                      ? "Recovery documented across two visits"
+                      : "No before/after recovery established"}
+                  </span>
+                </div>
+              </Panel>
+            </div>
+          )}
           <Quality visits={visits} asset="pump" onOpen={onOpen} />
         </>
       )}
@@ -857,45 +855,36 @@ export function HowItWorks({ state }) {
     sample = active(state.visits).find((v) => v.spring.readings?.length === 3);
   return (
     <>
-      <Header
-        title="Impact methodology"
-        sub={"Rules, formulas and evidence requirements · calculation version " + method.version}
-      />
+      <Header title="How it works" sub="What each result means and how it is worked out." />
       <div className="method-intro">
         <div>
-          <h2>Four questions. Separate answers.</h2>
+          <h2>Each spring against its own records</h2>
           <p>
-            Did the handpump recover or deliver more water? Is the spring more reliable? Is the DI system
-            maintained? What changed for the village?
+            For every DI site the dashboard answers five questions separately: how much roof water goes into
+            the ground, whether the handpump works, how the spring flow changed, whether the DI line and
+            filter are in order, and what changed for people.
           </p>
           <p>
-            These answers use different evidence. Adding them into one weighted score would hide missing
-            measurements and mix water, equipment and people.
+            They are kept apart, not added into one score, so a gap in one never hides behind another. A
+            spring is only compared with its own earlier records, never with other springs.
           </p>
-          <div className="method-decision">
-            <strong>Composite impact weights: not applied</strong>
-            <span>
-              No approved composite DI impact index is used. Actual units, counts, denominators and source
-              labels stay visible.
-            </span>
-          </div>
         </div>
         <div className="method-decision">
           <strong>From a visit to a result</strong>
           <ol>
-            <li>Enter the field record.</li>
-            <li>Check the source, date and units.</li>
-            <li>Apply the formula to eligible readings.</li>
-            <li>Show the result and its limits.</li>
+            <li>Record the visit: handpump first, then each spring.</li>
+            <li>The dashboard checks units, dates and the three readings.</li>
+            <li>It applies the formula below to the readings.</li>
+            <li>It shows the result with its source and limits.</li>
           </ol>
         </div>
       </div>
       <Panel
         title="How each value is calculated"
-        sub="Select an indicator to see its formula, inputs, weights and limits."
+        sub="Pick a result to see its formula, what it needs and what it means."
       >
         <label className="method-selector">
-          Indicator
+          Result
           <ChoiceSelect
             aria-label="Method indicator"
             value={chosen}
@@ -918,7 +907,7 @@ export function HowItWorks({ state }) {
           <p className="formula">{row.formula}</p>
           <dl className="method-facts">
             {[
-              ["Weight or contribution", row.weights],
+              ["How the parts combine", row.weights],
               ["Inputs required", row.needs],
               ["When evidence is missing", row.missing],
               ["What the result means", row.interpretation],
@@ -977,36 +966,10 @@ export function HowItWorks({ state }) {
             <li>Show rainfall, repairs, solar pumping, new pipes and other work beside the change.</li>
           </ol>
           <p className="notice">
-            No valid pair means “comparable follow-up needed”, rather than zero impact.
+            With no matching pair, the dashboard asks for a follow-up visit instead of showing zero change.
           </p>
         </Panel>
       </div>
-      <Panel title="From evidence to a displayed result">
-        <div className="method-pipeline">
-          {[
-            ["Original evidence", "Keep the paper-form/PDF/photo unchanged, with its checksum."],
-            [
-              "Reviewed entry",
-              "Enter a field value, related asset, date or date range, page and source note.",
-            ],
-            [
-              "Validation",
-              "Check units, three readings, required fields, location and conflicting accounts.",
-            ],
-            ["Calculation", "Apply the versioned formula only to eligible records. Preserve the raw inputs."],
-            ["Interpretation", "Label measured change, reported change and estimated collection separately."],
-          ].map(([title, body]) => (
-            <div key={title}>
-              <h3>{title}</h3>
-              <p>{body}</p>
-            </div>
-          ))}
-        </div>
-        <p className="caption">
-          Initial source intake was explicitly reviewed for this project. Future file uploads are supporting
-          evidence and are not parsed automatically. <a href="#/sources">Open the evidence records.</a>
-        </p>
-      </Panel>
       <div className="two-col">
         <Panel title="Short, medium and long term">
           <div className="method-timeline">
@@ -1051,14 +1014,9 @@ export function HowItWorks({ state }) {
             its own earlier records, not against other springs.
           </p>
           <p className="notice">
-            Current attribution: not quantified. Report the observed or reported change and its supporting
-            evidence.
-          </p>
-          <h3>The paper vulnerability screen is different</h3>
-          <p>
-            The field form’s 10 indicators each score 1–3 and are added with equal weight: total 10–30; below
-            15 low, 15–20 medium, above 20 high. That describes vulnerability. It is not a DI impact score and
-            is not substituted for the results above.
+            “DI water fed into the springs” is an estimate made with the spring planner’s method, not a
+            measurement. The flow changes are what was measured or agreed, with rain and other work shown
+            beside them.
           </p>
         </Panel>
       </div>

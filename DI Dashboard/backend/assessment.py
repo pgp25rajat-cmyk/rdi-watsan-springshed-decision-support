@@ -226,7 +226,7 @@ def follow_up(results, state):
 def enrich(state, results):
     active = active_visits(state["visits"])
     mapped = 0
-    pump_mapped = 0
+    pump_mapped = set()  # by handpump name: Arakot 2 is linked to two springs but is one handpump
     for site, a in zip(state["sites"], results):
         rows = [v for v in active if v["site_id"] == site["id"]]
         normal = lambda name: re.sub(r"[^a-z0-9]", "", str(name).lower())
@@ -357,9 +357,9 @@ def enrich(state, results):
             impact=site_impact(site, state),
         )
         mapped += site.get("latitude") is not None
-        pump_mapped += (site.get("pump_latitude") is not None) + sum(
-            p.get("latitude") is not None for p in site.get("additional_handpumps", [])
-        )
+        if site.get("pump_latitude") is not None:
+            pump_mapped.add(normal(site.get("handpump_name")))
+        pump_mapped |= {normal(p["name"]) for p in site.get("additional_handpumps", []) if p.get("latitude") is not None}
     gear = [p for a in results for p in a["equipment"]]
     checked = [p for p in gear if p["di_status"] != "not_checked"]
     connected = sum(p["di_status"] == "connected" for p in checked)
@@ -379,7 +379,7 @@ def enrich(state, results):
         "di_connected_percent": 100 * connected / len(checked) if checked else None,
         "needs_work": sum(bool(a["maintenance"]) for a in results),
         "springs_mapped": mapped,
-        "handpumps_mapped": pump_mapped,
+        "handpumps_mapped": len(pump_mapped),
         "evidence_records": len(state.get("evidence_records", [])),
         "lab_results": sum(a["quality_test_count"] for a in results),
         "impact": impact_portfolio([a["impact"] for a in results]),

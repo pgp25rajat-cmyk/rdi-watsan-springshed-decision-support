@@ -43,18 +43,21 @@ const range = (p) => (p.low === p.high ? fmt(p.low, 1) : fmt(p.low, 1) + "–" +
 export const changeText = (c) =>
   c.direction === "dry_to_flowing" || c.direction === "still_dry"
     ? directionText[c.direction]
-    : (c.mid > 0 ? "+" : "") +
-      fmt(c.mid, 1) +
-      " L/min" +
-      (c.percent != null ? " (" + (c.percent > 0 ? "+" : "") + fmt(c.percent) + "%)" : "");
+    : c.low === 0 && c.high === 0
+      ? "No change"
+      : (c.mid > 0 ? "+" : "") +
+        fmt(c.mid, 1) +
+        " L/min" +
+        (c.percent != null ? " (" + (c.percent > 0 ? "+" : "") + fmt(c.percent) + "%)" : "");
 
-// One row per spring: earlier value (hollow) to later value (filled). Bars show the range given.
 const shortChange = (c) =>
   c.direction === "dry_to_flowing"
     ? "Flows"
     : c.direction === "still_dry"
       ? "Dry"
-      : (c.mid > 0 ? "+" : "") + fmt(c.mid, 1);
+      : c.low === 0 && c.high === 0
+        ? "Same"
+        : (c.mid > 0 ? "+" : "") + fmt(c.mid, 1);
 
 // One row per spring: name on the left, then earlier value (hollow) to later value (filled), with the monsoon
 // flow (square) on the same row line. Bars show the range given; the change is on the right.
@@ -464,6 +467,7 @@ export function PortfolioBeyondWater({ state }) {
 
 export function SiteBeforeAfter({ impact }) {
   const r = impact.spring_before_after;
+  if (!r && impact.flow_note) return <Empty title="No spring flow yet">{impact.flow_note}</Empty>;
   if (!r)
     return (
       <Empty title="No before/after spring record">
@@ -518,6 +522,7 @@ export function SiteBeforeAfter({ impact }) {
 
 export function SiteLastTwo({ impact }) {
   const r = impact.last_two;
+  if (!r && impact.flow_note) return <Empty title="No spring flow yet">{impact.flow_note}</Empty>;
   if (!r) return <Empty title="Two flow records are needed">The next visit will give a second record.</Empty>;
   return (
     <>
@@ -722,7 +727,9 @@ export function ImpactSummary({ state }) {
           <small> / {p.spring_numeric + p.spring_reported} springs with flow data</small>
         </strong>
         <p>
-          {p.spring_no_data} of {p.di_sites} DI springs have no flow data yet
+          {p.spring_no_data === 1 ? "1 DI spring has" : p.spring_no_data + " DI springs have"} no flow data
+          yet
+          {p.spring_no_data_names?.length ? ": " + p.spring_no_data_names.join(", ") : ""}
         </p>
       </div>
       <div>

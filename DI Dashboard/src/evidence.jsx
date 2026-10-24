@@ -34,6 +34,16 @@ export function SitePhoto({ site, large = false, photo }) {
   );
 }
 
+const BASIS = {
+  measured: "Measured",
+  estimate: "Estimate",
+  report: "Report",
+  recall: "People's recall",
+  agreed: "Team value",
+  observed: "Seen on the visit",
+  not_measured: "Not measured",
+};
+
 export function PhotoStrip({ photos }) {
   const [open, setOpen] = useState(null);
   if (!photos.length) return <Empty title="No field photos yet">Photos are added by DI handpump.</Empty>;
@@ -121,7 +131,7 @@ export function EvidenceRows({ state, siteId, visitId, onOpen, asset }) {
                   ? "Check source"
                   : e.basis === "portal_entry"
                     ? "Portal entry"
-                    : "Supporting file"}
+                    : BASIS[e.basis] || "Source record"}
               </Tag>
             </div>
             <p className="evidence-value">{readable(e)}</p>
@@ -201,14 +211,7 @@ export function Sources({ state, onOpen }) {
           </ChoiceSelect>
         </label>
       </div>
-      <p className="notice">
-        Enter field values in the portal. Photos and files support those entries; the dashboard does not
-        extract values from them automatically.
-      </p>
-      <Panel
-        title="Values and supporting evidence"
-        sub="Source copies are kept unchanged, with file checksums. Unclear readings and asset links remain flagged."
-      >
+      <Panel title="Every value and where it came from" sub="Reports, field forms, team values and visits.">
         <EvidenceRows state={state} siteId={site === "all" ? null : site} asset={asset} onOpen={onOpen} />
       </Panel>
     </>

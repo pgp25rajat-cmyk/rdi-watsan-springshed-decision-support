@@ -30,6 +30,16 @@ RECORD_LABELS = {
     "field_visit_2026_10": "Field visit, Oct 2026",
     "rajat_2026_10_24": "Team note (Rajat, Oct 2026)",
 }
+# Plain names for the data file's metrics, as shown under Source records.
+METRIC_LABELS = {
+    "flow_lpm": "Flow",
+    "lean_flow_lpm": "Dry-season flow",
+    "monsoon_flow_lpm": "Monsoon flow",
+    "reported_change": "Change people reported",
+    "village_change": "Change people described",
+    "pump_status": "Handpump condition",
+    "pump_yield": "Handpump delivery",
+}
 VISITOR = "DOCC/WATSAN field team"
 # Planner defaults (scripts/module_c_di_impact.py): RDI design collects 70-80% of roof rain.
 COLLECTION_FACTOR = 0.8
@@ -225,6 +235,7 @@ def build(folder=DEFAULT_DIR):
             )
 
     visit_ids = {v["id"] for v in visits}
+    pump_names = {p["handpump_id"]: p["name"] for p in pump_rows}
     for o in obs_rows:
         sid = site_key(o["site_id"])
         if o["record"] == "field_visit_2026_10":
@@ -262,7 +273,15 @@ def build(folder=DEFAULT_DIR):
                 "site_id": sid,
                 "visit_id": vid,
                 "asset": o["asset"] if o["asset"] in ("spring", "handpump", "village") else "site",
-                "field": o["metric"] + (" · " + RECORD_LABELS.get(o["record"], o["record"])),
+                "field": " · ".join(
+                    x
+                    for x in (
+                        pump_names.get(o["asset_id"]) if o["asset"] == "handpump" else "",
+                        METRIC_LABELS.get(o["metric"], o["metric"].replace("_", " ")),
+                        RECORD_LABELS.get(o["record"], o["record"]),
+                    )
+                    if x
+                ),
                 "value": value + (" L/min" if o["metric"].endswith("_lpm") and low is not None else ""),
                 "basis": o["basis"],
                 "review_status": "source_transcribed",

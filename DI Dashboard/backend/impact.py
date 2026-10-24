@@ -460,8 +460,14 @@ def site_impact(site, state):
     active = [v for v in state["visits"] if v["status"] == "submitted"]
     obs += portal_observations(site, active)
     spring = spring_before_after(obs)
+    # Why a spring has no flow record yet (e.g. Badeda: covered, no access).
+    flow_note = next(
+        (o["text"] for o in obs if o["asset"] == "spring" and o["basis"] == "not_measured" and o.get("text")), ""
+    )
     return {
         "role": site.get("role") or "DI site",
+        "spring_name": site.get("spring_name") or site.get("name"),
+        "flow_note": flow_note if not spring else "",
         "spring_before_after": spring,
         "last_two": last_two(obs),
         "handpumps_before_after": pump_before_after(site, obs),
@@ -514,6 +520,7 @@ def portfolio(impacts):
         "spring_reported_up": sum(r["direction"] == "increase" for r in reported),
         "spring_reported_same": sum(r["direction"] == "same" for r in reported),
         "spring_no_data": len(di_sites) - len(numeric) - len(reported),
+        "spring_no_data_names": [i["spring_name"] for i in di_sites if not i["spring_before_after"]],
         "pumps": len(pumps),
         "pumps_with_before": sum(p["before"] is not None for p in pumps),
         "pumps_restored": sum(p["outcome"] == "restored" for p in pumps),

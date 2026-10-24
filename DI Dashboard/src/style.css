@@ -58,3 +58,5 @@
 .add-spring{margin:-8px 0 24px}
 .photo-site-content .site-card-head p{margin-bottom:0}
 .spring-ticks{display:flex;flex-wrap:wrap;gap:12px 28px;padding:6px 0}
+@media(min-width:801px){.pump-table td:first-child strong{white-space:nowrap}}
+.pump-table .tag{justify-self:start;width:fit-content}
