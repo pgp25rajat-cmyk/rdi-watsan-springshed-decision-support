@@ -5,7 +5,7 @@ from math import radians, sin, cos, asin, sqrt
 from .rules import active_visits, rainfall_location
 from .impact import INDICATORS as IMPACT_INDICATORS, portfolio as impact_portfolio, site_impact
 
-METHOD_VERSION = "3.1"
+METHOD_VERSION = "3.2"
 INDICATORS = [
     {
         "id": "spring_flow",

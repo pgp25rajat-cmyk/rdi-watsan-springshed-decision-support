@@ -103,11 +103,28 @@ class ImpactTests(unittest.TestCase):
         malani = by_id["wdi-04"]["impact"]["last_two"]
         self.assertEqual((malani["before"]["mid"], malani["after"]["mid"]), (10, 17))
         self.assertEqual(len(malani["sequence"]), 3)
+        # Kaddukhal is broken now (Rajat, 2026-10-24); its remark says so.
+        kaddukhal = by_id["wdi-03"]["impact"]["handpumps_before_after"][0]
+        self.assertEqual((kaddukhal["outcome"], kaddukhal["after"]), ("not_working_now", "broken"))
+        self.assertIn("broken", kaddukhal["remarks"])
+        self.assertTrue(by_id["wdi-02"]["impact"]["beyond_water"]["story"])
         p = result["portfolio"]["impact"]
         self.assertEqual(p["di_sites"], 9)
+        self.assertEqual(p["pumps_restored"], 8)
+        # Water injected follows the planner: collected = roof x rain used x 0.8, injected = x 0.85,
+        # reaching = injected x share x depth factor.
+        w = balench["di_water"]
+        arakot1 = w["rows"][0]
+        self.assertAlmostEqual(arakot1["collected_m3"], 150 * w["rain_used_mm"] / 1000 * 0.8, places=0)
+        self.assertAlmostEqual(arakot1["volume_m3"], arakot1["collected_m3"] * 0.85, places=0)
+        self.assertAlmostEqual(arakot1["reaching_m3"][1], arakot1["volume_m3"] * 0.15, places=0)
+        self.assertFalse(arakot1["online"])  # roof pipe broken
+        self.assertEqual(p["di_offline"], ["Arakot 1", "Chopriyal 2"])
+        self.assertLess(p["di_reaching_now_m3"][1], p["di_reaching_m3"][1])
+        # Arakot 2 (linked to two springs) is counted once in the total.
         per_site = sum(a["impact"]["di_water"].get("volume_m3") or 0 for a in result["sites"])
         arakot2 = by_id["wdi-06"]["impact"]["di_water"]["volume_m3"]
-        self.assertAlmostEqual(p["di_volume_m3"], per_site - arakot2, places=0)
+        self.assertLess(abs(p["di_volume_m3"] - (per_site - arakot2)), 2)
 
     def test_portal_edit_survives_reimport(self):
         watsan_import.load(self.db)

@@ -14,7 +14,7 @@ import {
   areas,
   seasons,
 } from "./shared.jsx";
-import { FlowChart, RainChart, VisitStrip } from "./graphics.jsx";
+import { FlowChart, VisitStrip } from "./graphics.jsx";
 import { ChoiceSelect } from "./controls.jsx";
 import { SiteMap } from "./maps.jsx";
 import { SitePhoto, EvidenceRows } from "./evidence.jsx";
@@ -27,9 +27,17 @@ import {
   SiteLastTwo,
   PumpBeforeAfter,
   DIWater,
+  BeyondWater,
+  PortfolioBeyondWater,
+  RainInfo,
 } from "./impact.jsx";
 
-const pumpLabels = { working: "Working", no_water: "No water", broken: "Broken", not_checked: "Not checked" };
+const pumpLabels = {
+  working: "Working",
+  no_water: "No water",
+  broken: "Broken",
+  not_checked: "Not checked",
+};
 const diLabels = {
   connected: "Connected",
   broken: "Broken",
@@ -134,7 +142,8 @@ function Progress({ state }) {
           <small> / {p.pump_checked} checked</small>
         </strong>
         <p>
-          {p.impact.pumps_restored} restored after DI (people's account) · {p.pump_restored} shown across two visits
+          {p.impact.pumps_restored} restored after DI (people's account) · {p.pump_restored} shown across two
+          visits
         </p>
       </div>
       <div>
@@ -250,52 +259,6 @@ function Quality({ visits, onOpen, asset }) {
     </Panel>
   );
 }
-function Rainfall({ site, state, a }) {
-  const lat = site.pump_latitude ?? site.latitude,
-    lon = site.pump_longitude ?? site.longitude,
-    key = lat != null ? `${Number(lat).toFixed(6)},${Number(lon).toFixed(6)}:era5` : null,
-    weather = state.weather[key],
-    job = state.weather_jobs.find((j) => j.site_id === site.id);
-  return (
-    <Panel
-      title="Rainfall context"
-      sub={
-        a.rainfall_at === "handpump"
-          ? "Automatic area estimate at the handpump location."
-          : "Spring location used as a proxy until handpump GPS is available."
-      }
-    >
-      {weather ? (
-        <RainChart weather={weather} />
-      ) : (
-        <Empty
-          title={
-            lat == null
-              ? "Add GPS to get rainfall"
-              : job?.status === "loading"
-                ? "Getting rainfall…"
-                : "Rainfall not available yet"
-          }
-        >
-          {job?.message ||
-            "The background update stores rainfall locally. Missing weather is never treated as zero."}
-        </Empty>
-      )}
-      {weather && job?.status === "failed" && (
-        <p className="notice">The last refresh failed. Saved rainfall is shown.</p>
-      )}
-      <a
-        className="provider-link"
-        href="https://open-meteo.com/en/docs/historical-weather-api"
-        target="_blank"
-        rel="noreferrer"
-      >
-        Open-Meteo / ERA5 · source and limits
-      </a>
-    </Panel>
-  );
-}
-
 export function Overview({ state, onOpen }) {
   const p = state.assessment.portfolio,
     drafts = state.visits.filter((v) => v.status === "draft"),
@@ -318,9 +281,10 @@ export function Overview({ state, onOpen }) {
         <PortfolioPumps state={state} />
       </div>
       <PortfolioLastTwo state={state} />
+      <PortfolioBeyondWater state={state} />
       <h2 className="section-title">Equipment and follow-up</h2>
       <Progress state={state} />
-      <div className="overview-map-grid">
+      <div className={drafts.length ? "overview-map-grid" : ""}>
         <Panel
           title="Springs and linked handpumps"
           sub={`${p.springs_mapped} spring positions · ${p.handpumps_mapped} handpump positions recorded. Open a marker to see the site.`}
@@ -331,24 +295,8 @@ export function Overview({ state, onOpen }) {
             Links and distant coordinate pairs still need field confirmation.
           </p>
         </Panel>
-        <aside>
-          <Panel title="What can we quantify now?">
-            <div className="impact-readiness">
-              <strong>{p.spring_comparisons + p.pump_comparisons}</strong>
-              <span>same-season visit pairs</span>
-            </div>
-            <p>
-              The before/after results above rest on recall and an undated report. {p.visits} saved visits are the
-              starting record; repeat visits in the same season will give measured change.
-            </p>
-            <p className="caption">
-              No single impact score is used. Natural recharge, repairs and other work also affect water.
-            </p>
-            <a className="text-link" href="#/how">
-              See formulas and evidence rules <Icon name="arrow" size={15} />
-            </a>
-          </Panel>
-          {drafts.length > 0 && (
+        {drafts.length > 0 && (
+          <aside>
             <Panel title="Unfinished visits">
               {drafts.map((v) => (
                 <a className="draft-row" key={v.id} href={"#/visits/new?draft=" + v.id}>
@@ -360,8 +308,8 @@ export function Overview({ state, onOpen }) {
                 </a>
               ))}
             </Panel>
-          )}
-        </aside>
+          </aside>
+        )}
       </div>
       <div className="two-col">
         <Panel
@@ -629,17 +577,8 @@ export function SiteDetail({ site: s, state, onOpen }) {
               </p>
             </Panel>
           </div>
-          {a.evidence_notes.length > 0 && (
-            <Panel title="Checks needed before interpretation">
-              {a.evidence_notes.map((n, i) => (
-                <p key={i} className="notice">
-                  {n}
-                </p>
-              ))}
-            </Panel>
-          )}
-          <Panel title="Village changes">
-            <Changes changes={a.changes.filter((c) => !c.asset || c.asset === "village")} />
+          <Panel title="Impact beyond water" sub="What people told us changed for them.">
+            <BeyondWater impact={a.impact} />
           </Panel>
         </>
       )}
@@ -732,7 +671,7 @@ export function Tracking({ state, onOpen }) {
         state.sites.find((s) => assessment(state, s.id)?.visit_count)?.id ||
         state.sites[0]?.id,
     ),
-    [asset, setAsset] = useState("spring");
+    [asset, setAsset] = useState(query.get("asset") || "spring");
   const site = state.sites.find((s) => s.id === selected) || state.sites[0];
   if (!site)
     return <Empty title="Add a site first">Its spring, handpump and DI checks will appear here.</Empty>;
@@ -748,7 +687,7 @@ export function Tracking({ state, onOpen }) {
     <>
       <Header
         title="Track impact"
-        sub="Assess spring response and handpump performance independently, then follow village outcomes."
+        sub="Spring flow, handpumps, water injected and impact beyond water for each DI site."
         action={
           <Button primary href={"#/visits/new?site=" + site.id}>
             Record a visit
@@ -774,8 +713,9 @@ export function Tracking({ state, onOpen }) {
         {[
           ["spring", "Spring response"],
           ["pump", "Handpump performance"],
+          ["water", "Water injected"],
           ["di", "DI and maintenance"],
-          ["village", "Village changes"],
+          ["village", "Impact beyond water"],
         ].map(([id, label]) => (
           <button
             key={id}
@@ -791,7 +731,10 @@ export function Tracking({ state, onOpen }) {
       {asset === "spring" && (
         <>
           <div className="two-col">
-            <Panel title="Dry-season spring flow: before vs after DI" sub="Primary result. The square shows monsoon flow after DI.">
+            <Panel
+              title="Dry-season spring flow: before vs after DI"
+              sub="Primary result. The square shows monsoon flow after DI."
+            >
               <SiteBeforeAfter impact={a.impact} />
             </Panel>
             <Panel title="Last two readings" sub="After-DI dry flow, then after-DI monsoon flow (latest).">
@@ -813,23 +756,14 @@ export function Tracking({ state, onOpen }) {
             </Panel>
             <Panel title="Observed flow change">
               <Compare comparison={a.spring.comparison} />
-              {a.comparison?.before_rain && a.comparison?.after_rain && (
-                <p className="caption">
-                  90-day rainfall before each visit: {fmt(a.comparison.before_rain.rain_mm)} →{" "}
-                  {fmt(a.comparison.after_rain.rain_mm)} mm.
-                </p>
-              )}
             </Panel>
           </div>
           <Quality visits={visits} asset="spring" onOpen={onOpen} />
-          <Panel title="Spring accounts">
-            <Changes changes={a.changes.filter((c) => c.asset === "spring")} />
-          </Panel>
         </>
       )}
       {asset === "pump" && (
         <>
-          <Panel title="Before vs after DI" sub="What people said the handpump was like before DI, and its condition now.">
+          <Panel title="Before vs after DI" sub="Condition before DI, condition now, and remarks.">
             <PumpBeforeAfter rows={a.impact.handpumps_before_after} />
           </Panel>
           <div className="two-col">
@@ -853,9 +787,6 @@ export function Tracking({ state, onOpen }) {
             </Panel>
           </div>
           <Quality visits={visits} asset="pump" onOpen={onOpen} />
-          <Panel title="Handpump accounts">
-            <Changes changes={a.changes.filter((c) => c.asset === "handpump")} />
-          </Panel>
         </>
       )}
       {asset === "di" && (
@@ -863,38 +794,6 @@ export function Tracking({ state, onOpen }) {
           <div className="two-col">
             <Panel title="Equipment and recharge connection">
               <Equipment a={a} onOpen={onOpen} state={state} />
-            </Panel>
-            <Panel title="Water DI can put into the ground" sub="Yearly estimate from roof area and rain, with the planner's defaults.">
-              <DIWater impact={a.impact} />
-            </Panel>
-          </div>
-          <div className="two-col">
-            <Panel title="Roof water in the last 90 days" sub="From the Open-Meteo rainfall, when online.">
-              {a.roof_potential ? (
-                <>
-                  <div className="roof-figure">
-                    <strong>{fmt(a.roof_potential.volume_m3, 1)}</strong>
-                    <span>
-                      m³ during {date(a.roof_potential.period_start)} – {date(a.roof_potential.period_end)}
-                    </span>
-                  </div>
-                  <p>
-                    {fmt(a.roof_potential.roof_area_m2)} m² × {fmt(a.rain.rain_mm, 1)} mm ×{" "}
-                    {a.roof_potential.collection_factor} ÷ 1000.
-                  </p>
-                </>
-              ) : (
-                <Empty title="A complete estimate is not available">
-                  Roof area, a justified collection factor and a complete rainfall period are needed. No
-                  default factor is applied.
-                </Empty>
-              )}
-              <p className="caption">
-                Collection potential is not actual injection, aquifer recharge or additional spring water.
-              </p>
-              <a className="text-link" href={"#/sites/" + site.id + "/edit"}>
-                Review roof and location details <Icon name="arrow" size={15} />
-              </a>
             </Panel>
             <Panel title="Maintenance follow-up">
               {a.maintenance.length ? (
@@ -912,42 +811,27 @@ export function Tracking({ state, onOpen }) {
           </div>
         </>
       )}
+      {asset === "water" && (
+        <>
+          <Panel title="Rainfall" sub="At the spring, as in the spring planner.">
+            <RainInfo impact={a.impact} />
+          </Panel>
+          <Panel
+            title="Water injected"
+            sub="Rain collected from the DI roofs, injected into the aquifer, and the part that may reach the spring."
+          >
+            <DIWater impact={a.impact} />
+          </Panel>
+        </>
+      )}
       {asset === "village" && (
         <Panel
-          title="Changes in village life"
-          sub="Water access, farming, hygiene, toilets and school. Other interventions are recorded alongside each account."
+          title="Impact beyond water"
+          sub="What people told us changed for them, from the community interaction on the field forms."
         >
-          <Changes changes={a.changes.filter((c) => !c.asset || c.asset === "village")} />
-          <p className="caption">
-            Household count is recorded once on the site. It is not repeatedly surveyed to create short-term
-            growth.
-          </p>
+          <BeyondWater impact={a.impact} />
         </Panel>
       )}
-      <div className="two-col">
-        <Rainfall site={site} state={state} a={a} />
-        <Panel title="Interpretation checks">
-          {a.evidence_notes.length ? (
-            a.evidence_notes.map((n, i) => (
-              <p className="notice" key={i}>
-                {n}
-              </p>
-            ))
-          ) : (
-            <p>
-              Use matching measurements and record rain, repairs and other works before interpreting a
-              difference.
-            </p>
-          )}
-          <p className="caption">DI’s share is not quantified by the current records.</p>
-          <a className="text-link" href={"#/sites/" + site.id}>
-            Open site and evidence <Icon name="arrow" size={15} />
-          </a>
-        </Panel>
-      </div>
-      <Panel title="Visit history">
-        <VisitStrip visits={visits} onOpen={onOpen} />
-      </Panel>
     </>
   );
 }
@@ -1158,9 +1042,9 @@ export function HowItWorks({ state }) {
           </p>
           <h3>The paper vulnerability screen is different</h3>
           <p>
-            The field form’s 10 indicators each score 1–3 and are added with equal weight: total 10–30; below 15
-            low, 15–20 medium, above 20 high. That describes vulnerability. It is not a DI impact score and is
-            not substituted for the results above.
+            The field form’s 10 indicators each score 1–3 and are added with equal weight: total 10–30; below
+            15 low, 15–20 medium, above 20 high. That describes vulnerability. It is not a DI impact score and
+            is not substituted for the results above.
           </p>
         </Panel>
       </div>

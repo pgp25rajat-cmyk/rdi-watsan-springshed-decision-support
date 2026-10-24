@@ -12,12 +12,20 @@ Change between two records (before B, after A):
                      likely increase / decrease if the ranges overlap but the midpoints moved,
                      "dry to flowing" if B was 0 and A is above 0, otherwise "no clear change"
 
-DI water (planner Module C defaults, scripts/module_c_di_impact.py):
-    injected per year V (m3) = roof area (m2) x annual rain (mm) x 0.8 collection x 0.85 injection / 1000
-    as a steady flow (L/min) = V x 1000 / 525,600 minutes
-    best case, all in the 5 lean months (L/min) = V x 1000 / (5 x 30.44 x 1,440)
-    share of the spring gain DI could explain = DI steady flow / spring change (mid), shown only for a gain.
-    This assumes every litre injected reaches this spring, so it is an upper limit.
+Water injected (the planner's Module C method, scripts/module_c_di_impact.py), per DI handpump:
+    rain used (mm)        = annual rain (IMD gauges, else CHIRPS) + 0.5 x winter snow at the spring's height
+    rain collected (m3)   = roof area (m2) x rain used / 1000 x 0.8 (gutter, pipe and splash losses)
+    injected (m3)         = rain collected x 0.85 (first flush, overflow, downtime, clogging)
+    reaching spring (m3)  = injected x share x depth factor
+        share (low / mid / best case): 0.30/0.60/1.00 in a recharge zone on the spring's slope, 0.10/0.30/0.60 in a zone
+        linked by a fault or rock tilt, 0.05/0.20/0.50 by a crack, 0.05/0.15/0.30 elsewhere in the catchment,
+        0/0.02/0.10 outside it, 0 below the spring
+        depth factor: injection point (handpump ground - depth, 70 m if not known) against the spring outlet:
+        x1.0 more than 10 m above, x0.7 within 10 m, x0.4 up to 50 m below, x0.2 deeper
+    added spring flow (L/min) = reaching x 1000 / 525,600 (spread over the year), or
+                                reaching x 1000 / (5 x 30.44 x 1,440) (best case: all in the 5 lean months)
+    "now" counts only handpumps whose DI line is not disconnected or broken.
+    share of the spring gain DI could explain = lean-season added flow (mid) / spring change (mid).
 """
 
 from datetime import date
@@ -25,7 +33,33 @@ from datetime import date
 COLLECTION = 0.8
 INJECTION = 0.85
 LEAN_MONTHS = 5
+SNOW_CAPTURE = 0.5
+DEFAULT_DEPTH_M = 70
+SHARE = {
+    "in_zone_slope": (0.3, 0.6, 1.0),
+    "in_zone_linked": (0.1, 0.3, 0.6),
+    "in_zone_crack": (0.05, 0.2, 0.5),
+    "in_catchment": (0.05, 0.15, 0.3),
+    "outside": (0.0, 0.02, 0.1),
+    "below_spring": (0.0, 0.0, 0.0),
+}
+SHARE_LABEL = {
+    "in_zone_slope": "In a recharge zone on the spring's slope",
+    "in_zone_linked": "In a recharge zone linked by a fault or rock tilt",
+    "in_zone_crack": "In a recharge zone linked by a crack",
+    "in_catchment": "In the spring's catchment",
+    "outside": "Outside the spring's catchment",
+    "below_spring": "Below the spring",
+}
+DEPTH_FACTOR = [
+    (10, 1.0, "above the spring outlet"),
+    (-10, 0.7, "about level with the spring outlet"),
+    (-50, 0.4, "below the spring outlet"),
+    (-1e9, 0.2, "far below the spring outlet"),
+]
+OFF_LINE = ("disconnected", "broken")
 MINUTES_PER_YEAR = 525_600
+LEAN_MINUTES = LEAN_MONTHS * 30.44 * 1440
 BASIS_RANK = {"measured": 4, "observed": 4, "agreed": 3, "estimate": 3, "report": 2, "recall": 1}
 BASIS_LABEL = {
     "measured": "Measured (bucket and stopwatch)",
@@ -315,48 +349,108 @@ def pump_before_after(site, obs):
                 "after": a,
                 "after_date": after[-1].get("date") if after else None,
                 "outcome": outcome,
+                "remarks": h.get("remarks", ""),
                 "evidence": "recall" if before else None,
             }
         )
     return rows
 
 
+def depth_factor(injection_z, spring_z):
+    for above, factor, words in DEPTH_FACTOR:
+        if injection_z - spring_z >= above:
+            return factor, words
+    return DEPTH_FACTOR[-1][1:]
+
+
 def di_water(site, spring_result):
+    """Water injected and the share that may reach the spring, per handpump and for the site (planner Module C)."""
     rain = site.get("annual_rain_mm")
+    snow = site.get("snow_mm") or 0
+    rain_used = None if not rain else rain + SNOW_CAPTURE * snow
+    spring_z = site.get("elevation_m")
     pumps = site["handpumps"] if "handpumps" in site else (
         [{"name": site.get("handpump_name"), "roof_area_m2": site.get("roof_area_m2")}]
         + list(site.get("additional_handpumps") or [])
     )
+    rain_info = {
+        "annual_rain_mm": rain,
+        "annual_rain_source": site.get("annual_rain_source", ""),
+        "rain_chirps_mm": site.get("rain_chirps_mm"),
+        "monsoon_share_pct": site.get("rain_monsoon_share_pct"),
+        "dry_season_mm": site.get("rain_dry_season_mm"),
+        "snow_mm": snow,
+        "snow_used_mm": round(SNOW_CAPTURE * snow),
+        "rain_used_mm": None if rain_used is None else round(rain_used),
+    }
     rows = []
     for h in pumps:
+        row = {"id": h.get("id") or h.get("name"), "name": h.get("name"), "roof_area_m2": h.get("roof_area_m2")}
         roof = h.get("roof_area_m2")
-        if not roof or not rain:
-            rows.append({"id": h.get("id") or h.get("name"), "name": h.get("name"), "roof_area_m2": roof, "volume_m3": None})
+        if not roof or not rain_used:
+            rows.append({**row, "volume_m3": None})
             continue
-        volume = roof * rain * COLLECTION * INJECTION / 1000
-        rows.append({"id": h.get("id") or h.get("name"), "name": h.get("name"), "roof_area_m2": roof, "volume_m3": round(volume, 1)})
+        where = h.get("location_class") or "in_catchment"
+        depth = h.get("bore_depth_m") or DEFAULT_DEPTH_M
+        factor, words = 1.0, ""
+        injection_z = None
+        if h.get("elevation_m") is not None and spring_z is not None:
+            injection_z = h["elevation_m"] - depth
+            factor, words = depth_factor(injection_z, spring_z)
+        share = [f * factor for f in SHARE[where]]
+        collected = roof * rain_used / 1000 * COLLECTION
+        injected = collected * INJECTION
+        reaching = [injected * f for f in share]
+        rows.append(
+            {
+                **row,
+                "collected_m3": round(collected, 1),
+                "volume_m3": round(injected, 1),
+                "location_class": where,
+                "location_label": SHARE_LABEL[where],
+                "location_note": h.get("location_note", ""),
+                "depth_m": depth,
+                "depth_given": bool(h.get("bore_depth_m")),
+                "injection_elevation_m": None if injection_z is None else round(injection_z),
+                "depth_factor": factor,
+                "depth_words": words,
+                "share": [round(f, 3) for f in share],
+                "reaching_m3": [round(r, 1) for r in reaching],
+                "added_lpm_year": [round(r * 1000 / MINUTES_PER_YEAR, 3) for r in reaching],
+                "added_lpm_lean": [round(r * 1000 / LEAN_MINUTES, 3) for r in reaching],
+                "online": (h.get("di_status") or "") not in OFF_LINE,
+                "di_status": h.get("di_status") or "",
+            }
+        )
     known = [r for r in rows if r["volume_m3"] is not None]
     if not known:
-        return {"available": False, "rows": rows, "annual_rain_mm": rain,
+        return {"available": False, "rows": rows, **rain_info,
                 "reason": "Roof area or annual rainfall is not recorded." if rows else "No DI handpump at this site."}
-    volume = sum(r["volume_m3"] for r in known)
-    steady = volume * 1000 / MINUTES_PER_YEAR
-    lean = volume * 1000 / (LEAN_MONTHS * 30.44 * 1440)
+    now = [r for r in known if r["online"]]
+
+    def total(items, key):
+        return [round(sum(r[key][i] for r in items), 3) for i in range(3)]
+
     result = {
         "available": True,
         "rows": rows,
         "missing_roofs": [r["name"] for r in rows if r["volume_m3"] is None],
-        "annual_rain_mm": rain,
-        "annual_rain_source": site.get("annual_rain_source", ""),
+        **rain_info,
         "collection": COLLECTION,
         "injection": INJECTION,
-        "volume_m3": round(volume, 1),
-        "steady_lpm": round(steady, 2),
-        "lean_lpm": round(lean, 2),
+        "lean_months": LEAN_MONTHS,
+        "collected_m3": round(sum(r["collected_m3"] for r in known), 1),
+        "volume_m3": round(sum(r["volume_m3"] for r in known), 1),
+        "reaching_m3": total(known, "reaching_m3"),
+        "added_lpm_year": total(known, "added_lpm_year"),
+        "added_lpm_lean": total(known, "added_lpm_lean"),
+        "volume_now_m3": round(sum(r["volume_m3"] for r in now), 1),
+        "reaching_now_m3": total(now, "reaching_m3") if now else [0, 0, 0],
+        "offline": [r["name"] for r in known if not r["online"]],
         "share_of_gain_pct": None,
     }
     if spring_result and spring_result.get("kind") == "numeric" and spring_result["change"]["mid"] > 0:
-        result["share_of_gain_pct"] = round(100 * steady / spring_result["change"]["mid"])
+        result["share_of_gain_pct"] = round(100 * result["added_lpm_lean"][1] / spring_result["change"]["mid"])
         result["gain_metric"] = spring_result["metric_label"]
     return result
 
@@ -381,7 +475,21 @@ def site_impact(site, state):
             key=lambda o: order_key({"period": o["period"], "date": o["date"], "record": o["record"]}),
         ),
         "period_assumed": any(o.get("period_assumed") for o in obs),
+        "beyond_water": beyond_water(site, [v for v in active if v["site_id"] == site["id"]]),
     }
+
+
+def beyond_water(site, visits):
+    """What people said changed for them, from the community interaction part of the field forms and later visits."""
+    seen, changes = set(), []
+    for v in sorted(visits, key=lambda v: v.get("visit_date") or ""):
+        for c in v.get("changes") or []:
+            key = (c.get("area"), c.get("before"), c.get("after"))
+            if key in seen:
+                continue
+            seen.add(key)
+            changes.append({**c, "date": v.get("visit_date")})
+    return {"story": (site.get("field_history") or {}).get("impact_beyond_water", ""), "changes": changes}
 
 
 def portfolio(impacts):
@@ -392,7 +500,10 @@ def portfolio(impacts):
     pumps = list({p["name"]: p for i in di_sites for p in i["handpumps_before_after"]}.values())
     water = [i["di_water"] for i in di_sites if i["di_water"]["available"]]
     # A handpump linked to two springs (Arakot 2) is counted once in the total.
-    volumes = {r["id"]: r["volume_m3"] for w in water for r in w["rows"] if r["volume_m3"] is not None}
+    rows = {r["id"]: r for w in water for r in w["rows"] if r["volume_m3"] is not None}
+    volumes = {k: r["volume_m3"] for k, r in rows.items()}
+    reaching = [round(sum(r["reaching_m3"][i] for r in rows.values()), 1) for i in range(3)]
+    reaching_now = [round(sum(r["reaching_m3"][i] for r in rows.values() if r["online"]), 1) for i in range(3)]
     return {
         "di_sites": len(di_sites),
         "spring_numeric": len(numeric),
@@ -410,6 +521,10 @@ def portfolio(impacts):
         "pumps_not_working": sum(p["outcome"] == "not_working_now" for p in pumps),
         "last_two": sum(i["last_two"] is not None for i in impacts),
         "di_volume_m3": round(sum(volumes.values()), 1),
+        "di_collected_m3": round(sum(r["collected_m3"] for r in rows.values()), 1),
+        "di_reaching_m3": reaching,
+        "di_reaching_now_m3": reaching_now,
+        "di_offline": sorted({r["name"] for r in rows.values() if not r["online"]}),
         "di_sites_with_volume": len(water),
     }
 
@@ -457,28 +572,72 @@ INDICATORS = [
         "interpretation": "DI's most direct effect: a defunct handpump given water again.",
     },
     {
-        "id": "di_water",
-        "asset": "di",
-        "name": "Water DI can put into the ground",
+        "id": "rainfall",
+        "asset": "water injected",
+        "name": "Rainfall used for DI",
+        "unit": "mm a year",
+        "formula": "Rain used = annual rain + 0.5 × winter snow at the spring's height",
+        "weights": "Annual rain from the IMD gridded rain gauges (2001-2025 mean); CHIRPS satellite rain only when "
+        "gauges are missing, as in the planner. Snow is ERA5 winter snowfall read at the spring's height; half is "
+        "counted as melting into the gutters (judgement).",
+        "needs": "The spring's position (rain and snow are read from the planner's data layers).",
+        "missing": "No rain value: no water estimate for the site.",
+        "interpretation": "A long-term average year. A wet or dry year will differ.",
+    },
+    {
+        "id": "rain_collected",
+        "asset": "water injected",
+        "name": "Rain collected from the DI roofs",
+        "unit": "m³ a year",
+        "formula": "Collected = roof area (m²) × rain used (mm) / 1000 × 0.8",
+        "weights": "0.8 = share of roof rain reaching the handpump after gutter, pipe and splash losses (RDI design "
+        "0.7-0.8). Same default as the planner.",
+        "needs": "Roof area per DI handpump (field form).",
+        "missing": "No roof area: that handpump is left out and named.",
+        "interpretation": "Rain the roof can send to the handpump in an average year.",
+    },
+    {
+        "id": "water_injected",
+        "asset": "water injected",
+        "name": "Water injected into the aquifer",
+        "unit": "m³ a year",
+        "formula": "Injected = collected × 0.85",
+        "weights": "0.85 = share actually injected after first flush, overflow, downtime and clogging (a different "
+        "loss from the 0.8 above). Same default as the planner.",
+        "needs": "Collected water.",
+        "missing": "As above.",
+        "interpretation": "Water going into the ground when the DI line works. A disconnected line injects nothing "
+        "until it is repaired, so the 'now' figures leave it out.",
+    },
+    {
+        "id": "water_reaching_spring",
+        "asset": "water injected",
+        "name": "DI water that may reach the spring",
         "unit": "m³ a year and L/min",
-        "formula": "V = roof area × annual rain × 0.8 × 0.85 / 1000; steady flow = V × 1000 / 525,600; "
-        "lean-season best case = V × 1000 / (5 × 30.44 × 1,440)",
-        "weights": "0.8 = share of roof rain collected (RDI design 0.7-0.8); 0.85 = share injected after first "
-        "flush, overflow and clogging. Same defaults as the planner.",
-        "needs": "Roof area per handpump (field form) and annual rain at the spring (CHIRPS 2018-2025, as the planner).",
-        "missing": "No roof area: no estimate for that handpump.",
-        "interpretation": "An upper limit on the water DI adds, not measured injection.",
+        "formula": "Reaching = injected × share × depth factor. Added flow = reaching × 1000 / 525,600 (spread over "
+        "the year) or reaching × 1000 / (5 × 30.44 × 1,440) (best case: all in the 5 lean months)",
+        "weights": "Share (low / mid / best case): 0.30/0.60/1.00 in a recharge zone on the spring's slope; "
+        "0.10/0.30/0.60 in a zone linked by a fault or rock tilt; 0.05/0.20/0.50 by a crack; 0.05/0.15/0.30 elsewhere "
+        "in the catchment; 0/0.02/0.10 outside it; 0 below the spring. Depth factor from the injection point "
+        "(handpump ground − depth, 70 m if unknown) against the spring outlet: × 1.0 more than 10 m above, × 0.7 "
+        "within 10 m, × 0.4 up to 50 m below, × 0.2 deeper. Same as the planner.",
+        "needs": "Handpump and spring heights (DEM), handpump depth, and where the handpump sits. The planner's "
+        "recharge zones are not run for these sites yet, so a handpump above its spring with a reported link uses "
+        "the 'in the catchment' share; Kaddukhal uses 'outside' (geologist found no link).",
+        "missing": "Without a link to the spring the real share is zero; only monitoring can show it.",
+        "interpretation": "An approximate range for planning and monitoring, not a measured flow. The rest of the "
+        "water feeds other springs, streams or deeper groundwater.",
     },
     {
         "id": "share_explained",
-        "asset": "di",
+        "asset": "water injected",
         "name": "Share of the spring gain DI could explain",
         "unit": "%",
-        "formula": "100 × DI steady flow / spring change (mid)",
-        "weights": "Assumes every injected litre reaches this spring, so this is the most DI could explain.",
-        "needs": "A numeric before/after gain and a DI water estimate.",
+        "formula": "100 × best-case lean-season added flow (mid) / dry-season spring gain (mid)",
+        "weights": "Uses the mid share and assumes all of it comes out in the lean months, so it leans high.",
+        "needs": "A numeric before/after dry-season gain and a DI water estimate.",
         "missing": "Not shown when the spring did not gain or there is no estimate.",
-        "interpretation": "Below 100% means DI alone cannot account for the whole gain; rain or other works "
-        "also played a part. Above 100% means DI could cover it if the link is real.",
+        "interpretation": "Well below 100% means DI alone does not account for the whole gain; rain, other works "
+        "or the spring's own variation also played a part.",
     },
 ]

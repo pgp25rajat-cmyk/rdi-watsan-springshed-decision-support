@@ -40,6 +40,8 @@ FIELD = ROOT / "data/02_processed/field_visit"
 READINGS = ROOT / "data/01_staged/field_visit/csv/field_visit_discharge_readings_2026-10.csv"
 LITERATURE = ROOT / "data/01_staged/literature/csv/literature_spring_values_long_v1.csv"
 MASTER = ROOT / "data/02_processed/spring_master/spring_master_v1.csv"
+FEATURES = ROOT / "data/02_processed/spring_features/spring_features_v1.csv"
+SECONDARY = ROOT / "data/02_processed/spring_features/spring_secondary_features_v1.csv"
 OUT = ROOT / "data/02_processed/watsan_di"
 
 REPORT = "WATSAN Spring Assessment Report (SRC-003), summary table; date and method not stated"
@@ -70,7 +72,8 @@ REPORT_HANDPUMPS = [
     }
 ]
 
-# Handpump condition now. Rajat (2026-10-24): every DI handpump was defunct before DI and works now.
+# Handpump condition now. Rajat (2026-10-24): every DI handpump was defunct before DI and works now, except
+# Kaddukhal, which is broken.
 WORKING_NOTE = "Working (Rajat, 2026-10-24)"
 PUMP_AFTER = {
     "FV26-DI-ARK1": ("working", "Delivery test 6-7 strokes for 1-2 L"),
@@ -79,7 +82,7 @@ PUMP_AFTER = {
     "FV26-DI-CHP1": ("working", ""),
     "FV26-DI-CHP2": ("working", "Pump box not ticked on the form; people said it has water in the dry season"),
     "FV26-DI-KAN": ("working", ""),
-    "FV26-DI-UNI": ("working", "Field form recorded it broken (possible vehicle damage); " + WORKING_NOTE),
+    "FV26-DI-UNI": ("broken", "Handpump broken, possible vehicle damage (field form; confirmed by Rajat, 2026-10-24)"),
     "FV26-DI-KUN": ("working", "Water tapped directly from the handpump"),
     "SRC028-DI-DUN": ("working", "Not visited; " + WORKING_NOTE),
 }
@@ -119,6 +122,43 @@ TEAM_FLOWS = {
 TEAM_SOURCE = "Agreed by Rajat (2026-10-24) from the earlier RDI reports (before) and the October 2026 field forms (after)"
 HANDPUMP_NAMES = {"FV26-DI-UNI": "Kaddukhal"}
 
+# Remarks shown beside each handpump's before/after status: water quality, breakages, DI line condition.
+# From the field forms (DI section and community interaction) and Rajat's corrections (2026-10-24).
+REMARKS = {
+    "FV26-DI-ARK1": "Has water in the dry season; water decent, slight iron. Rooftop pipe broken, so the DI line is disconnected.",
+    "FV26-DI-ARK2": "DI tested on the visit. Linked to both Balench and Paniyar Dhar (not verified).",
+    "FV26-DI-GUN": "Gives more water than before DI. Iron in the water is still a concern.",
+    "FV26-DI-CHP1": "DI line, gutter and filter in good order.",
+    "FV26-DI-CHP2": "Water quality improved: it was red/brown with high iron before DI (no lab test). "
+    "DI line disconnected during house construction; filter blocked.",
+    "FV26-DI-KAN": "Water in the dry season, very good quality; travellers drink and wash here. Roadside DI site is dirty.",
+    "FV26-DI-UNI": "Handpump broken (possible vehicle damage). First flush not working, filter blocked.",
+    "FV26-DI-KUN": "Working again; people tap water directly. Exposed roof pipes at risk from animals and monkeys.",
+    "SRC028-DI-DUN": "Not visited; from the SRHU report.",
+}
+
+# Impact beyond water: what people told us in the community interaction part of the field forms, one short
+# account per site. Written plainly; any limits stay in the account.
+IMPACT_STORY = {
+    "WDI-01": "A handpump that had stood defunct now gives water through the dry season, and the spring's dry-season "
+    "flow has doubled. The water is decent to drink. Fixing the broken rooftop pipe at Arakot 1 will keep this going.",
+    "WDI-02": "Families once walked 2-3 km downhill for water. Today all 28 households (about 200 people) have water "
+    "in the village, and it now supports vegetation and farming. People also report more water in springs further "
+    "downhill at Silogi. The Himmotthan solar pumping scheme works alongside DI here.",
+    "WDI-03": "The naula is the only fallback for 2 households (about 10 people) when the JJM tap fails. People saw no "
+    "change from DI, and the school handpump is now broken.",
+    "WDI-04": "The Gunogi handpump gives more water than before DI, and the spring's dry-season flow has risen. Iron in "
+    "the handpump water is still people's main worry, so a water test is the next step.",
+    "WDI-05": "Before DI the handpump water was red-brown and people could not use it. Now it has water through the dry "
+    "season, and the spring that about 20 nearby households use flows better. Reconnecting the DI line, cut during "
+    "house construction, is the priority.",
+    "WDI-06": "The spring still dries in the lean months, and people walk to Balench for water then. It now flows in the "
+    "monsoon.",
+    "WDI-07": "The Kanatal handpump now has water in the dry season, and it is very good quality: travellers stop to "
+    "drink and wash. Nearby houses say the spring flow has gone up. The roadside DI site needs regular cleaning.",
+    "WDI-08": "A handpump that was defunct works again, and people tap water from it directly.",
+}
+
 # Direction of change people reported (after DI, compared with earlier years).
 DIRECTION = {"More": "increase", "Same": "same", "Less": "decrease", "Dries at times": "same"}
 
@@ -132,23 +172,107 @@ REPORT_NOTE = {
 # Changes people described on the field visit, as (asset, area, direction, earlier, now, note). Wording kept close
 # to the form; "earlier" is the time before DI unless the note says otherwise.
 CHANGES = {
-    "WDI-01": [("handpump", "access", "better", "Arakot handpump was defunct",
-                "Handpump has water in the dry season; water decent, slight iron", "")],
-    "WDI-02": [("village", "access", "better", "Severe water crisis; people walked 2-3 km downhill for water",
-                "Water available in the village; vegetation and farming",
-                "Himmotthan solar pumping from the spring is a separate scheme and explains much of this.")],
-    "WDI-03": [("village", "access", "same", "Naula is the only source when JJM does not supply",
-                "No impact from DI seen", "Geologist found no link between the DI handpump and the naula.")],
-    "WDI-04": [("handpump", "access", "better", "Handpump gave less water", "Handpump flow has increased", ""),
-               ("handpump", "quality", "unclear", "High iron in handpump water", "Iron is still the main concern", "")],
-    "WDI-05": [("handpump", "quality", "better", "Handpump water very bad (red/brown), handpump defunct",
-                "Handpump has water in the dry season", "DI line is now disconnected (house construction)."),
-               ("spring", "access", "better", "Lower spring flow", "Discharge has improved", "")],
-    "WDI-06": [("village", "access", "same", "Dries in lean months; people fetch water from Balench",
-                "Still dries every summer", "Arakot 2 DI may feed this spring; no change reported.")],
-    "WDI-07": [("handpump", "access", "better", "Handpump had no water in the dry season",
-                "Has water in the dry season; very good quality, travellers drink and wash", ""),
-               ("spring", "access", "better", "Lower spring flow", "Flow has increased", "")],
+    "WDI-01": [
+        (
+            "handpump",
+            "access",
+            "better",
+            "Arakot handpump was defunct",
+            "Handpump has water in the dry season; water decent, slight iron",
+            "",
+        ),
+        ("spring", "access", "better", "Dry-season flow about 1-2 L/min", "Dry-season flow about 2-3 L/min", ""),
+        (
+            "handpump",
+            "upkeep",
+            "worse",
+            "DI line carried roof water to Arakot 1",
+            "Rooftop pipe broken, so no roof water reaches the handpump",
+            "",
+        ),
+    ],
+    "WDI-02": [
+        (
+            "village",
+            "access",
+            "better",
+            "Severe water crisis; people walked 2-3 km downhill for water",
+            "Water available in the village for all 28 households (about 200 people)",
+            "Himmotthan solar pumping from the spring is a separate scheme and explains much of this.",
+        ),
+        (
+            "village",
+            "vegetation",
+            "better",
+            "Little water for plants or fields",
+            "Vegetation and farming have come back with the water",
+            "",
+        ),
+        (
+            "spring",
+            "access",
+            "better",
+            "Lower flow in springs downhill at Silogi",
+            "People report more water in the downhill springs; water quality good",
+            "",
+        ),
+    ],
+    "WDI-03": [
+        (
+            "village",
+            "access",
+            "same",
+            "Naula is the only source when JJM does not supply",
+            "No impact from DI seen",
+            "Geologist found no link between the DI handpump and the naula.",
+        ),
+        (
+            "handpump",
+            "upkeep",
+            "worse",
+            "School handpump fitted with DI in 2025",
+            "Handpump broken (possible vehicle damage); first flush not working",
+            "",
+        ),
+    ],
+    "WDI-04": [
+        ("handpump", "access", "better", "Handpump gave less water", "Handpump flow has increased", ""),
+        ("handpump", "quality", "unclear", "High iron in handpump water", "Iron is still the main concern", ""),
+    ],
+    "WDI-05": [
+        (
+            "handpump",
+            "quality",
+            "better",
+            "Handpump water very bad (red/brown), handpump defunct",
+            "Handpump has water in the dry season",
+            "No lab test yet.",
+        ),
+        ("spring", "access", "better", "Lower spring flow", "Discharge has improved for about 20 households", ""),
+        ("handpump", "upkeep", "worse", "DI line connected", "DI line disconnected during house construction", ""),
+    ],
+    "WDI-06": [
+        (
+            "village",
+            "access",
+            "same",
+            "Dries in lean months; people fetch water from Balench",
+            "Still dries every summer",
+            "Arakot 2 DI may feed this spring; not verified.",
+        )
+    ],
+    "WDI-07": [
+        ("handpump", "access", "better", "Handpump had no water in the dry season", "Has water in the dry season", ""),
+        (
+            "handpump",
+            "quality",
+            "better",
+            "Handpump defunct",
+            "Very good quality water; travellers drink and wash here",
+            "",
+        ),
+        ("spring", "access", "better", "Lower spring flow", "Nearby houses say the flow has increased", ""),
+    ],
     "WDI-08": [("handpump", "access", "better", "Handpump defunct", "Handpump working; water tapped directly", "")],
 }
 
@@ -156,8 +280,40 @@ LINK_OVERRIDE = {
     "WDI-06": "Arakot 2 may feed Paniyar Dhar as well as Balench (Rajat, 2026-10-24); not verified",
 }
 
+# Where each DI handpump sits relative to its spring, in the planner's classes (Module C SHARE). The planner's recharge
+# zones (Module B) have not been run for these sites, so a handpump above its spring with a reported link is placed
+# "in_catchment" (the planner's share for a site in the surface catchment outside the top zones). Change a class here
+# once the planner has been run on the spring.
+LOCATION = {
+    "FV26-DI-UNI": ("outside", "Geologist found no connection between this handpump and the naula."),
+}
+LOCATION_DEFAULT = (
+    "in_catchment",
+    "Above the spring with a reported link; the planner's recharge zones are not run for this site yet, so the "
+    "'in the catchment' share is used.",
+)
+
 INSTALL = {"FV26-DI-UNI": (2025, "Installed last year for the school (field visit, 20 Oct 2026)")}
 VISIT_DATE_OVERRIDE = {"FV26-DI-KUN": "2026-10-21"}
+
+
+def rain_fields(f, sec, m):
+    """Rain at the spring, chosen as the planner does (scripts/module_c_di_impact.py rainfall()): IMD gauges first,
+    else CHIRPS. Snow is the ERA5 winter snowfall read at the spring's height (water equivalent, mm)."""
+    imd, chirps = num(f.get("rain_imd_mean_annual_mm")), num(f.get("rain_chirps_mean_annual_mm_2018_2025"))
+    if imd:
+        annual, source = imd, f"IMD gridded rain gauges, mean of {f.get('rain_imd_years_used') or '2001-2025'}"
+    else:
+        annual = chirps or num(m.get("rainfall_mean_annual_mm"))
+        source = "CHIRPS satellite estimate, 2018-2025 mean"
+    return {
+        "annual_rain_mm": "" if annual is None else round(annual),
+        "annual_rain_source": source,
+        "rain_chirps_mm": "" if chirps is None else round(chirps),
+        "rain_monsoon_share_pct": f.get("rain_imd_monsoon_share_pct") or f.get("rain_chirps_monsoon_share_pct", ""),
+        "rain_dry_season_mm": f.get("rain_chirps_dry_season_mm", ""),
+        "snow_mm": sec.get("snow_at_elevation_mm", ""),
+    }
 
 
 def read(path):
@@ -214,6 +370,8 @@ def main():
     for r in read(LITERATURE):
         lit.setdefault(r["record_id"], {})[r["field"]] = r
     master = {r["record_id"]: r for r in read(MASTER)}
+    features = {r["record_id"]: r for r in read(FEATURES)}
+    secondary = {r["record_id"]: r for r in read(SECONDARY)}
 
     site_rows, pump_rows, obs = [], [], []
 
@@ -259,8 +417,7 @@ def main():
                 "latitude": m["latitude"],
                 "longitude": m["longitude"],
                 "elevation_m": m["elevation_m"],
-                "annual_rain_mm": m["rainfall_mean_annual_mm"],
-                "annual_rain_source": "CHIRPS 2018-2025 mean at the spring (as the planner)",
+                **rain_fields(features.get(record_id, {}), secondary.get(record_id, {}), m),
                 "households": f.get("households", ""),
                 "people": f.get("people", ""),
                 "handpump_ids": ";".join(handpump_ids),
@@ -271,6 +428,7 @@ def main():
                 "visit_date": visit_date,
                 "water_before": f.get("before_after_di_recall", ""),
                 "community_notes": f.get("community_notes", ""),
+                "impact_beyond_water": IMPACT_STORY.get(site_id, ""),
                 "top_concerns": f.get("top_concerns", ""),
                 "other_works": f.get("recharge_works_uphill", ""),
                 "notes": f.get("notes", ""),
@@ -324,11 +482,11 @@ def main():
                 rp = next(x for x in REPORT_HANDPUMPS if x["handpump_id"] == hp_id)
                 pump_rows.append({"handpump_id": hp_id, "site_id": site_id, "primary": "yes" if i == 0 else "no",
                                   "name": rp["name"], "latitude": rp["latitude"], "longitude": rp["longitude"],
-                                  "link_status": rp["link_status"], "source": rp["source"], "pump_status": "working",
-                                  "notes": PUMP_AFTER[hp_id][1]})
+                                  "link_status": rp["link_status"], "source": rp["source"], "pump_status": PUMP_AFTER[hp_id][0],
+                                  "notes": PUMP_AFTER[hp_id][1], "remarks": REMARKS.get(hp_id, "")})
                 add(site_id, "handpump", hp_id, "before_di_agreed", "before_di", "", "pump_status", text="defunct",
                     basis="agreed", source=BEFORE_NOTE)
-                add(site_id, "handpump", hp_id, "after_di_agreed", "after_di", "", "pump_status", text="working",
+                add(site_id, "handpump", hp_id, "after_di_agreed", "after_di", "", "pump_status", text=PUMP_AFTER[hp_id][0],
                     basis="agreed", source=BEFORE_NOTE, note=PUMP_AFTER[hp_id][1])
                 continue
             area, area_note = roof(p["roof_area_m2"], hp_id)
@@ -366,11 +524,16 @@ def main():
                     "link_status": p["link_status"],
                     "source": FORM,
                     "notes": "; ".join(x for x in (PUMP_AFTER.get(hp_id, ("", ""))[1], p["di_status"], p["notes"]) if x),
+
+                    "remarks": REMARKS.get(hp_id, ""),
+                    "location_class": LOCATION.get(hp_id, LOCATION_DEFAULT)[0],
+                    "location_note": LOCATION.get(hp_id, LOCATION_DEFAULT)[1],
                 }
             )
             add(site_id, "handpump", hp_id, "before_di_agreed", "before_di", "", "pump_status", text="defunct",
                 basis="agreed", source=BEFORE_NOTE, note=PUMP_BEFORE_DETAIL.get(hp_id, ""))
-            add(site_id, "handpump", hp_id, "field_visit_2026_10", "after_di", hp_date, "pump_status", text="working",
+            add(site_id, "handpump", hp_id, "field_visit_2026_10", "after_di", hp_date, "pump_status",
+                text=PUMP_AFTER.get(hp_id, ("not_checked", ""))[0],
                 basis="agreed", source=FORM + "; " + BEFORE_NOTE, note=PUMP_AFTER.get(hp_id, ("", ""))[1])
             if p["pump_yield_text"]:
                 add(site_id, "handpump", hp_id, "field_visit_2026_10", "after_di", hp_date, "pump_yield",
@@ -422,6 +585,9 @@ README = [
      "not stated; recall = what people said; observed = condition seen on the visit."),
     ("village_change", "A change people described: value_text = now, note = earlier (then | any caveat), with "
      "change_area and change_direction."),
+    ("remarks", "Handpump table: one short line on water quality, breakages and the DI line, from the field forms."),
+    ("impact_beyond_water", "Sites table: a short account of what people told us in the community interaction part "
+     "of the field form."),
     ("Ranges", "value_low and value_high keep the range as given. Nothing is replaced by a midpoint here."),
     ("Not included", "Photos, scanned forms and people's names."),
 ]

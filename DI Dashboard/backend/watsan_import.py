@@ -93,6 +93,11 @@ def build(folder=DEFAULT_DIR):
                 "di_year": num(p.get("di_install_year")),
                 "di_install_note": p.get("di_install_note", ""),
                 "link_status": p.get("link_status", ""),
+                "remarks": p.get("remarks", ""),
+                "pump_status": p.get("pump_status", ""),
+                "di_status": p.get("di_status", ""),
+                "location_class": p.get("location_class", ""),
+                "location_note": p.get("location_note", ""),
                 "location_status": "field_gps" if "Field form" in p.get("source", "") else "report",
             }
             for p in pumps
@@ -130,6 +135,10 @@ def build(folder=DEFAULT_DIR):
                 "collection_factor": COLLECTION_FACTOR if primary and primary["roof_area_m2"] else None,
                 "annual_rain_mm": num(r.get("annual_rain_mm")),
                 "annual_rain_source": r.get("annual_rain_source", ""),
+                "rain_chirps_mm": num(r.get("rain_chirps_mm")),
+                "rain_monsoon_share_pct": num(r.get("rain_monsoon_share_pct")),
+                "rain_dry_season_mm": num(r.get("rain_dry_season_mm")),
+                "snow_mm": num(r.get("snow_mm")),
                 "link_basis": "unknown" if "not established" in link.lower() or not primary else "reported",
                 "water_before": r.get("water_before", ""),
                 "supply": "",
@@ -146,6 +155,7 @@ def build(folder=DEFAULT_DIR):
                 "evidence_notes": notes,
                 "field_history": {
                     "seasonal_account": r.get("community_notes", ""),
+                    "impact_beyond_water": r.get("impact_beyond_water", ""),
                     "source_spring_note": r.get("notes", ""),
                 },
                 "setup_complete": True,
