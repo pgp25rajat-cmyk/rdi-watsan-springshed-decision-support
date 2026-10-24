@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { api } from "./api.js";
 import { Icon, Mark, Button } from "./shared.jsx";
-import { Overview, Sites, SiteDetail, Tracking, HowItWorks, VisitDrawer } from "./views.jsx";
+import { Overview, Sites, SiteDetail, Tracking, HowItWorks, VisitDrawer, PumpReport } from "./views.jsx";
+import { handpumpGroups } from "./photos.js";
 import { SiteForm, VisitForm } from "./forms.jsx";
 import { Sources } from "./evidence.jsx";
 import "@fontsource/source-sans-3/latin-400.css";
@@ -19,7 +20,8 @@ function App() {
     [route, setRoute] = useState(location.hash || "#/overview"),
     [menu, setMenu] = useState(false),
     [opened, setOpened] = useState(null),
-    [toast, setToast] = useState("");
+    [toast, setToast] = useState(""),
+    [picking, setPicking] = useState(false);
   async function reload() {
     try {
       setState(await api("state"));
@@ -113,6 +115,7 @@ function App() {
         />
       );
     } else if (parts[0] === "tracking") content = <Tracking state={state} onOpen={setOpened} />;
+    else if (parts[0] === "report") content = <PumpReport state={state} pump={params.get("pump")} />;
     else if (parts[0] === "sources") content = <Sources state={state} onOpen={setOpened} />;
     else if (parts[0] === "how") content = <HowItWorks state={state} />;
     else content = <Overview state={state} onOpen={setOpened} />;
@@ -140,8 +143,7 @@ function App() {
         </a>
       </div>
       <div className="dash-topbar-right">
-        {/* the page being viewed, printed or saved as PDF from the print window */}
-        <button type="button" className="dash-download" onClick={() => window.print()} title="Save this page as PDF">
+        <button type="button" className="dash-download" onClick={() => setPicking(true)} title="A detailed report for one DI handpump, saved as PDF">
           Download report
         </button>
         <button
@@ -189,6 +191,9 @@ function App() {
           {toast}
         </div>
       )}
+      {picking && state && (
+        <ReportPicker state={state} pump={params.get("pump")} onClose={() => setPicking(false)} />
+      )}
       {opened && (
         <div className="modal-backdrop" onClick={() => setOpened(null)}>
           <VisitDrawer visit={opened} state={state} onClose={() => setOpened(null)} />
@@ -199,3 +204,39 @@ function App() {
   );
 }
 createRoot(document.getElementById("root")).render(<App />);
+
+// Download report: choose a DI handpump, then its report opens and the print window saves it as PDF
+function ReportPicker({ state, pump, onClose }) {
+  const groups = handpumpGroups(state.sites),
+    [name, setName] = useState(pump && groups.some((g) => g.name === pump) ? pump : groups[0]?.name || "");
+  const go = () => {
+    onClose();
+    location.hash = "/report?pump=" + encodeURIComponent(name) + "&print=1";
+  };
+  return (
+    <div className="picker-backdrop" onClick={onClose}>
+      <div className="picker" role="dialog" aria-modal="true" aria-labelledby="picker-title" onClick={(e) => e.stopPropagation()}>
+        <h2 id="picker-title">Download report</h2>
+        <p>Choose a DI handpump. Its detailed report opens, and the print window saves it as PDF.</p>
+        <label>
+          DI handpump
+          <select value={name} onChange={(e) => setName(e.target.value)} autoFocus>
+            {groups.map((g) => (
+              <option key={g.name} value={g.name}>
+                {g.name} · {[...g.sites].sort((x, y) => x.name.localeCompare(y.name)).map((s) => s.name).join(", ")}
+              </option>
+            ))}
+          </select>
+        </label>
+        <div className="picker-actions">
+          <button type="button" className="button" onClick={onClose}>
+            Cancel
+          </button>
+          <button type="button" className="button primary" onClick={go} disabled={!name}>
+            Download PDF
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

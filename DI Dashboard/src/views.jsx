@@ -1231,3 +1231,225 @@ export function VisitDrawer({ visit: v, state, onClose }) {
     </div>
   );
 }
+
+// ------------------------------------------------------------------ report for one DI handpump
+// Everything the dashboard holds for one DI handpump on one printable page (Download report > choose a handpump).
+// The browser's print window saves it as PDF; it opens by itself when the page is reached with ?print=1.
+export function PumpReport({ state, pump }) {
+  const groups = handpumpGroups(state.sites),
+    group = groups.find((g) => g.name === pump);
+  React.useEffect(() => {
+    if (!group || !new URLSearchParams(location.hash.split("?")[1] || "").get("print")) return;
+    history.replaceState(null, "", "#/report?pump=" + encodeURIComponent(group.name)); // print once, not on every reload
+    const id = setTimeout(() => window.print(), 1200); // let the photos and charts draw first
+    return () => clearTimeout(id);
+  }, [group?.name]);
+  if (!group) return <Empty title="Choose a DI handpump">Use Download report at the top of the page.</Empty>;
+  const springs = [...group.sites].sort((x, y) => x.name.localeCompare(y.name)),
+    first = springs[0],
+    a = assessment(state, first.id),
+    sameName = (x) =>
+      x?.replace(/[^a-z0-9]/gi, "").toLowerCase() === group.name.replace(/[^a-z0-9]/gi, "").toLowerCase(),
+    hp = (first.handpumps || []).find((h) => sameName(h.name)) || (first.handpumps || [])[0] || {},
+    water = a.impact.di_water?.rows?.find((r) => sameName(r.name)),
+    pumpRow = a.impact.handpumps_before_after.filter((p) => sameName(p.name)),
+    photos = pumpPhotos(group.name),
+    visits = active(state.visits).filter((v) => springs.some((s) => s.id === v.site_id)),
+    generated = new Date().toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" }),
+    range = (r, d = 0) => (r ? r.map((x) => fmt(x, d)).join("–") : "–"),
+    word = (x) => (x ? pumpLabels[x] || x.charAt(0).toUpperCase() + x.slice(1).replace(/_/g, " ") : "Not known");
+  const facts = [
+    ["Springs it feeds", springs.map((s) => s.name + (s.other_names ? " (" + s.other_names + ")" : "")).join(", ")],
+    ["Village · district", [first.village, first.district].filter(Boolean).join(" · ")],
+    ["Handpump location", hp.latitude != null ? fmt(hp.latitude, 6) + ", " + fmt(hp.longitude, 6) : "Not recorded"],
+    ["Handpump height", hp.elevation_m != null ? fmt(hp.elevation_m, 0) + " m" : "Not recorded"],
+    [
+      "From the spring",
+      hp.distance_to_spring_m != null
+        ? fmt(hp.distance_to_spring_m, 0) + " m away, " + fmt(hp.height_above_spring_m, 0) + " m above it"
+        : "Not recorded",
+    ],
+    ["Bore depth", hp.bore_depth_m != null ? fmt(hp.bore_depth_m, 0) + " m" : "Not recorded"],
+    ["Roof feeding the DI line", hp.roof_area_m2 != null ? fmt(hp.roof_area_m2, 0) + " m²" : "Not recorded"],
+    ["DI installed", hp.di_year ? String(Math.round(hp.di_year)) : "Not recorded"],
+    ["Handpump now", pumpLabels[hp.pump_status] || "Not checked"],
+    ["DI line now", diLabels[hp.di_status] || "Not checked"],
+    ["Link to the spring", hp.link_status || first.link_basis || "Not recorded"],
+    ["Households using the spring", first.households ?? "Not recorded"],
+  ];
+  return (
+    <div className="pump-report">
+      <div className="report-actions">
+        <a className="back-link" href={"#/tracking?pump=" + encodeURIComponent(group.name)}>
+          <Icon name="back" size={15} />
+          Back to Track impact
+        </a>
+        <Button primary onClick={() => window.print()}>
+          Save as PDF
+        </Button>
+      </div>
+      <header className="report-cover">
+        <span>WATSAN DI handpump report · RDI</span>
+        <h1>{group.name}</h1>
+        <p>
+          {springs.length > 1 ? "Springs" : "Spring"}: {springs.map((s) => s.name).join(", ")} ·{" "}
+          {[first.village, first.district].filter(Boolean).join(", ")}
+        </p>
+        <small>
+          Made on {generated} from the DI dashboard · {visits.length} saved visit records
+        </small>
+      </header>
+
+      <section className="report-section">
+        <h2>1. At a glance</h2>
+        <div className="report-kpis">
+          <div>
+            <span>Handpump</span>
+            <strong>
+              {pumpRow[0] ? word(pumpRow[0].before) + " → " + word(pumpRow[0].after) : word(hp.pump_status)}
+            </strong>
+          </div>
+          <div>
+            <span>DI water injected</span>
+            <strong>{water ? fmt(water.volume_m3, 0) + " m³ a year" : "–"}</strong>
+          </div>
+          <div>
+            <span>May reach the spring</span>
+            <strong>{water ? fmt(water.reaching_m3[1], 0) + " m³ a year" : "–"}</strong>
+            {water && <small>range {range([water.reaching_m3[0], water.reaching_m3[2]])}</small>}
+          </div>
+          <div>
+            <span>Spring flow now</span>
+            <strong>{shownFlow(a)}</strong>
+          </div>
+        </div>
+        {first.field_history?.impact_beyond_water && <p className="notice">{first.field_history.impact_beyond_water}</p>}
+      </section>
+
+      <section className="report-section">
+        <h2>2. Site details</h2>
+        <dl className="facts">
+          {facts.map(([k, v]) => (
+            <div key={k}>
+              <dt>{k}</dt>
+              <dd>{v}</dd>
+            </div>
+          ))}
+        </dl>
+        {hp.remarks && <p className="notice">{hp.remarks}</p>}
+      </section>
+
+      {photos.length > 0 && (
+        <section className="report-section">
+          <h2>3. Field photos</h2>
+          <div className="report-photos">
+            {photos.map((p) => (
+              <figure key={p.src}>
+                <img src={p.url} alt={p.caption} />
+                <figcaption>{p.caption}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <section className="report-section">
+        <h2>{photos.length ? 4 : 3}. Water injected</h2>
+        <Panel title="Rainfall" sub="At the spring, as in the spring planner.">
+          <RainInfo impact={a.impact} />
+        </Panel>
+        {springs.map((s) => (
+          <Panel key={s.id} title={"Water injected" + (springs.length > 1 ? " · " + s.name : "")}
+            sub="Rain collected from the DI roof, injected into the aquifer, and the part that may reach the spring.">
+            <DIWater impact={assessment(state, s.id).impact} />
+          </Panel>
+        ))}
+      </section>
+
+      <section className="report-section">
+        <h2>{photos.length ? 5 : 4}. Handpump performance</h2>
+        <Panel title="Before vs after DI" sub="Condition before DI, condition now, and remarks.">
+          <PumpBeforeAfter rows={pumpRow} />
+        </Panel>
+      </section>
+
+      <section className="report-section">
+        <h2>{photos.length ? 6 : 5}. Spring performance</h2>
+        {springs.map((s) => {
+          const sa = assessment(state, s.id),
+            sv = active(state.visits).filter((v) => v.site_id === s.id);
+          return (
+            <div key={s.id} className="report-spring">
+              {springs.length > 1 && <h3 className="spring-heading">Spring: {s.name}</h3>}
+              <Panel title="Dry-season spring flow: before vs after DI" sub="The square shows monsoon flow after DI.">
+                <SiteBeforeAfter impact={sa.impact} />
+              </Panel>
+              <Panel title="Last two readings" sub="After-DI dry flow, then after-DI monsoon flow (latest).">
+                <SiteLastTwo impact={sa.impact} />
+              </Panel>
+              {hasReadings(sv) && (
+                <Panel title="Spring flow at each visit" sub="Timed readings from saved visits.">
+                  <FlowChart visits={sv} />
+                </Panel>
+              )}
+            </div>
+          );
+        })}
+      </section>
+
+      <section className="report-section">
+        <h2>{photos.length ? 7 : 6}. DI and maintenance</h2>
+        <Panel title="Equipment and recharge connection">
+          <Equipment a={a} onOpen={() => {}} state={state} />
+        </Panel>
+        <Panel title="Maintenance follow-up">
+          {a.maintenance.length ? (
+            a.maintenance.map((r, i) => (
+              <p key={i} className="notice">
+                {r}
+              </p>
+            ))
+          ) : (
+            <p>No issue has been recorded.</p>
+          )}
+        </Panel>
+      </section>
+
+      <section className="report-section">
+        <h2>{photos.length ? 8 : 7}. Impact beyond water</h2>
+        {springs.map((s) => (
+          <Panel key={s.id} title={springs.length > 1 ? s.name : "What people told us"}
+            sub="From the community interaction on the field forms.">
+            <BeyondWater impact={assessment(state, s.id).impact} />
+          </Panel>
+        ))}
+      </section>
+
+      <section className="report-section">
+        <h2>{photos.length ? 9 : 8}. Source records</h2>
+        <EvidenceRows
+          state={state}
+          siteIds={springs.map((s) => s.id)}
+          otherPumps={springs.flatMap((s) => (s.handpumps || []).map((h) => h.name)).filter((n) => !sameName(n))}
+          all
+        />
+      </section>
+
+      <section className="report-section report-method">
+        <h2>{photos.length ? 10 : 9}. How these numbers are made</h2>
+        <ul>
+          <li>Values are ranges where the field records are ranges; change = after − before.</li>
+          <li>
+            Water injected = roof area × yearly rain × 0.8 (collected) × 0.85 (injected), the spring planner's
+            defaults. The part reaching the spring uses the planner's share for where the handpump sits.
+          </li>
+          <li>
+            A before/after difference shows what changed, not how much of it DI caused. Rain, other works and
+            reading methods also change flows.
+          </li>
+          <li>Records are labelled by basis: measured, estimate, report, recall or observed.</li>
+        </ul>
+      </section>
+    </div>
+  );
+}

@@ -89,7 +89,7 @@ function readable(e) {
   }
   return String(v);
 }
-export function EvidenceRows({ state, siteId, siteIds, otherPumps = [], visitId, onOpen, asset }) {
+export function EvidenceRows({ state, siteId, siteIds, otherPumps = [], visitId, onOpen, asset, all = false }) {
   const [visible, setVisible] = useState(12);
   useEffect(() => setVisible(12), [siteId, siteIds?.join(), visitId, asset]);
   // Handpump records start with the handpump's name; hide those of another handpump at the same spring.
@@ -111,7 +111,7 @@ export function EvidenceRows({ state, siteId, siteIds, otherPumps = [], visitId,
     );
   return (
     <div className="evidence-list">
-      {rows.slice(0, visible).map((e) => {
+      {rows.slice(0, all ? rows.length : visible).map((e) => {
         const file = state.attachments.find((a) => a.id === e.attachment_id),
           visit = state.visits.find((v) => v.id === e.visit_id);
         return (
@@ -161,7 +161,7 @@ export function EvidenceRows({ state, siteId, siteIds, otherPumps = [], visitId,
           </article>
         );
       })}
-      {rows.length > visible && (
+      {!all && rows.length > visible && (
         <div className="evidence-more">
           <span>
             {visible} of {rows.length} records shown

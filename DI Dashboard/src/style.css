@@ -78,3 +78,35 @@
 @media(max-width:800px){.dash-menu{display:grid}.dash-topbar{padding:8px 12px}.dash-brand strong{font-size:16px}.dash-download{padding:6px 10px;font-size:13px}.sidebar.is-open{inset:56px 0 auto 0;background:var(--bg);border-bottom:1px solid var(--line)}.app-frame{padding-top:8px}}
 @media(max-width:420px){.dash-home{padding:4px 9px}.dash-logo{display:none}}
 @media print{.dash-topbar,.sidebar,.mobile-bar,.toast,.page-head .button,.header-actions{display:none!important}.app-frame{display:block;padding:0;min-height:0}.sheet{border:0;padding:0;min-height:0}:root{background:#fff}}
+/* Download report: handpump picker */
+.picker-backdrop{position:fixed;inset:0;background:rgba(15,59,51,.35);display:grid;place-items:center;z-index:90;padding:16px}
+.picker{background:var(--surface);border-radius:12px;box-shadow:var(--shadow);padding:22px 24px;width:min(440px,100%)}
+.picker h2{font-family:var(--serif);font-size:20px;font-weight:600}.picker p{color:var(--ink-2);font-size:13px}
+.picker label{display:grid;gap:7px;font-size:13px;font-weight:500}
+.picker-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+/* the report for one DI handpump */
+.pump-report{max-width:960px}
+.report-actions{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px}
+.report-cover{background:var(--brand);color:#fff;border-radius:12px;padding:26px 28px;margin-bottom:26px}
+.report-cover span{font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:.8}
+.report-cover h1{font-family:var(--serif);font-size:34px;font-weight:600;margin:6px 0 4px;color:#fff}
+.report-cover p{margin:0 0 6px;font-size:15px}.report-cover small{opacity:.8;font-size:12px}
+.report-section{margin-bottom:26px}
+.report-section>h2{font-family:var(--serif);font-size:21px;font-weight:600;color:var(--brand);border-bottom:2px solid var(--accent-soft-2);padding-bottom:6px;margin-bottom:16px}
+.report-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.report-kpis>div{background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:grid;gap:6px}
+.report-kpis span,.report-kpis small{font-size:12px;color:var(--muted)}.report-kpis strong{font-size:18px;font-weight:600}
+.report-photos{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.report-photos figure{margin:0}.report-photos img{width:100%;height:190px;object-fit:cover;border-radius:8px;display:block}
+.report-photos figcaption{font-size:12px;color:var(--ink-2);margin-top:5px}
+.report-method li{font-size:13px;line-height:1.6;color:var(--ink-2)}
+@media(max-width:700px){.report-kpis,.report-photos{grid-template-columns:1fr 1fr}}
+@media print{
+  @page{size:A4;margin:14mm}
+  .report-actions,.picker-backdrop,.pump-report .text-link,.evidence-links button{display:none!important}
+  .pump-report{max-width:none}
+  .report-cover{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .report-section{break-inside:auto}.report-section>h2{break-after:avoid}
+  .panel,.report-kpis>div,.report-photos figure,.evidence-list article{break-inside:avoid}
+  .report-photos img{height:150px}
+}
