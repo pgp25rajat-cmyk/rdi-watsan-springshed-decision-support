@@ -27,6 +27,8 @@ On start, the server loads the WATSAN DI sites data file from `../data/02_proces
 - 8 DI handpumps. Arakot 1 and 2 link to Balench; Arakot 2 may also feed Paniyar Dhar, so it is listed under both sites and its water is counted once in totals.
 - 88 values, each labelled before or after DI, with its record (before-DI recall, WATSAN report, field visit Oct 2026), basis (measured, estimate, report, recall, observed) and source.
 
+Each handpump's place relative to its spring (in a recharge zone, in the catchment, outside) comes from the spring planner: `python scripts/planner_di_locations.py` runs the planner for each DI spring and writes `planner_di_locations_v1.csv`, which the builder reads, so the share of DI water reaching the spring is the same in both tools. Kaddukhal stays "outside" because the geologist found no link. Run it again, then the builder, after the planner's method or the DI sites change.
+
 The October 2026 field visit appears as saved visits; every value also appears under **Source records**. The import runs again only when the files change. Sites edited and visits entered in the portal are kept.
 
 Photos, scanned forms and people's names are not included.
