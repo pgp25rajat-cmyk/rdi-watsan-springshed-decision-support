@@ -5,6 +5,12 @@ import { Icon, Mark, Button } from "./shared.jsx";
 import { Overview, Sites, SiteDetail, Tracking, HowItWorks, VisitDrawer } from "./views.jsx";
 import { SiteForm, VisitForm } from "./forms.jsx";
 import { Sources } from "./evidence.jsx";
+import "@fontsource/source-sans-3/latin-400.css";
+import "@fontsource/source-sans-3/latin-500.css";
+import "@fontsource/source-sans-3/latin-600.css";
+import "@fontsource/source-sans-3/latin-700.css";
+import "@fontsource/source-serif-4/latin-600.css";
+import "../../app/src/theme.css"; // the shared look: one palette and font for the whole tool
 import "./style.css";
 
 function App() {

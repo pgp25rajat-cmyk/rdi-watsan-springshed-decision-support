@@ -1,0 +1,43 @@
+/* One look for the whole tool: opening page, planner (app/) and DI dashboard ("DI Dashboard/" imports this file).
+   Forest green and cream from the opening page; Source Sans 3 for text, Source Serif 4 for page titles.
+   Both fonts are bundled (@fontsource), so the tool looks the same offline. Change a colour here and all three follow.
+   Colours that carry meaning stay fixed: risk Low/Medium/High, recharge zones R1-R3 and the map layers. */
+:root {
+  /* brand */
+  --brand: #0f3b33;          /* forest: top bars, primary buttons, titles */
+  --brand-2: #164c42;        /* hover */
+  --accent: #2f6f5c;         /* moss: links, selected tabs and chips, focus */
+  --accent-soft: #e5ede8;    /* sage: selected rows, info boxes */
+  --accent-soft-2: #d3e1d9;
+  --accent-mid: #8aab9b;     /* quiet lines and icons */
+  /* paper */
+  --bg: #f4f1e9;             /* cream page */
+  --surface: #ffffff;        /* cards */
+  --surface-2: #fbfaf6;
+  --surface-3: #eef2ee;
+  --line: #e2ddd1;
+  --line-2: #cfc8b8;
+  /* text */
+  --ink: #1f2b28;
+  --ink-2: #44524d;
+  --ink-3: #6b7873;
+  /* meaning (kept the same everywhere) */
+  --water: #0b6e8a;          /* water on maps and charts */
+  --di-site: #e8a317;        /* WATSAN DI handpumps on maps (planner and dashboard) */
+  --green: #2f7d5c;          /* done, positive change */
+  --green-soft: #e6f1ea;
+  --earth: #9a7b4f;
+  --risk-low: #2f9e6b;
+  --risk-med: #d38b12;
+  --risk-high: #c8473b;
+  --amber-bg: #fdf3dc;
+  --amber-ink: #7a5208;
+  --red-bg: #fbe9e6;
+  --focus: #2f6f5c;
+  /* type and shape */
+  --font: 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --radius: 10px;
+  --shadow: 0 1px 2px rgba(15, 59, 51, 0.06), 0 4px 14px rgba(15, 59, 51, 0.07);
+  color-scheme: light;
+}
