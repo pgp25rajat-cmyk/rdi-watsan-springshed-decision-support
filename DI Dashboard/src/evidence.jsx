@@ -1,16 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { Panel, Empty, Tag, Icon, visitDate } from "./shared.jsx";
 import { ChoiceSelect } from "./controls.jsx";
+import { pumpPhotos, sitePumps } from "./photos.js";
 
-export const photoUrl = (s) => s.photo_url || (s.photo_id ? "/api/v2/attachments/" + s.photo_id : null);
-export function SitePhoto({ site, large = false }) {
-  const url = photoUrl(site);
+// A photo saved with the site wins; otherwise the field photo of its selected DI handpump.
+const fieldPhoto = (s) => sitePumps(s).flatMap((p) => pumpPhotos(p.name))[0];
+export const photoUrl = (s) =>
+  s.photo_url || (s.photo_id ? "/api/v2/attachments/" + s.photo_id : null) || fieldPhoto(s)?.url || null;
+export function SitePhoto({ site, large = false, photo }) {
+  const field = !site.photo_url && !site.photo_id ? photo || fieldPhoto(site) : null,
+    url = field ? field.url : photoUrl(site),
+    caption = field ? field.caption : site.photo_caption;
   return url ? (
     <figure className={"site-photo " + (large ? "large" : "")}>
-      <img src={url} alt={site.photo_caption || site.name + " site photograph"} loading="lazy" />
+      <img src={url} alt={caption || site.name + " site photograph"} loading="lazy" />
       {large && (
         <figcaption>
-          {site.photo_caption}
+          {caption}
           {site.photo_id && (
             <a href={"/api/v2/attachments/" + site.photo_id} target="_blank" rel="noreferrer">
               Open original <Icon name="arrow" size={13} />
@@ -25,6 +31,39 @@ export function SitePhoto({ site, large = false }) {
       <span>No site photo yet</span>
       <span>Edit site details to add a photo</span>
     </div>
+  );
+}
+
+export function PhotoStrip({ photos }) {
+  const [open, setOpen] = useState(null);
+  if (!photos.length) return <Empty title="No field photos yet">Photos are added by DI handpump.</Empty>;
+  return (
+    <>
+      <div className="photo-strip">
+        {photos.map((p, i) => (
+          <button key={p.src} onClick={() => setOpen(i)} aria-label={"Open photo: " + p.caption}>
+            <img src={p.url} alt={p.caption} loading="lazy" />
+            <span>{p.caption}</span>
+          </button>
+        ))}
+      </div>
+      {open != null && (
+        <div
+          className="photo-view"
+          role="dialog"
+          aria-label={photos[open].caption}
+          onClick={() => setOpen(null)}
+        >
+          <figure onClick={(e) => e.stopPropagation()}>
+            <img src={photos[open].url} alt={photos[open].caption} />
+            <figcaption>
+              {photos[open].caption}
+              <button onClick={() => setOpen(null)}>Close</button>
+            </figcaption>
+          </figure>
+        </div>
+      )}
+    </>
   );
 }
 function readable(e) {

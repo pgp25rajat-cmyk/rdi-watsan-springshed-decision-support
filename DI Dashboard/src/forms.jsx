@@ -16,20 +16,26 @@ import {
   fmt,
 } from "./shared.jsx";
 
+const SPRING_FIELDS = ["spring_name", "gps_later", "latitude", "longitude", "link_basis"];
+const emptySpring = () => ({
+  spring_name: "",
+  gps_later: false,
+  latitude: "",
+  longitude: "",
+  link_basis: "",
+});
+
+// The handpump and its site come first; then one or more springs. Each spring is saved as its own site record
+// that shares the handpump details, so every spring keeps its own visits and results.
 export function SiteForm({ site, onSaved }) {
   const [data, setData] = useState(() => ({
     ...{
-      spring_name: "",
       village: "",
       district: "",
       handpump_name: "",
       pump_gps_later: true,
       pump_latitude: "",
       pump_longitude: "",
-      gps_later: false,
-      latitude: "",
-      longitude: "",
-      link_basis: "",
       roof_area_m2: "",
       collection_factor: "",
       di_year: "",
@@ -42,33 +48,47 @@ export function SiteForm({ site, onSaved }) {
     },
     ...site,
   }));
+  const [springs, setSprings] = useState(() =>
+    site ? [Object.fromEntries(SPRING_FIELDS.map((k) => [k, site[k] ?? ""]))] : [emptySpring()],
+  );
   const pumps = data.additional_handpumps || [];
-  const setPump = (i, k, v) => set("additional_handpumps", pumps.map((p, j) => (j === i ? { ...p, [k]: v } : p)));
+  const setPump = (i, k, v) =>
+    set(
+      "additional_handpumps",
+      pumps.map((p, j) => (j === i ? { ...p, [k]: v } : p)),
+    );
+  const setSpring = (i, patch) => setSprings((all) => all.map((s, j) => (j === i ? { ...s, ...patch } : s)));
   const [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
     [photo, setPhoto] = useState(null);
-  const savedSite = useRef(site?.id);
+  // Ids of springs already saved, so a retry after an error updates them instead of adding duplicates.
+  const savedIds = useRef(site ? [site.id] : []);
   const set = (k, v) => setData((d) => ({ ...d, [k]: v }));
-  const input = (k, props = {}) =>
-    props.type === "date" ? (
-      <DatePicker value={data[k] ?? ""} onChange={(e) => set(k, e.target.value)} max={today()} />
-    ) : (
-      <input value={data[k] ?? ""} onChange={(e) => set(k, e.target.value)} {...props} />
-    );
+  const input = (k, props = {}) => (
+    <input value={data[k] ?? ""} onChange={(e) => set(k, e.target.value)} {...props} />
+  );
+  const springInput = (i, k, props = {}) => (
+    <input value={springs[i][k] ?? ""} onChange={(e) => setSpring(i, { [k]: e.target.value })} {...props} />
+  );
   async function save(e) {
     e.preventDefault();
     setBusy(true);
     setError("");
+    let i = 0;
     try {
-      const s = await api("sites" + (savedSite.current ? "/" + savedSite.current : ""), {
-        ...data,
-        name: data.spring_name,
-      });
-      savedSite.current = s.id;
-      if (photo) await attach(photo, s.id, null, { kind: "site_photo", asset: "spring" });
-      await onSaved(s.id);
+      for (; i < springs.length; i++) {
+        const id = savedIds.current[i];
+        const s = await api("sites" + (id ? "/" + id : ""), {
+          ...data,
+          ...springs[i],
+          name: springs[i].spring_name,
+        });
+        savedIds.current[i] = s.id;
+      }
+      if (photo) await attach(photo, savedIds.current[0], null, { kind: "site_photo", asset: "handpump" });
+      await onSaved(savedIds.current[0]);
     } catch (e) {
-      setError(e.message);
+      setError((springs.length > 1 && i < springs.length ? "Spring " + (i + 1) + ": " : "") + e.message);
       setBusy(false);
     }
   }
@@ -76,22 +96,20 @@ export function SiteForm({ site, onSaved }) {
     <>
       <Header
         title={site ? "Site details" : "Add a site"}
-        sub="One spring and its linked DI handpump. Add this once; update it when something changes."
+        sub="A DI handpump and the springs it feeds. Add this once; update it when something changes."
       />
       <div className="setup-layout">
         <form onSubmit={save}>
           <p className="form-note">Fields marked * are needed.</p>
-          <Panel title="Spring and handpump">
+          <Panel title="Handpump and site">
             <div className="form-grid">
-              <Field label="Spring name" required>
-                {input("spring_name", { placeholder: "Local name of the spring" })}
-              </Field>
               <Field
                 label="Handpump name or landmark"
                 required
+                wide
                 hint="Use a name that the next visitor can recognise."
               >
-                {input("handpump_name", { placeholder: "e.g. Handpump near the school" })}
+                {input("handpump_name", { placeholder: "e.g. Arakot 1, or handpump near the school" })}
               </Field>
               <Field label="Village" required>
                 {input("village")}
@@ -101,48 +119,9 @@ export function SiteForm({ site, onSaved }) {
               </Field>
             </div>
           </Panel>
-          <Panel title="Spring location">
-            <div className="form-grid">
-              <div className="wide">
-                <label className="check-label">
-                  <input
-                    type="checkbox"
-                    checked={data.gps_later}
-                    onChange={(e) => set("gps_later", e.target.checked)}
-                  />
-                  I will add spring GPS later
-                </label>
-              </div>
-              {!data.gps_later && (
-                <>
-                  <Field label="Spring latitude" required hint="Decimal degrees, from GPS.">
-                    {input("latitude", { type: "number", step: "any", min: -90, max: 90 })}
-                  </Field>
-                  <Field label="Spring longitude" required>
-                    {input("longitude", { type: "number", step: "any", min: -180, max: 180 })}
-                  </Field>
-                </>
-              )}
-              <div className="wide">
-                <LocationPicker
-                  title="Spring"
-                  latitude={data.latitude}
-                  longitude={data.longitude}
-                  onPick={(lat, lon) =>
-                    setData((d) => ({
-                      ...d,
-                      gps_later: false,
-                      latitude: lat.toFixed(6),
-                      longitude: lon.toFixed(6),
-                    }))
-                  }
-                />
-              </div>
-            </div>
-          </Panel>
           <Panel
-            title="DI handpump location"
-            sub="The handpump has its own position. It is never placed at the spring by default."
+            title="Handpump location"
+            sub="The handpump has its own position. It is never placed at a spring by default."
           >
             <div className="form-grid">
               <div className="wide">
@@ -170,16 +149,6 @@ export function SiteForm({ site, onSaved }) {
                   title="Handpump"
                   latitude={data.pump_latitude}
                   longitude={data.pump_longitude}
-                  otherPoint={
-                    data.latitude !== "" && data.latitude != null
-                      ? {
-                          id: site?.id || "",
-                          name: data.spring_name,
-                          latitude: data.latitude,
-                          longitude: data.longitude,
-                        }
-                      : null
-                  }
                   onPick={(lat, lon) =>
                     setData((d) => ({
                       ...d,
@@ -190,69 +159,9 @@ export function SiteForm({ site, onSaved }) {
                   }
                 />
               </div>
-              <Field label="How was this spring linked to the handpump?" required wide>
-                <ChoiceSelect
-                  value={data.link_basis ?? ""}
-                  onChange={(e) => set("link_basis", e.target.value)}
-                >
-                  <option value="">Choose one</option>
-                  <option value="reported">WATSAN or local people explained the link</option>
-                  <option value="field_checked">The link was checked in the field</option>
-                  <option value="unknown">The link still needs checking</option>
-                </ChoiceSelect>
-              </Field>
             </div>
-            <div className="extra-pumps">
-              <h3>Other DI handpumps linked to this spring</h3>
-              <p className="caption">For example Arakot 1 and Arakot 2 both feed Balench. Each keeps its own checks.</p>
-              {pumps.map((p, i) => (
-                <div className="form-grid extra-pump" key={i}>
-                  <Field label="Handpump name" required>
-                    <input value={p.name ?? ""} onChange={(e) => setPump(i, "name", e.target.value)} />
-                  </Field>
-                  <Field label="Roof area (m²)">
-                    <input type="number" min="0" step="any" value={p.roof_area_m2 ?? ""} onChange={(e) => setPump(i, "roof_area_m2", e.target.value)} />
-                  </Field>
-                  <Field label="Latitude">
-                    <input type="number" step="any" min="-90" max="90" value={p.latitude ?? ""} onChange={(e) => setPump(i, "latitude", e.target.value)} />
-                  </Field>
-                  <Field label="Longitude">
-                    <input type="number" step="any" min="-180" max="180" value={p.longitude ?? ""} onChange={(e) => setPump(i, "longitude", e.target.value)} />
-                  </Field>
-                  <Field label="Year DI was installed">
-                    <input type="number" min="1900" max={new Date().getFullYear()} step="1" value={p.di_year ?? ""} onChange={(e) => setPump(i, "di_year", e.target.value)} />
-                  </Field>
-                  <div className="field">
-                    <button type="button" className="button" onClick={() => set("additional_handpumps", pumps.filter((_, j) => j !== i))}>
-                      Remove
-                    </button>
-                  </div>
-                </div>
-              ))}
-              <Button type="button" onClick={() => set("additional_handpumps", [...pumps, { name: "" }])}>
-                <Icon name="plus" size={15} />
-                Add another handpump
-              </Button>
-            </div>
-            {data.location_notes && <p className="notice">{data.location_notes}</p>}
           </Panel>
-          <Panel
-            title="Site photo"
-            sub="A recognisable view of the spring or handpump. The file is saved as supporting evidence."
-          >
-            <Field label="Choose site photo" hint="JPG, PNG or WebP, up to 25 MB.">
-              <input
-                type="file"
-                accept=".jpg,.jpeg,.png,.webp"
-                onChange={(e) => setPhoto(e.target.files[0] || null)}
-              />
-            </Field>
-            {photo && <p className="caption">{photo.name} will be saved with this site.</p>}
-          </Panel>
-          <details className="optional-section">
-            <summary>
-              DI setup <span>Optional details</span>
-            </summary>
+          <Panel title="Handpump details" sub="Leave a box blank if it is not known yet.">
             <div className="form-grid">
               <Field label="Year DI was installed">
                 {input("di_year", { type: "number", min: 1900, max: new Date().getFullYear(), step: 1 })}
@@ -272,8 +181,173 @@ export function SiteForm({ site, onSaved }) {
                   placeholder: "e.g. 0.8, if justified",
                 })}
               </Field>
+              <Field label="Handpump photo" hint="JPG, PNG or WebP, up to 25 MB.">
+                <input
+                  type="file"
+                  accept=".jpg,.jpeg,.png,.webp"
+                  onChange={(e) => setPhoto(e.target.files[0] || null)}
+                />
+              </Field>
+              {photo && <p className="caption wide">{photo.name} will be saved with this site.</p>}
             </div>
-          </details>
+            <details className="optional-section extra-pumps">
+              <summary>
+                Other DI handpumps feeding the same spring <span>Optional</span>
+              </summary>
+              <p className="caption">
+                For example Arakot 1 and Arakot 2 both feed Balench. Each keeps its own checks.
+              </p>
+              {pumps.map((p, i) => (
+                <div className="form-grid extra-pump" key={i}>
+                  <Field label="Handpump name" required>
+                    <input value={p.name ?? ""} onChange={(e) => setPump(i, "name", e.target.value)} />
+                  </Field>
+                  <Field label="Roof area (m²)">
+                    <input
+                      type="number"
+                      min="0"
+                      step="any"
+                      value={p.roof_area_m2 ?? ""}
+                      onChange={(e) => setPump(i, "roof_area_m2", e.target.value)}
+                    />
+                  </Field>
+                  <Field label="Latitude">
+                    <input
+                      type="number"
+                      step="any"
+                      min="-90"
+                      max="90"
+                      value={p.latitude ?? ""}
+                      onChange={(e) => setPump(i, "latitude", e.target.value)}
+                    />
+                  </Field>
+                  <Field label="Longitude">
+                    <input
+                      type="number"
+                      step="any"
+                      min="-180"
+                      max="180"
+                      value={p.longitude ?? ""}
+                      onChange={(e) => setPump(i, "longitude", e.target.value)}
+                    />
+                  </Field>
+                  <Field label="Year DI was installed">
+                    <input
+                      type="number"
+                      min="1900"
+                      max={new Date().getFullYear()}
+                      step="1"
+                      value={p.di_year ?? ""}
+                      onChange={(e) => setPump(i, "di_year", e.target.value)}
+                    />
+                  </Field>
+                  <div className="field">
+                    <button
+                      type="button"
+                      className="button"
+                      onClick={() =>
+                        set(
+                          "additional_handpumps",
+                          pumps.filter((_, j) => j !== i),
+                        )
+                      }
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              ))}
+              <Button type="button" onClick={() => set("additional_handpumps", [...pumps, { name: "" }])}>
+                <Icon name="plus" size={15} />
+                Add another handpump
+              </Button>
+            </details>
+            {data.location_notes && <p className="notice">{data.location_notes}</p>}
+          </Panel>
+          {springs.map((sp, i) => (
+            <Panel
+              key={i}
+              title={springs.length > 1 ? "Spring " + (i + 1) : "Spring"}
+              sub="A spring this handpump feeds. It gets its own record, visits and results."
+              action={
+                i > 0 &&
+                !savedIds.current[i] && (
+                  <button
+                    type="button"
+                    className="remove"
+                    onClick={() => setSprings((all) => all.filter((_, j) => j !== i))}
+                  >
+                    Remove this spring
+                  </button>
+                )
+              }
+            >
+              <div className="form-grid">
+                <Field label="Spring name" required>
+                  {springInput(i, "spring_name", { placeholder: "Local name of the spring" })}
+                </Field>
+                <Field label="How was this spring linked to the handpump?" required>
+                  <ChoiceSelect
+                    value={sp.link_basis ?? ""}
+                    onChange={(e) => setSpring(i, { link_basis: e.target.value })}
+                  >
+                    <option value="">Choose one</option>
+                    <option value="reported">WATSAN or local people explained the link</option>
+                    <option value="field_checked">The link was checked in the field</option>
+                    <option value="unknown">The link still needs checking</option>
+                  </ChoiceSelect>
+                </Field>
+                <div className="wide">
+                  <label className="check-label">
+                    <input
+                      type="checkbox"
+                      checked={!!sp.gps_later}
+                      onChange={(e) => setSpring(i, { gps_later: e.target.checked })}
+                    />
+                    I will add spring GPS later
+                  </label>
+                </div>
+                {!sp.gps_later && (
+                  <>
+                    <Field label="Spring latitude" required hint="Decimal degrees, from GPS.">
+                      {springInput(i, "latitude", { type: "number", step: "any", min: -90, max: 90 })}
+                    </Field>
+                    <Field label="Spring longitude" required>
+                      {springInput(i, "longitude", { type: "number", step: "any", min: -180, max: 180 })}
+                    </Field>
+                  </>
+                )}
+                <div className="wide">
+                  <LocationPicker
+                    title={"Spring" + (springs.length > 1 ? " " + (i + 1) : "")}
+                    latitude={sp.latitude}
+                    longitude={sp.longitude}
+                    otherPoint={
+                      data.pump_latitude !== "" && data.pump_latitude != null
+                        ? {
+                            id: site?.id || "",
+                            name: data.handpump_name || "Handpump",
+                            latitude: data.pump_latitude,
+                            longitude: data.pump_longitude,
+                          }
+                        : null
+                    }
+                    onPick={(lat, lon) =>
+                      setSpring(i, { gps_later: false, latitude: lat.toFixed(6), longitude: lon.toFixed(6) })
+                    }
+                  />
+                </div>
+              </div>
+            </Panel>
+          ))}
+          {!site && (
+            <div className="add-spring">
+              <Button type="button" onClick={() => setSprings((all) => [...all, emptySpring()])}>
+                <Icon name="plus" size={15} />
+                Add another spring
+              </Button>
+            </div>
+          )}
           <details className="optional-section">
             <summary>
               Village water history <span>Record once</span>
@@ -326,7 +400,11 @@ export function SiteForm({ site, onSaved }) {
           <div className="form-actions">
             <Button href={site ? "#/sites/" + site.id : "#/sites"}>Cancel</Button>
             <Button primary disabled={busy} type="submit">
-              {busy ? "Saving…" : "Save site"}
+              {busy
+                ? "Saving…"
+                : springs.length > 1
+                  ? "Save site and " + springs.length + " springs"
+                  : "Save site"}
               <Icon name="check" size={16} />
             </Button>
           </div>
@@ -340,7 +418,7 @@ export function SiteForm({ site, onSaved }) {
           </p>
           <div className="setup-example">
             <span>Site details</span>
-            <strong>Spring ↔ DI handpump</strong>
+            <strong>DI handpump → springs</strong>
             <span>Visit 1 → Visit 2 → Visit 3</span>
             <p>The setup stays separate from the visit notes.</p>
           </div>

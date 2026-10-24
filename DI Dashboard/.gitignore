@@ -2,8 +2,6 @@
 node_modules/
 runtime/
 data/
-public/photos/
-dist/photos/
 .taste-skill/
 __pycache__/
 *.py[cod]

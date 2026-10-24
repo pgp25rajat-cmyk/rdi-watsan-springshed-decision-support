@@ -17,7 +17,8 @@ import {
 import { FlowChart, VisitStrip } from "./graphics.jsx";
 import { ChoiceSelect } from "./controls.jsx";
 import { SiteMap } from "./maps.jsx";
-import { SitePhoto, EvidenceRows } from "./evidence.jsx";
+import { SitePhoto, PhotoStrip, EvidenceRows } from "./evidence.jsx";
+import { handpumpGroups, pumpPhotos, sitePhotos } from "./photos.js";
 import {
   ImpactSummary,
   PortfolioBeforeAfter,
@@ -408,14 +409,17 @@ export function Overview({ state, onOpen }) {
 
 export function Sites({ state }) {
   const [q, setQ] = useState(""),
-    sites = state.sites.filter((s) =>
-      (s.name + " " + s.village + " " + s.handpump_name).toLowerCase().includes(q.toLowerCase()),
+    groups = handpumpGroups(state.sites).filter((g) =>
+      [g.name, ...g.sites.flatMap((s) => [s.name, s.village])]
+        .join(" ")
+        .toLowerCase()
+        .includes(q.toLowerCase()),
     );
   return (
     <>
       <Header
         title="Sites"
-        sub="Each spring has its own record, with linked handpumps and dated evidence."
+        sub="Each DI handpump with the springs it feeds."
         action={
           <Button primary href="#/sites/new">
             <Icon name="plus" size={16} />
@@ -427,60 +431,49 @@ export function Sites({ state }) {
         <input
           className="search"
           aria-label="Find a site"
-          placeholder="Find a spring, village or handpump"
+          placeholder="Find a handpump, spring or village"
           value={q}
           onChange={(e) => setQ(e.target.value)}
         />
-        <span>{sites.length} sites</span>
+        <span>
+          {groups.length} {groups.length === 1 ? "handpump" : "handpumps"}
+        </span>
       </div>
       <div className="photo-site-grid">
-        {sites.map((s) => {
-          const a = assessment(state, s.id);
+        {groups.map((g) => {
+          const home = g.sites[0],
+            photo = pumpPhotos(g.name)[0];
           return (
-            <article className="photo-site-card" key={s.id}>
-              <a href={"#/sites/" + s.id} aria-label={"Open " + s.name}>
-                <SitePhoto site={s} />
+            <article className="photo-site-card" key={g.name}>
+              <a href={"#/sites/" + home.id} aria-label={"Open " + g.name}>
+                <SitePhoto site={home} photo={photo} />
               </a>
               <div className="photo-site-content">
                 <div className="site-card-head">
                   <div>
-                    <a href={"#/sites/" + s.id}>
-                      <h2>{s.name}</h2>
+                    <a href={"#/sites/" + home.id}>
+                      <h2>{g.name}</h2>
                     </a>
                     <p>
-                      {s.village} · {s.district || "District to add"}
+                      {home.village} · {home.district || "District to add"}
                     </p>
                   </div>
                   <Icon name="arrow" size={17} />
                 </div>
-                <div className="site-pair">
-                  <span>Spring flow</span>
-                  <strong>{shownFlow(a)}</strong>
-                  <span>Handpump</span>
-                  <strong>{s.handpump_name || "Details needed"}</strong>
-                  <span>DI line</span>
-                  <strong>{diLabels[a.di_status]}</strong>
-                </div>
-                <div className="site-card-status">
-                  <Tag tone={a.maintenance.length ? "warning" : ""}>
-                    {a.maintenance.length
-                      ? "Needs work"
-                      : a.visit_count + " " + (a.visit_count === 1 ? "visit" : "visits")}
-                  </Tag>
-                  <span>{a.evidence_count} source records</span>
-                </div>
-                <div className="site-card-actions">
-                  <a href={"#/sites/" + s.id}>
-                    Open site <Icon name="arrow" size={14} />
-                  </a>
-                  <a href={"#/sites/" + s.id + "/edit"}>Edit details</a>
+                <div className="pump-springs">
+                  <span>{g.sites.length === 1 ? "Spring" : "Springs"}</span>
+                  {g.sites.map((s) => (
+                    <a key={s.id} href={"#/sites/" + s.id}>
+                      {s.spring_name || s.name}
+                    </a>
+                  ))}
                 </div>
               </div>
             </article>
           );
         })}
       </div>
-      {!sites.length && <Empty title="No matching sites">Try another name or add a site.</Empty>}
+      {!groups.length && <Empty title="No matching sites">Try another name or add a site.</Empty>}
     </>
   );
 }
@@ -597,6 +590,9 @@ export function SiteDetail({ site: s, state, onOpen }) {
           </div>
           <Panel title="Impact beyond water" sub="What people told us changed for them.">
             <BeyondWater impact={a.impact} />
+          </Panel>
+          <Panel title="Field photos" sub="October 2026 field visit, by linked DI handpump.">
+            <PhotoStrip photos={sitePhotos(s)} />
           </Panel>
         </>
       )}
