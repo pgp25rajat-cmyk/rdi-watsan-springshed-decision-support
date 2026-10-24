@@ -49,22 +49,31 @@ export const changeText = (c) =>
       (c.percent != null ? " (" + (c.percent > 0 ? "+" : "") + fmt(c.percent) + "%)" : "");
 
 // One row per spring: earlier value (hollow) to later value (filled). Bars show the range given.
+// One row per spring: name on the left, then earlier value (hollow) to later value (filled), with the monsoon
+// flow (square) on the same row line. Bars show the range given; the change is on the right.
 export function Dumbbell({ rows, earlier = "Before DI", later = "After DI" }) {
   const [ref, W] = useChartWidth();
   if (!rows.length) return <div ref={ref} />;
-  const rowH = 58,
-    T = W < 500 ? 58 : 26,
-    L = 8,
-    R = 16,
-    H = T + rows.length * rowH + 30;
+  const narrow = W < 560,
+    hasMonsoon = rows.some((r) => r.monsoon_after),
+    rowH = narrow ? 50 : 40,
+    T = narrow ? (hasMonsoon ? 62 : 44) : 34,
+    LW = narrow ? 122 : Math.min(150, Math.max(96, 8 + 7.5 * Math.max(...rows.map((r) => r.name.length)))),
+    RW = narrow ? 14 : 150,
+    H = T + rows.length * rowH + 28;
   const top =
-    Math.max(1, ...rows.flatMap((r) => [r.before.high, r.after.high, r.monsoon_after?.high || 0])) * 1.12;
-  const hasMonsoon = rows.some((r) => r.monsoon_after);
-  const x = (n) => L + (n / top) * (W - L - R);
-  const ticks = (W < 500 ? [0, 0.5, 1] : [0, 0.25, 0.5, 0.75, 1]).map((f) => top * f),
-    last = ticks.length - 1,
-    narrow = W < 500,
-    legendX = narrow ? L + 6 : L + 40 + earlier.length * 7;
+    Math.max(1, ...rows.flatMap((r) => [r.before.high, r.after.high, r.monsoon_after?.high || 0])) * 1.08;
+  const x0 = LW + 12,
+    x1 = W - RW,
+    x = (n) => x0 + (n / top) * (x1 - x0);
+  const ticks = (narrow ? [0, 0.5, 1] : [0, 0.25, 0.5, 0.75, 1]).map((f) => top * f),
+    last = ticks.length - 1;
+  const legend = [
+    ["hollow", earlier],
+    ["filled", later],
+    ...(hasMonsoon ? [["square", "Monsoon flow, after DI"]] : []),
+  ];
+  let lx = x0;
   return (
     <div className="chart" ref={ref}>
       <svg
@@ -72,12 +81,46 @@ export function Dumbbell({ rows, earlier = "Before DI", later = "After DI" }) {
         role="img"
         aria-label={earlier + " and " + later + " spring flow, litres per minute"}
       >
+        <g className="axis">
+          {legend.map(([kind, label], k) => {
+            const lxNow = narrow ? 6 : lx,
+              ly = narrow ? 10 + k * 17 : 10;
+            if (!narrow) lx += 34 + label.length * 6.6;
+            return (
+              <g key={kind}>
+                {kind === "square" ? (
+                  <rect
+                    x={lxNow - 5}
+                    y={ly - 5}
+                    width="10"
+                    height="10"
+                    fill="white"
+                    stroke="var(--teal)"
+                    strokeWidth="2"
+                  />
+                ) : (
+                  <circle
+                    cx={lxNow}
+                    cy={ly}
+                    r="5"
+                    fill={kind === "filled" ? "var(--accent)" : "white"}
+                    stroke={kind === "filled" ? "none" : "var(--muted)"}
+                    strokeWidth="2"
+                  />
+                )}
+                <text x={lxNow + 11} y={ly + 4}>
+                  {label}
+                </text>
+              </g>
+            );
+          })}
+        </g>
         {ticks.map((t, i) => (
           <g key={i}>
-            <line x1={x(t)} x2={x(t)} y1={T - 6} y2={H - 26} className="chart-grid" />
+            <line x1={x(t)} x2={x(t)} y1={T - 4} y2={H - 24} className="chart-grid" />
             <text
               x={x(t)}
-              y={H - 10}
+              y={H - 8}
               textAnchor={i === 0 ? "start" : i === last ? "end" : "middle"}
               className="axis"
             >
@@ -86,54 +129,40 @@ export function Dumbbell({ rows, earlier = "Before DI", later = "After DI" }) {
             </text>
           </g>
         ))}
-        <g className="axis">
-          <circle cx={L + 6} cy={10} r="5" fill="white" stroke="var(--muted)" strokeWidth="2" />
-          <text x={L + 16} y={14}>
-            {earlier}
-          </text>
-          <circle cx={legendX} cy={narrow ? 26 : 10} r="5" fill="var(--accent)" />
-          <text x={legendX + 10} y={narrow ? 30 : 14}>
-            {later}
-          </text>
-          {hasMonsoon && (
-            <>
-              <rect
-                x={narrow ? L + 1 : legendX + 30 + later.length * 7}
-                y={narrow ? 37 : 5}
-                width="10"
-                height="10"
-                fill="white"
-                stroke="var(--teal)"
-                strokeWidth="2"
-                transform=""
-              />
-              <text x={narrow ? L + 16 : legendX + 46 + later.length * 7} y={narrow ? 46 : 14}>
-                Monsoon flow, after DI
-              </text>
-            </>
-          )}
-        </g>
         {rows.map((r, i) => {
-          const y = T + i * rowH + 34,
+          const y = T + i * rowH + rowH / 2,
             b = r.before,
-            a = r.after;
+            a = r.after,
+            m = r.monsoon_after;
           return (
             <g key={r.key || i}>
-              <text x={L} y={y - 18} className="chart-label dumbbell-name">
+              <line x1={x0} x2={x1} y1={y} y2={y} className="chart-grid" />
+              <text x={LW} y={narrow ? y - 3 : y + 4} textAnchor="end" className="chart-label dumbbell-name">
                 {r.name}
               </text>
-              <text
-                x={W - R}
-                y={y - 18}
-                textAnchor="end"
-                className={"chart-label dumbbell-change " + tone(r.change.direction)}
-              >
-                {changeText(r.change)}
-              </text>
+              {narrow ? (
+                <text
+                  x={LW}
+                  y={y + 13}
+                  textAnchor="end"
+                  className={"axis dumbbell-change " + tone(r.change.direction)}
+                >
+                  {changeText(r.change)}
+                </text>
+              ) : (
+                <text
+                  x={W - 2}
+                  y={y + 4}
+                  textAnchor="end"
+                  className={"chart-label dumbbell-change " + tone(r.change.direction)}
+                >
+                  {changeText(r.change)}
+                </text>
+              )}
               <rect
                 x={x(b.low) - 1}
                 width={Math.max(2, x(b.high) - x(b.low) + 2)}
-                y={y - 9}
+                y={y - 3}
                 height="6"
                 rx="3"
                 fill="var(--line)"
@@ -145,30 +174,41 @@ export function Dumbbell({ rows, earlier = "Before DI", later = "After DI" }) {
               <rect
                 x={x(a.low) - 1}
                 width={Math.max(2, x(a.high) - x(a.low) + 2)}
-                y={y + 3}
+                y={y - 3}
                 height="6"
                 rx="3"
                 fill="var(--accent)"
-                opacity=".35"
+                opacity=".25"
               >
                 <title>
                   {a.record_label}: {range(a)} L/min · {a.basis_label}
                 </title>
               </rect>
-              <line
-                x1={x(b.mid)}
-                x2={x(a.mid)}
-                y1={y}
-                y2={y}
-                stroke="var(--muted)"
-                strokeWidth="1.5"
-                strokeDasharray="3 3"
-              />
-              <circle cx={x(b.mid)} cy={y} r="6" fill="white" stroke="var(--muted)" strokeWidth="2" />
-              <circle cx={x(a.mid)} cy={y} r="6" fill="var(--accent)" />
-              {r.monsoon_after && (
+              {m && (
+                <line
+                  x1={x(a.mid)}
+                  x2={x(m.mid)}
+                  y1={y}
+                  y2={y}
+                  stroke="var(--teal)"
+                  strokeWidth="1.5"
+                  opacity=".45"
+                />
+              )}
+              <line x1={x(b.mid)} x2={x(a.mid)} y1={y} y2={y} stroke="var(--muted)" strokeWidth="2" />
+              <circle cx={x(b.mid)} cy={y} r="6" fill="white" stroke="var(--muted)" strokeWidth="2">
+                <title>
+                  {b.record_label}: {range(b)} L/min
+                </title>
+              </circle>
+              <circle cx={x(a.mid)} cy={y} r="6" fill="var(--accent)">
+                <title>
+                  {a.record_label}: {range(a)} L/min
+                </title>
+              </circle>
+              {m && (
                 <rect
-                  x={x(r.monsoon_after.mid) - 5}
+                  x={x(m.mid) - 5}
                   y={y - 5}
                   width="10"
                   height="10"
@@ -176,7 +216,7 @@ export function Dumbbell({ rows, earlier = "Before DI", later = "After DI" }) {
                   stroke="var(--teal)"
                   strokeWidth="2"
                 >
-                  <title>Monsoon flow after DI: {range(r.monsoon_after)} L/min</title>
+                  <title>Monsoon flow after DI: {range(m)} L/min</title>
                 </rect>
               )}
             </g>
@@ -438,7 +478,9 @@ export function SiteBeforeAfter({ impact }) {
     );
   return (
     <>
-      <Dumbbell rows={[{ name: r.metric_label, role: impact.role, ...r }]} />
+      <Dumbbell
+        rows={[{ name: r.metric === "lean_flow_lpm" ? "Dry season" : "On the day", role: impact.role, ...r }]}
+      />
       <dl className="facts">
         {[
           ["Before DI", range(r.before) + " L/min · " + r.before.basis_label],
